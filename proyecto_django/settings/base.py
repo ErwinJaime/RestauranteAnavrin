@@ -36,6 +36,10 @@ DJANGO_APPS = (
 
 LOCAL_APPS = (
     'applications.usuarios',
+    'rest_framework',
+    'applications.menu',
+    'rest_framework.authtoken',
+    'corsheaders',
 )
 
 THIRD_PARTY_APPS = ()
@@ -50,9 +54,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # para poder conectar con vue
 ]
 
 ROOT_URLCONF = 'proyecto_django.urls'
+
+CORS_ALLOW_ALL_ORIGINS = True # para poder conectar con vue
 
 TEMPLATES = [
     {
