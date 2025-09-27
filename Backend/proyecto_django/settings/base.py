@@ -36,8 +36,8 @@ DJANGO_APPS = (
 
 LOCAL_APPS = (
     'applications.usuarios',
-    'applications.menu',
     'rest_framework',
+    'applications.menu',
     'rest_framework.authtoken',
     'corsheaders',
 )
