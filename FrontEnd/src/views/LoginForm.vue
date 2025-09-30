@@ -89,7 +89,7 @@
           <!-- Registro -->
           <div class="register-section">
             <span class="register-text">¿No tienes cuenta? </span>
-            <a href="#" class="register-link" @click="$emit('switch-to-register')">Regístrate</a>
+            <a href="#" class="register-link" @click.prevent="$router.push('/registro')">Regístrate</a>
           </div>
         </form>
       </div>

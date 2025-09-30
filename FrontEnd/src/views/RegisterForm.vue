@@ -105,7 +105,7 @@
           <!-- Login -->
           <div class="login-section">
             <span class="login-text">¿Ya tienes cuenta? </span>
-            <a href="#" class="login-link" @click="$emit('switch-to-login')">Inicia sesión</a>
+            <a href="#" class="login-link" @click.prevent="$router.push('/')">Inicia sesión</a>
           </div>
         </form>
       </div>
