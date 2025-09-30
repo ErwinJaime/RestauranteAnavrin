@@ -1,77 +1,26 @@
 <template>
   <div id="app">
-    <!-- Mostrar formulario de login o registro según el estado -->
-    <LoginForm 
-      v-if="!showRegister" 
-      @login-success="handleLoginSuccess"
-      @switch-to-register="showRegister = true"
-    />
-    <RegisterForm 
-      v-else 
-      @register-success="handleRegisterSuccess"
-      @switch-to-login="showRegister = false"
-    />
-    
-    <!-- Dashboard simple para usuarios autenticados -->
-    <div v-if="user" class="dashboard">
-      <div class="dashboard-header">
-        <h1>¡Bienvenido, {{ user.nombre }}!</h1>
-        <button @click="logout" class="logout-button">Cerrar Sesión</button>
-      </div>
-      <div class="dashboard-content">
-        <p>Has iniciado sesión correctamente.</p>
-        <p>Email: {{ user.correo }}</p>
-        <p>ID: {{ user.id }}</p>
-      </div>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import LoginForm from './components/LoginForm.vue'
-import RegisterForm from './components/RegisterForm.vue'
-import authService from './services/authService'
-
-export default {
-  name: 'App',
-  components: {
-    LoginForm,
-    RegisterForm
-  },
-  data() {
-    return {
-      showRegister: false,
-      user: null
-    }
-  },
-  mounted() {
-    // Verificar si hay un usuario autenticado al cargar la app
-    if (authService.isAuthenticated()) {
-      this.user = authService.getUser()
-    }
-  },
-  methods: {
-    handleLoginSuccess(user) {
-      this.user = user
-      this.showRegister = false
-    },
-    
-    handleRegisterSuccess() {
-      // Después del registro exitoso, mostrar el formulario de login
-      this.showRegister = false
-    },
-    
-    logout() {
-      authService.logout()
-      this.user = null
-    }
+  export default {
+    name: "App"
   }
-}
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f6f8;
+}
+</style>
 
+<style>
 * {
   margin: 0;
   padding: 0;

@@ -126,8 +126,10 @@ export default {
         const result = await authService.login(this.email, this.password)
         
         if (result.success) {
+          this.$router.push('/dashboard')
           // Login exitoso
           console.log('Login exitoso:', result.user)
+          
           
           // Mostrar mensaje de éxito
           this.$emit('login-success', result.user)
@@ -137,7 +139,7 @@ export default {
           this.password = ''
           
           // Aquí puedes redirigir cuando tengas Vue Router
-          // this.$router.push('/dashboard')
+          
           
         } else {
           // Error en login
