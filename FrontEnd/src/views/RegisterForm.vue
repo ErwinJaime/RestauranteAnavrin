@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page">
+  <div class="register-page">
     <!-- Imagen de fondo lado izquierdo -->
     <div class="left-section">
       <!-- Línea naranja lateral -->
@@ -16,12 +16,28 @@
         <h1 class="brand">ANAVRIN</h1>
       </div>
       
-      <div class="login-container">
+      <div class="register-container">
         <!-- Título del formulario -->
-        <h2 class="login-title">Inicia Sesión</h2>
+        <h2 class="register-title">Crear Cuenta</h2>
         
         <!-- Formulario -->
-        <form @submit.prevent="handleLogin" class="login-form">
+        <form @submit.prevent="handleRegister" class="register-form">
+          <!-- Campo Nombre -->
+          <div class="input-group">
+            <div class="input-container">
+              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input 
+                v-model="nombre"
+                type="text" 
+                placeholder="Nombre completo"
+                required
+                class="form-input"
+              >
+            </div>
+          </div>
+
           <!-- Campo Email -->
           <div class="input-group">
             <div class="input-container">
@@ -53,43 +69,43 @@
               >
             </div>
           </div>
+
+          <!-- Campo Confirmar Contraseña -->
+          <div class="input-group">
+            <div class="input-container">
+              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M16 12V8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8V12M12 15C12.5523 15 13 14.5523 13 14C13 13.4477 12.5523 13 12 13C11.4477 13 11 13.4477 11 14C11 14.5523 11.4477 15 12 15ZM7 12H17C18.1046 12 19 12.8954 19 14V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18V14C5 12.8954 5.89543 12 7 12Z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input 
+                v-model="confirmPassword"
+                type="password" 
+                placeholder="Confirmar contraseña"
+                required
+                class="form-input"
+              >
+            </div>
+          </div>
           
           <!-- Mensaje de error -->
           <div v-if="error" class="error-message">
             {{ error }}
           </div>
-          
-          <!-- Enlace olvidé contraseña -->
-          <div class="forgot-password">
-            <a href="#" class="forgot-link">Olvidé mi contraseña</a>
+
+          <!-- Mensaje de éxito -->
+          <div v-if="success" class="success-message">
+            {{ success }}
           </div>
           
-          <!-- Botón Entrar -->
-          <button type="submit" class="login-button" :disabled="loading">
-            <span v-if="loading">Cargando...</span>
-            <span v-else>Entrar</span>
+          <!-- Botón Registrarse -->
+          <button type="submit" class="register-button" :disabled="loading">
+            <span v-if="loading">Creando cuenta...</span>
+            <span v-else>Crear Cuenta</span>
           </button>
           
-          <!-- Divisor -->
-          <div class="divider">
-            <span class="divider-text">-O-</span>
-          </div>
-          
-          <!-- Botón Google -->
-          <button type="button" class="google-button" @click="loginWithGoogle">
-            <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            Continúa con Google
-          </button>
-          
-          <!-- Registro -->
-          <div class="register-section">
-            <span class="register-text">¿No tienes cuenta? </span>
-            <a href="#" class="register-link" @click.prevent="$router.push('/registro')">Regístrate</a>
+          <!-- Login -->
+          <div class="login-section">
+            <span class="login-text">¿Ya tienes cuenta? </span>
+            <a href="#" class="login-link" @click.prevent="$router.push('/')">Inicia sesión</a>
           </div>
         </form>
       </div>
@@ -101,48 +117,67 @@
 import authService from '@/services/authService'
 
 export default {
-  name: 'LoginForm',
+  name: 'RegisterForm',
   data() {
     return {
+      nombre: '',
       email: '',
       password: '',
+      confirmPassword: '',
       loading: false,
-      error: ''
+      error: '',
+      success: ''
     }
   },
   methods: {
-    async handleLogin() {
+    async handleRegister() {
       this.loading = true
       this.error = ''
+      this.success = ''
       
-      // Validación básica
-      if (!this.email || !this.password) {
+      // Validaciones
+      if (!this.nombre || !this.email || !this.password || !this.confirmPassword) {
         this.error = 'Por favor, completa todos los campos'
         this.loading = false
         return
       }
 
+      if (this.password !== this.confirmPassword) {
+        this.error = 'Las contraseñas no coinciden'
+        this.loading = false
+        return
+      }
+
+      if (this.password.length < 6) {
+        this.error = 'La contraseña debe tener al menos 6 caracteres'
+        this.loading = false
+        return
+      }
+
       try {
-        const result = await authService.login(this.email, this.password)
+        const userData = {
+          nombre: this.nombre,
+          correo: this.email,
+          password: this.password
+        }
+
+        const result = await authService.register(userData)
         
         if (result.success) {
-          this.$router.push('/dashboard')
-          // Login exitoso
-          console.log('Login exitoso:', result.user)
-          
-          
-          // Mostrar mensaje de éxito
-          this.$emit('login-success', result.user)
+          // Registro exitoso
+          this.success = result.message
           
           // Limpiar formulario
+          this.nombre = ''
           this.email = ''
           this.password = ''
+          this.confirmPassword = ''
           
-          // Aquí puedes redirigir cuando tengas Vue Router
-          
+          // Emitir evento de éxito
+          this.$emit('register-success')
           
         } else {
-          // Error en login
+          // Error en registro
           this.error = result.error
         }
       } catch (error) {
@@ -151,16 +186,6 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-    
-    loginWithGoogle() {
-      // Implementar login con Google
-      console.log('Login con Google')
-      this.error = 'Login con Google no implementado aún'
-    },
-
-    clearError() {
-      this.error = ''
     }
   }
 }
@@ -170,12 +195,12 @@ export default {
 /* Importar Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');
 
-.login-page {
+.register-page {
   display: flex;
   height: 100vh;
   width: 100vw;
   font-family: 'Poppins', sans-serif;
-  overflow: hidden; /* Elimina el scroll */
+  overflow: hidden;
 }
 
 .left-section {
@@ -188,18 +213,16 @@ export default {
   overflow: hidden;
 }
 
-/* Línea naranja lateral */
 .orange-line {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 30px; /* Más ancha */
+  width: 30px;
   background: linear-gradient(135deg, #FF6B35, #F7931E);
   z-index: 3;
 }
 
-/* Aquí colocas tu imagen del chef */
 .chef-image {
   width: 100%;
   height: 100%;
@@ -226,7 +249,7 @@ export default {
   padding: 2rem;
   max-height: 100vh;
   position: relative;
-  overflow: hidden; /* Elimina el scroll completamente */
+  overflow: hidden;
 }
 
 .header {
@@ -235,7 +258,7 @@ export default {
   right: 2rem;
 }
 
-.login-container {
+.register-container {
   width: 100%;
   max-width: 400px;
   margin: auto;
@@ -243,11 +266,11 @@ export default {
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  padding-top: 4rem; /* Espacio para el header */
+  padding-top: 4rem;
 }
 
 .brand {
-  font-size: 20px; /* Tamaño ajustado para el logo */
+  font-size: 20px;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0;
@@ -255,17 +278,17 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
-.login-title {
-  font-size: 42px; /* Más pequeño */
-  font-weight: 600; /* SemiBold */
+.register-title {
+  font-size: 42px;
+  font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 2rem;
-  text-align: center; /* Centrado */
+  text-align: center;
   font-family: 'Poppins', sans-serif;
   line-height: 1.1;
 }
 
-.login-form {
+.register-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -293,8 +316,8 @@ export default {
   padding: 1rem 1rem 1rem 3rem;
   border: 2px solid #e5e5e5;
   border-radius: 8px;
-  font-size: 20px; /* Poppins, Medium, tamaño 20 */
-  font-weight: 500; /* Medium */
+  font-size: 20px;
+  font-weight: 500;
   font-family: 'Poppins', sans-serif;
   transition: border-color 0.3s ease;
   background-color: #ffffff;
@@ -325,24 +348,20 @@ export default {
   border: 1px solid #fcc;
 }
 
-.forgot-password {
-  text-align: left;
-  margin: 0.25rem 0 0.75rem 0; /* Más pegado al input y menos espacio abajo */
-}
-
-.forgot-link {
-  color: #666;
-  text-decoration: underline;
-  font-size: 16px; /* Más pequeño */
+.success-message {
+  background-color: #efe;
+  color: #363;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin: 0.5rem 0;
+  border: 1px solid #cfc;
 }
 
-.forgot-link:hover {
-  color: #ff6b35;
-}
-
-.login-button {
+.register-button {
   width: 100%;
   padding: 1rem;
   background: linear-gradient(135deg, #ff6b35, #f7931e);
@@ -357,93 +376,45 @@ export default {
   margin-top: 1rem;
 }
 
-.login-button:hover {
+.register-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
-.login-button:disabled {
+.register-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 1rem 0; /* Menos espacio arriba y abajo */
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #e5e5e5;
-}
-
-.divider-text {
-  margin: 0 1rem;
-  color: #999;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-}
-
-.google-button {
-  width: 100%;
-  padding: 1rem;
-  background-color: #ffffff;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
-  font-size: 20px;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.google-button:hover {
-  border-color: #d0d0d0;
-  background-color: #f8f8f8;
-}
-
-.google-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.register-section {
+.login-section {
   text-align: center;
   margin-top: 2rem;
 }
 
-.register-text {
+.login-text {
   color: #666;
   font-size: 20px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
 
-.register-link {
+.login-link {
   color: #ff6b35;
   text-decoration: none;
   font-weight: 500;
   font-size: 20px;
   font-family: 'Poppins', sans-serif;
+  cursor: pointer;
 }
 
-.register-link:hover {
+.login-link:hover {
   text-decoration: underline;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .login-page {
+  .register-page {
     flex-direction: column;
   }
   
@@ -453,7 +424,7 @@ export default {
   }
   
   .orange-line {
-    width: 20px; /* Más ancha que antes pero adaptada a móvil */
+    width: 20px;
   }
   
   .right-section {
@@ -466,26 +437,20 @@ export default {
     right: 1rem;
   }
   
-  .login-container {
+  .register-container {
     padding-top: 3rem;
     height: 70vh;
   }
   
-  .login-title {
+  .register-title {
     font-size: 32px;
   }
   
   .form-input,
   .form-input::placeholder,
-  .divider-text,
-  .google-button,
-  .register-text,
-  .register-link {
+  .login-text,
+  .login-link {
     font-size: 16px;
-  }
-  
-  .forgot-link {
-    font-size: 14px;
   }
 }
 
@@ -494,12 +459,12 @@ export default {
     padding: 1rem;
   }
   
-  .login-title {
+  .register-title {
     font-size: 28px;
   }
   
   .orange-line {
-    width: 15px; /* Aún más ancha en pantallas muy pequeñas */
+    width: 15px;
   }
 }
 </style>

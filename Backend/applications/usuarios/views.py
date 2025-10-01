@@ -54,3 +54,27 @@ def login_usuario(request):
         }, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Contraseña incorrecta"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# Perfil de usuario (requiere autenticación)
+@api_view(['GET'])
+def perfil_usuario(request):
+    # Obtener el usuario desde el token JWT
+    usuario = request.user
+    
+    if not usuario or not hasattr(usuario, 'id'):
+        return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    try:
+        # Buscar el usuario en la base de datos
+        usuario_db = Usuario.objects.get(id=usuario.id)
+        return Response({
+            "usuario": {
+                "id": usuario_db.id,
+                "nombre": usuario_db.nombre,
+                "correo": usuario_db.correo,
+                "creadoen": usuario_db.creadoen
+            }
+        }, status=status.HTTP_200_OK)
+    except Usuario.DoesNotExist:
+        return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
