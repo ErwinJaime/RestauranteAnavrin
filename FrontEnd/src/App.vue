@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import LoginForm from './components/LoginForm.vue'
+import LoginForm from './views/LoginForm.vue'
 
 export default {
   name: 'App',
-  components: {
+  RouterView: {
     LoginForm
   }
 }
