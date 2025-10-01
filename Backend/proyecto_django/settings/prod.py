@@ -1,14 +1,11 @@
 import os
 import dj_database_url
 from .base import *
-# Configurar base de datos para Render
-
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
-
 
 DATABASES = {
     'default': dj_database_url.config(
@@ -21,8 +18,10 @@ DATABASES = {
 # Archivos estáticos
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
-
-
+# ✅ Para WhiteNoise 6.x usa esta configuración
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
