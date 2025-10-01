@@ -54,12 +54,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     'corsheaders.middleware.CorsMiddleware', # para poder conectar con vue
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'proyecto_django.urls'
 
-CORS_ALLOW_ALL_ORIGINS = True # para poder conectar con vue
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Puerto por defecto de Vite (Vue 3)
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_ALL_ORIGINS = True # para poder conectar con vue por defecto true en desarrollo
 
 TEMPLATES = [
     {
