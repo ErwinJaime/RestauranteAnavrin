@@ -40,8 +40,6 @@ LOCAL_APPS = (
 )
 
 THIRD_PARTY_APPS = (
-    'whitenoise.runserver_nostatic',
-    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -63,6 +61,8 @@ MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', # para servir archivos estaticos en produccion
+
+    'whitenoise.runserver_nostatic',
 ]
 
 ROOT_URLCONF = 'proyecto_django.urls'
