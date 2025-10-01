@@ -3,6 +3,7 @@ import dj_database_url
 from .base import *
 # Configurar base de datos para Render
 
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 DATABASES = {
     'default': dj_database_url.config(
