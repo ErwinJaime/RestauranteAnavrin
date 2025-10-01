@@ -1,7 +1,8 @@
 // Servicio de autenticación para manejar JWT y operaciones de usuario
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/usuarios";
+// Cambiar la línea 4:
+const API_BASE_URL = process.env.VUE_APP_API_BASE_URL || "http://127.0.0.1:8000/api/usuarios";
 
 class AuthService {
   constructor() {
