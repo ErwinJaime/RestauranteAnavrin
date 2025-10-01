@@ -40,6 +40,8 @@ LOCAL_APPS = (
 )
 
 THIRD_PARTY_APPS = (
+    'whitenoise.runserver_nostatic',
+    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -58,6 +60,9 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware', # para poder conectar con vue
     "django.middleware.common.CommonMiddleware",
+
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # para servir archivos estaticos en produccion
 ]
 
 ROOT_URLCONF = 'proyecto_django.urls'
