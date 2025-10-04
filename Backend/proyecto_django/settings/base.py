@@ -3,6 +3,7 @@ Django settings for proyecto_django project.
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -14,8 +15,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-t77%hdlb&5$=+bvbfu9o@uu+=d^+-*p&o&-uky%h6hcr&ht&se'
 
-# Application definition
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# ✅ ALLOWED_HOSTS - CRÍTICO para producción
+ALLOWED_HOSTS = [
+    'restauranteanavrin-2.onrender.com',  # Tu backend en Render
+    'localhost',
+    '127.0.0.1',
+]
+
+# Application definition
 DJANGO_APPS = ( 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,7 +50,7 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Debe ir aquí, justo después de SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # ✅ CORS debe ir temprano
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,11 +62,36 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'proyecto_django.urls'
 
+# ✅ CONFIGURACIÓN DE CORS - CORREGIDA
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Puerto por defecto de Vite (Vue 3)
+    "https://frontend-vue-b0xz.onrender.com",  # ✅ Tu frontend en Render
+    "http://localhost:5173",  # Para desarrollo local
     "http://127.0.0.1:5173",
+    "http://localhost:8080",  # Si usas Vue CLI
 ]
-CORS_ALLOW_ALL_ORIGINS = True # para poder conectar con vue por defecto true en desarrollo
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Configuración de Django REST Framework
 REST_FRAMEWORK = {
