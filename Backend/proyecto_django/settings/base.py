@@ -13,6 +13,8 @@ STATIC_URL = '/static/'
 # Para producción - donde se recolectan los archivos estáticos
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+AUTH_USER_MODEL = 'usuarios.Usuario'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
