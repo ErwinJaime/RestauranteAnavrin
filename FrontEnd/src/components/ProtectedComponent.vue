@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import authService from '@/services/authService'
+import authService from '@/services/probar'
 
 export default {
   name: 'ProtectedComponent',
