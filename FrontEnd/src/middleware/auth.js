@@ -1,5 +1,5 @@
 // Middleware de autenticación para Vue
-import authService from '@/services/authService'
+import authService from '@/services/probar'
 
 export function requireAuth(to, from, next) {
   if (authService.isAuthenticated()) {
