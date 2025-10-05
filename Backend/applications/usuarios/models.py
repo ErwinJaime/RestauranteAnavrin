@@ -10,7 +10,7 @@ class Usuario(models.Model):
 
     class Meta:
         db_table = "usuarios"
-        managed = False
+        managed = True
     
     def set_password(self, raw_password):
         # Aquí puedes agregar lógica para hashear la contraseña antes de guardarla
