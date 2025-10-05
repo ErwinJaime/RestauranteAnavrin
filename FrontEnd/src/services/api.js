@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+const baseURL = process.env.VUE_APP_API_BASE_URL 
+  ? `${process.env.VUE_APP_API_BASE_URL}/`  // Asegura que termine en /
+  : 'http://127.0.0.1:8000/api/usuarios/'
+
 const api = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000/api/usuarios'
-  // ⬆️ QUITA la barra final
+  baseURL: baseURL
 })
 
 api.interceptors.request.use((config) => {
