@@ -22,7 +22,7 @@ class AuthService {
   // Método para hacer login
   async login(email, password) {
     try {
-      const response = await this.axiosInstance.post("/login/", {
+      const response = await this.axiosInstance.post("login/", {
         correo: email,
         password: password,
       });
@@ -45,7 +45,7 @@ class AuthService {
   // Método para registrar usuario
   async register(userData) {
     try {
-      const response = await this.axiosInstance.post("/registro/", userData);
+      const response = await this.axiosInstance.post("registro/", userData);
       const data = response.data;
 
       return { success: true, message: data.mensaje };
