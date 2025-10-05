@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import authService from '@/services/authService'
+import { registro } from '@/services/auth'
 
 export default {
   name: 'RegisterForm',
@@ -134,8 +134,7 @@ export default {
       this.loading = true
       this.error = ''
       this.success = ''
-      
-      // Validaciones
+        
       if (!this.nombre || !this.email || !this.password || !this.confirmPassword) {
         this.error = 'Por favor, completa todos los campos'
         this.loading = false
@@ -155,34 +154,24 @@ export default {
       }
 
       try {
-        const userData = {
-          nombre: this.nombre,
-          correo: this.email,
-          password: this.password
-        }
-
-        const result = await authService.register(userData)
+        const response = await registro(this.nombre, this.email, this.password)
         
-        if (result.success) {
-          // Registro exitoso
-          this.success = result.message
-          
-          // Limpiar formulario
-          this.nombre = ''
-          this.email = ''
-          this.password = ''
-          this.confirmPassword = ''
-          
-          // Emitir evento de éxito
-          this.$emit('register-success')
-          
-        } else {
-          // Error en registro
-          this.error = result.error
-        }
+        this.success = response.data.mensaje || 'Usuario registrado exitosamente'
+        
+        // Limpiar formulario
+        this.nombre = ''
+        this.email = ''
+        this.password = ''
+        this.confirmPassword = ''
+        
+        // Redirigir al login después de 2 segundos
+        setTimeout(() => {
+          this.$router.push('/')
+        }, 2000)
+        
       } catch (error) {
-        console.error('Error inesperado:', error)
-        this.error = 'Error inesperado. Intenta nuevamente.'
+        console.error('Error completo:', error)
+        this.error = error.response?.data?.error || 'Error al registrar usuario'
       } finally {
         this.loading = false
       }

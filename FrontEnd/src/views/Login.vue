@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import authService from '@/services/authService'
+import { login } from '@/services/auth'
 
 export default {
   name: 'LoginForm',
@@ -111,11 +111,12 @@ export default {
     }
   },
   methods: {
+    
+    // En el método handleLogin:
     async handleLogin() {
       this.loading = true
       this.error = ''
       
-      // Validación básica
       if (!this.email || !this.password) {
         this.error = 'Por favor, completa todos los campos'
         this.loading = false
@@ -123,36 +124,23 @@ export default {
       }
 
       try {
-        const result = await authService.login(this.email, this.password)
+        const response = await login(this.email, this.password)
         
-        if (result.success) {
-          this.$router.push('/dashboard')
-          // Login exitoso
-          console.log('Login exitoso:', result.user)
-          
-          
-          // Mostrar mensaje de éxito
-          this.$emit('login-success', result.user)
-          
-          // Limpiar formulario
-          this.email = ''
-          this.password = ''
-          
-          // Aquí puedes redirigir cuando tengas Vue Router
-          
-          
-        } else {
-          // Error en login
-          this.error = result.error
-        }
+        // Guardar tokens
+        localStorage.setItem('access_token', response.data.access)
+        localStorage.setItem('refresh_token', response.data.refresh)
+        localStorage.setItem('user', JSON.stringify(response.data.usuario))
+        
+        // Redirigir
+        this.$router.push('/dashboard')
+        
       } catch (error) {
-        console.error('Error inesperado:', error)
-        this.error = 'Error inesperado. Intenta nuevamente.'
+        console.error('Error en login:', error)
+        this.error = error.response?.data?.error || 'Credenciales incorrectas'
       } finally {
         this.loading = false
       }
     },
-    
     loginWithGoogle() {
       // Implementar login con Google
       console.log('Login con Google')
