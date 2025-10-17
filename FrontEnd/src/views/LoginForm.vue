@@ -155,6 +155,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style scoped>
@@ -222,23 +223,23 @@ export default {
 
 .header {
   position: absolute;
-  top: 2rem;
+  top: 1.5rem; /* Más arriba */
   right: 2rem;
 }
 
 .login-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 350px; 
   margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  padding-top: 4rem; /* Espacio para el header */
+  padding-top: 3rem; /* Menos espacio para mover hacia arriba */
 }
 
 .brand {
-  font-size: 20px; /* Tamaño ajustado para el logo */
+  font-size: 20px; /* ANAVRIN más pequeño */
   font-weight: 600;
   color: #1a1a1a;
   margin: 0;
@@ -247,11 +248,11 @@ export default {
 }
 
 .login-title {
-  font-size: 42px; /* Más pequeño */
-  font-weight: 600; /* SemiBold */
+  font-size: 28px; /* Más pequeño */
+  font-weight: 600; 
   color: #1a1a1a;
-  margin-bottom: 2rem;
-  text-align: center; /* Centrado */
+  margin-bottom: 1.5rem; 
+  text-align: center; 
   font-family: 'Poppins', sans-serif;
   line-height: 1.1;
 }
@@ -259,7 +260,7 @@ export default {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem; 
 }
 
 .input-group {
@@ -281,11 +282,11 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
+  padding: 1rem 1rem 1rem 3rem; /* Cuadros más pequeños */
   border: 2px solid #e5e5e5;
   border-radius: 8px;
-  font-size: 20px; /* Poppins, Medium, tamaño 20 */
-  font-weight: 500; /* Medium */
+  font-size: 12px; /* Fuente más pequeña */
+  font-weight: 500; 
   font-family: 'Poppins', sans-serif;
   transition: border-color 0.3s ease;
   background-color: #ffffff;
@@ -298,27 +299,14 @@ export default {
 
 .form-input::placeholder {
   color: #999;
-  font-size: 20px;
+  font-size: 16px; /* Placeholder más pequeño también */
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
-}
-
-.error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 0.75rem;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  text-align: center;
-  margin: 0.5rem 0;
-  border: 1px solid #fcc;
 }
 
 .forgot-password {
   text-align: left;
-  margin: 0.25rem 0 0.75rem 0; /* Más pegado al input y menos espacio abajo */
+  margin: 0.25rem 0 0.75rem 0; 
 }
 
 .forgot-link {
@@ -335,17 +323,17 @@ export default {
 
 .login-button {
   width: 100%;
-  padding: 1rem;
+  padding: 0.6rem; /* Botón más pequeño */
   background: linear-gradient(135deg, #ff6b35, #f7931e);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 16px; /* Fuente más pequeña */
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 1rem;
+  margin-top: 0.5rem; 
 }
 
 .login-button:hover {
@@ -362,7 +350,7 @@ export default {
 .divider {
   display: flex;
   align-items: center;
-  margin: 1rem 0; /* Menos espacio arriba y abajo */
+  margin: 1rem 0; 
 }
 
 .divider::before,
@@ -376,18 +364,18 @@ export default {
 .divider-text {
   margin: 0 1rem;
   color: #999;
-  font-size: 20px;
+  font-size: 16px; 
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
 
 .google-button {
   width: 100%;
-  padding: 1rem;
+  padding: 1rem; /* Botón más pequeño */
   background-color: #ffffff;
   border: 2px solid #e5e5e5;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 16px; /* Fuente más pequeña */
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
@@ -410,12 +398,12 @@ export default {
 
 .register-section {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1.5rem; /* Más pegado hacia arriba */
 }
 
 .register-text {
   color: #666;
-  font-size: 20px;
+  font-size: 16px; /* Más pequeño */
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
@@ -424,7 +412,7 @@ export default {
   color: #ff6b35;
   text-decoration: none;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px; /* Más pequeño */
   font-family: 'Poppins', sans-serif;
 }
 
@@ -444,7 +432,7 @@ export default {
   }
   
   .orange-line {
-    width: 20px; /* Más ancha que antes pero adaptada a móvil */
+    width: 20px; 
   }
   
   .right-section {
@@ -463,20 +451,18 @@ export default {
   }
   
   .login-title {
-    font-size: 32px;
+    font-size: 24px;
   }
   
   .form-input,
-  .form-input::placeholder,
-  .divider-text,
-  .google-button,
-  .register-text,
-  .register-link {
-    font-size: 16px;
+  .form-input::placeholder {
+    font-size: 14px;
   }
   
-  .forgot-link {
-    font-size: 14px;
+  .forgot-link,
+  .register-text,
+  .register-link {
+    font-size: 12px;
   }
 }
 
@@ -486,11 +472,11 @@ export default {
   }
   
   .login-title {
-    font-size: 28px;
+    font-size: 22px;
   }
   
   .orange-line {
-    width: 15px; /* Aún más ancha en pantallas muy pequeñas */
+    width: 15px; 
   }
 }
 </style>

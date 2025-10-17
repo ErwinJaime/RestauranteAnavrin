@@ -268,7 +268,7 @@ export default {
 }
 
 .register-title {
-  font-size: 42px;
+  font-size: 28px;
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 2rem;
@@ -305,7 +305,7 @@ export default {
   padding: 1rem 1rem 1rem 3rem;
   border: 2px solid #e5e5e5;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   transition: border-color 0.3s ease;
@@ -319,7 +319,7 @@ export default {
 
 .form-input::placeholder {
   color: #999;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
@@ -353,11 +353,11 @@ export default {
 .register-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  background: linear-gradient(150deg, #ff6b35, #f7931e);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
@@ -383,7 +383,7 @@ export default {
 
 .login-text {
   color: #666;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
@@ -392,7 +392,7 @@ export default {
   color: #ff6b35;
   text-decoration: none;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
 }
