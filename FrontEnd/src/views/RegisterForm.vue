@@ -5,7 +5,7 @@
       <!-- Línea naranja lateral -->
       <div class="orange-line"></div>
       <!-- Imagen del chef -->
-      <img src="@/assets/chef-image.jpg" alt="Chef" class="chef-image">
+      <img src="@/assets/ImagenCrear.jpg" alt="Chef" class="chef-image">
       <div class="image-overlay"></div>
     </div>
     

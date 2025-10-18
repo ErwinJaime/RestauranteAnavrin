@@ -71,8 +71,7 @@ ROOT_URLCONF = 'proyecto_django.urls'
 # ✅ CONFIGURACIÓN DE CORS - CORREGIDA
 CORS_ALLOWED_ORIGINS = [
     "https://frontend-vue-b0xz.onrender.com",  # ✅ Tu frontend en Render
-    "http://localhost:5173",  # Para desarrollo local
-    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8080",
     "http://localhost:8080",  # Si usas Vue CLI
 ]
 

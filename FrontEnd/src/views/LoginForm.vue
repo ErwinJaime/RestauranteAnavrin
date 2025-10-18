@@ -451,12 +451,12 @@ export default {
   }
   
   .login-title {
-    font-size: 24px;
+    font-size: 20px;
   }
   
   .form-input,
   .form-input::placeholder {
-    font-size: 14px;
+    font-size: 10px;
   }
   
   .forgot-link,
