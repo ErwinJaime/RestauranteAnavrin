@@ -57,7 +57,9 @@ def login_usuario(request):
 @api_view(['POST'])
 def google_login(request):
     token = request.data.get('token')
-    
+    print("GOOGLE_CLIENT_ID en backend:", GOOGLE_CLIENT_ID)
+    print("Token recibido:", token[:40] + "...")
+
     if not token:
         return Response(
             {"error": "Token de Google requerido"}, 
