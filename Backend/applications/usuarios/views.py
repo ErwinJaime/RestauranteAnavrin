@@ -1,7 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# Create your views here.
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -9,9 +7,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import Usuario
 from .serializers import UsuarioSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.hashers import check_password
-
-
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import os
 
 def saludo(request):
     return HttpResponse("pagina usuarios")
@@ -20,7 +18,7 @@ def saludo(request):
 @api_view(['POST'])
 def registro_usuario(request):
     data = request.data.copy()
-    data['password'] = make_password(data['password'])  # encriptar password
+    data['password'] = make_password(data['password'])
     serializer = UsuarioSerializer(data=data)
 
     if serializer.is_valid():
@@ -29,7 +27,7 @@ def registro_usuario(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Login de usuario
+# Login de usuario normal
 @api_view(['POST'])
 def login_usuario(request):
     correo = request.data.get("correo")
@@ -40,7 +38,6 @@ def login_usuario(request):
     except Usuario.DoesNotExist:
         return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 🔑 CAMBIO IMPORTANTE: usar check_password en lugar de "=="
     if check_password(password, usuario.password):
         refresh = RefreshToken.for_user(usuario)
         return Response({
@@ -56,17 +53,89 @@ def login_usuario(request):
         return Response({"error": "Contraseña incorrecta"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+# 🆕 Login con Google
+@api_view(['POST'])
+def google_login(request):
+    token = request.data.get('token')
+    
+    if not token:
+        return Response(
+            {"error": "Token de Google requerido"}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        # Verificar el token con Google
+        GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+        
+        if not GOOGLE_CLIENT_ID:
+            return Response(
+                {"error": "Google Client ID no configurado en el servidor"}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        idinfo = id_token.verify_oauth2_token(
+            token, 
+            requests.Request(), 
+            GOOGLE_CLIENT_ID
+        )
+        
+        # Extraer información del usuario
+        email = idinfo.get('email')
+        nombre = idinfo.get('name', email.split('@')[0])
+        google_id = idinfo.get('sub')
+        
+        if not email:
+            return Response(
+                {"error": "No se pudo obtener el email de Google"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Buscar o crear usuario
+        usuario, created = Usuario.objects.get_or_create(
+            correo=email,
+            defaults={
+                'nombre': nombre,
+                'password': make_password(google_id)  # Password basada en Google ID
+            }
+        )
+        
+        # Generar tokens JWT
+        refresh = RefreshToken.for_user(usuario)
+        
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "usuario": {
+                "id": usuario.id,
+                "nombre": usuario.nombre,
+                "correo": usuario.correo
+            },
+            "is_new_user": created
+        }, status=status.HTTP_200_OK)
+        
+    except ValueError as e:
+        # Token inválido
+        return Response(
+            {"error": f"Token de Google inválido: {str(e)}"}, 
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"Error al procesar login con Google: {str(e)}"}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
 # Perfil de usuario (requiere autenticación)
 @api_view(['GET'])
 def perfil_usuario(request):
-    # Obtener el usuario desde el token JWT
     usuario = request.user
     
     if not usuario or not hasattr(usuario, 'id'):
         return Response({"error": "Usuario no autenticado"}, status=status.HTTP_401_UNAUTHORIZED)
     
     try:
-        # Buscar el usuario en la base de datos
         usuario_db = Usuario.objects.get(id=usuario.id)
         return Response({
             "usuario": {

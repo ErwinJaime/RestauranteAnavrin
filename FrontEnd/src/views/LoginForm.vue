@@ -1,5 +1,6 @@
 <template>
   <div class="login-page">
+    
     <!-- Imagen de fondo lado izquierdo -->
     <div class="left-section">
       <!-- Línea naranja lateral -->
@@ -98,7 +99,7 @@
 </template>
 
 <script>
-import { login } from '@/services/auth'
+import { login, googleLogin } from '@/services/auth'
 
 export default {
   name: 'LoginForm',
@@ -111,10 +112,7 @@ export default {
     }
   },
   methods: {
-// Línea 1 del <script>:
-
-
-// En el método handleLogin:
+    // Login normal
     async handleLogin() {
       this.loading = true
       this.error = ''
@@ -127,13 +125,11 @@ export default {
 
       try {
         const response = await login(this.email, this.password)
-        
-        // Guardar tokens
+
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         localStorage.setItem('user', JSON.stringify(response.data.usuario))
         
-        // Redirigir
         this.$router.push('/dashboard')
         
       } catch (error) {
@@ -144,10 +140,61 @@ export default {
       }
     },
     
+    // Login con Google
     loginWithGoogle() {
-      // Implementar login con Google
-      console.log('Login con Google')
-      this.error = 'Login con Google no implementado aún'
+      this.loading = true
+      this.error = ''
+      
+      // Verificar que el script de Google esté cargado
+      if (typeof window.google === 'undefined') {
+        this.error = 'Google Sign-In no está disponible. Recarga la página.'
+        this.loading = false
+        return
+      }
+      
+      // Inicializar Google Sign-In
+      window.google.accounts.id.initialize({
+        client_id: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+        callback: this.handleGoogleCallback
+      })
+      
+      // Mostrar el prompt de Google
+      window.google.accounts.id.prompt()
+    },
+    
+    // Callback que recibe la respuesta de Google
+    async handleGoogleCallback(response) {
+      try {
+        const googleToken = response.credential
+        
+        if (!googleToken) {
+          this.error = 'No se pudo obtener el token de Google'
+          this.loading = false
+          return
+        }
+        
+        // Enviar al backend
+        const backendResponse = await googleLogin(googleToken)
+        
+        // Guardar tokens y usuario
+        localStorage.setItem('access_token', backendResponse.data.access)
+        localStorage.setItem('refresh_token', backendResponse.data.refresh)
+        localStorage.setItem('user', JSON.stringify(backendResponse.data.usuario))
+        
+        // Mostrar mensaje si es usuario nuevo
+        if (backendResponse.data.is_new_user) {
+          console.log('¡Bienvenido! Tu cuenta ha sido creada.')
+        }
+        
+        // Redirigir al dashboard
+        this.$router.push('/dashboard')
+        
+      } catch (error) {
+        console.error('Error en login con Google:', error)
+        this.error = error.response?.data?.error || 'Error al iniciar sesión con Google'
+      } finally {
+        this.loading = false
+      }
     },
 
     clearError() {

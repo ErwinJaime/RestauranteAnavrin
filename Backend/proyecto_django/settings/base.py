@@ -4,6 +4,8 @@ Django settings for proyecto_django project.
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -96,6 +98,11 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+]
+# Permitir orígenes con expresiones regulares Revisar
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://accounts\.google\.com$',
+    r'^https://.*\.googleusercontent\.com$',
 ]
 
 # Configuración de Django REST Framework
