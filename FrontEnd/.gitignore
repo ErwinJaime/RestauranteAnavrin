@@ -6,6 +6,8 @@ node_modules
 # local env files
 .env.local
 .env.*.local
+# Evitar subir archivos de entorno
+**/*.env
 
 # Log files
 npm-debug.log*
