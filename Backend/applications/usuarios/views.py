@@ -53,13 +53,11 @@ def login_usuario(request):
         return Response({"error": "Contraseña incorrecta"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# 🆕 Login con Google
+# Login con Google
 @api_view(['POST'])
 def google_login(request):
     token = request.data.get('token')
-    print("GOOGLE_CLIENT_ID en backend:", GOOGLE_CLIENT_ID)
-    print("Token recibido:", token[:40] + "...")
-
+    
     if not token:
         return Response(
             {"error": "Token de Google requerido"}, 
@@ -67,7 +65,7 @@ def google_login(request):
         )
     
     try:
-        # Verificar el token con Google
+        # ✅ PRIMERO obtener el Client ID
         GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
         
         if not GOOGLE_CLIENT_ID:
@@ -76,6 +74,11 @@ def google_login(request):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
+        # Debug (opcional - puedes quitarlo después)
+        print("Token recibido (primeros 40 chars):", token[:40] if len(token) > 40 else token)
+        print("GOOGLE_CLIENT_ID configurado:", GOOGLE_CLIENT_ID[:20] + "...")
+        
+        # Verificar el token con Google
         idinfo = id_token.verify_oauth2_token(
             token, 
             requests.Request(), 
@@ -98,7 +101,7 @@ def google_login(request):
             correo=email,
             defaults={
                 'nombre': nombre,
-                'password': make_password(google_id)  # Password basada en Google ID
+                'password': make_password(google_id)
             }
         )
         
@@ -118,11 +121,14 @@ def google_login(request):
         
     except ValueError as e:
         # Token inválido
+        print("Error de validación del token:", str(e))
         return Response(
             {"error": f"Token de Google inválido: {str(e)}"}, 
             status=status.HTTP_401_UNAUTHORIZED
         )
     except Exception as e:
+        # Cualquier otro error
+        print("Error inesperado:", str(e))
         return Response(
             {"error": f"Error al procesar login con Google: {str(e)}"}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
