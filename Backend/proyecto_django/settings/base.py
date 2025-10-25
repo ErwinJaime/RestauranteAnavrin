@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-t77%hdlb&5$=+bvbfu9o@uu+=d^+-*p&o&-uky%h6hcr&ht&se
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+
 # ✅ ALLOWED_HOSTS - CRÍTICO para producción
 ALLOWED_HOSTS = [
     'restauranteanavrin-2.onrender.com',  # Tu backend en Render
