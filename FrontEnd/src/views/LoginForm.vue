@@ -112,7 +112,7 @@ export default {
     }
   },
   methods: {
-    // Login normal
+        // Login normal
     async handleLogin() {
       this.loading = true
       this.error = ''
@@ -124,14 +124,21 @@ export default {
       }
 
       try {
+        // ✅ AGREGAR ESTA LÍNEA - Llamar a la función login
         const response = await login(this.email, this.password)
-
+        
+        // Guardar tokens
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         localStorage.setItem('user', JSON.stringify(response.data.usuario))
-        
-        this.$router.push('/dashboard')
-        
+
+        // Verificar si es admin para redirigir
+        const esAdmin = response.data.usuario.es_admin
+        if (esAdmin) {
+          this.$router.push('/admin-dashboard')
+        } else {
+          this.$router.push('/dashboard')
+        }
       } catch (error) {
         console.error('Error en login:', error)
         this.error = error.response?.data?.error || 'Credenciales incorrectas'

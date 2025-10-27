@@ -153,25 +153,38 @@ export default {
         return
       }
 
+      // Llamar al servicio de registro
       try {
-        const response = await registro(this.nombre, this.email, this.password)
+        const response = await registro(
+          this.nombre, 
+          this.email, 
+          this.password,
+          this.confirmPassword 
+        )
         
-        this.success = response.data.mensaje || 'Usuario registrado exitosamente'
+        // ✅ Guardar tokens y usuario en localStorage
+        localStorage.setItem('access_token', response.data.access)
+        localStorage.setItem('refresh_token', response.data.refresh)
+        localStorage.setItem('user', JSON.stringify(response.data.usuario))
         
-        // Limpiar formulario
-        this.nombre = ''
-        this.email = ''
-        this.password = ''
-        this.confirmPassword = ''
+        this.success = '¡Cuenta creada! Redirigiendo...'
         
-        // Redirigir al login después de 2 segundos
+        // Redirigir directo al dashboard (ya está logueado)
         setTimeout(() => {
-          this.$router.push('/')
-        }, 2000)
+          this.$router.push('/dashboard')
+        }, 1500)
         
       } catch (error) {
         console.error('Error completo:', error)
-        this.error = error.response?.data?.error || 'Error al registrar usuario'
+        
+        // ✅ Mejor manejo de errores del backend
+        if (error.response?.data?.password) {
+          this.error = error.response.data.password[0]
+        } else if (error.response?.data?.correo) {
+          this.error = 'Este correo ya está registrado'
+        } else {
+          this.error = error.response?.data?.error || 'Error al registrar usuario'
+        }
       } finally {
         this.loading = false
       }
