@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginForm from '@/views/LoginForm.vue'
 import UserDashboard from '@/views/UserDashboard.vue'
 import RegisterForm from '@/views/RegisterForm.vue'
-
+import AdminDashboard from '@/views/AdminDashboard.vue'
 const routes = [
   { 
     path: '/', 
@@ -17,6 +17,10 @@ const routes = [
     path: '/dashboard', 
     name: 'Dashboard', 
     component: UserDashboard  // ✅ Nombre completo
+  },
+  { path: '/admin-dashboard',
+     name: 'AdminDashboard',
+      component: AdminDashboard
   },
   { 
     path: '/registro', 
