@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from usuarios.models import Usuario
+from applications.usuarios.models import Usuario  # ✅ Agregar 'applications.'
 
 class Command(BaseCommand):
     help = 'Crea usuario admin si no existe'
