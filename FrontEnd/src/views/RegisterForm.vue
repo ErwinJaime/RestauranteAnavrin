@@ -5,7 +5,7 @@
       <!-- Línea naranja lateral -->
       <div class="orange-line"></div>
       <!-- Imagen del chef -->
-      <img src="@/assets/chef-image.jpg" alt="Chef" class="chef-image">
+      <img src="@/assets/ImagenCrear.jpg" alt="Chef" class="chef-image">
       <div class="image-overlay"></div>
     </div>
     
@@ -153,25 +153,38 @@ export default {
         return
       }
 
+      // Llamar al servicio de registro
       try {
-        const response = await registro(this.nombre, this.email, this.password)
+        const response = await registro(
+          this.nombre, 
+          this.email, 
+          this.password,
+          this.confirmPassword 
+        )
         
-        this.success = response.data.mensaje || 'Usuario registrado exitosamente'
+        // ✅ Guardar tokens y usuario en localStorage
+        localStorage.setItem('access_token', response.data.access)
+        localStorage.setItem('refresh_token', response.data.refresh)
+        localStorage.setItem('user', JSON.stringify(response.data.usuario))
         
-        // Limpiar formulario
-        this.nombre = ''
-        this.email = ''
-        this.password = ''
-        this.confirmPassword = ''
+        this.success = '¡Cuenta creada! Redirigiendo...'
         
-        // Redirigir al login después de 2 segundos
+        // Redirigir directo al dashboard (ya está logueado)
         setTimeout(() => {
-          this.$router.push('/')
-        }, 2000)
+          this.$router.push('/dashboard')
+        }, 1500)
         
       } catch (error) {
         console.error('Error completo:', error)
-        this.error = error.response?.data?.error || 'Error al registrar usuario'
+        
+        // ✅ Mejor manejo de errores del backend
+        if (error.response?.data?.password) {
+          this.error = error.response.data.password[0]
+        } else if (error.response?.data?.correo) {
+          this.error = 'Este correo ya está registrado'
+        } else {
+          this.error = error.response?.data?.error || 'Error al registrar usuario'
+        }
       } finally {
         this.loading = false
       }
@@ -268,7 +281,7 @@ export default {
 }
 
 .register-title {
-  font-size: 42px;
+  font-size: 28px;
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 2rem;
@@ -305,7 +318,7 @@ export default {
   padding: 1rem 1rem 1rem 3rem;
   border: 2px solid #e5e5e5;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   transition: border-color 0.3s ease;
@@ -319,7 +332,7 @@ export default {
 
 .form-input::placeholder {
   color: #999;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
@@ -353,11 +366,11 @@ export default {
 .register-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  background: linear-gradient(150deg, #ff6b35, #f7931e);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
@@ -383,7 +396,7 @@ export default {
 
 .login-text {
   color: #666;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
 }
@@ -392,7 +405,7 @@ export default {
   color: #ff6b35;
   text-decoration: none;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
 }

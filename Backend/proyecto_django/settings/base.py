@@ -4,6 +4,8 @@ Django settings for proyecto_django project.
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +25,7 @@ SECRET_KEY = 'django-insecure-t77%hdlb&5$=+bvbfu9o@uu+=d^+-*p&o&-uky%h6hcr&ht&se
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 
 # ✅ ALLOWED_HOSTS - CRÍTICO para producción
 ALLOWED_HOSTS = [
@@ -71,8 +74,7 @@ ROOT_URLCONF = 'proyecto_django.urls'
 # ✅ CONFIGURACIÓN DE CORS - CORREGIDA
 CORS_ALLOWED_ORIGINS = [
     "https://frontend-vue-b0xz.onrender.com",  # ✅ Tu frontend en Render
-    "http://localhost:5173",  # Para desarrollo local
-    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8080",
     "http://localhost:8080",  # Si usas Vue CLI
 ]
 
@@ -97,6 +99,11 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+]
+# Permitir orígenes con expresiones regulares Revisar
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://accounts\.google\.com$',
+    r'^https://.*\.googleusercontent\.com$',
 ]
 
 # Configuración de Django REST Framework
