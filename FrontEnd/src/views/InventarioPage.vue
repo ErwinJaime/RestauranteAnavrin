@@ -22,7 +22,7 @@
       <!-- Barra de acciones -->
       <div class="actions-bar">
         <!-- Botón Agregar Nuevo Plato -->
-        <button class="btn-agregar">
+        <button class="btn-agregar" @click="abrirModal">
           + Agregar Nuevo Plato
         </button>
 
@@ -53,19 +53,48 @@
     
     <!-- Imagen mortero derecha -->
     <img src="@/assets/mortero.png" alt="Mortero" class="img-mortero">
+
+    <AgregarProducto
+      :isOpen="mostrarModal"
+      @cerrar="cerrarModal"
+      @guardar="guardarProducto"
+    />
   </div>
 </template>
 
 <script>
 import { ref } from 'vue'
+import AgregarProducto from './AgregarProducto.vue' 
 
 export default {
   name: 'InventarioPage',
+  components: {
+    AgregarProducto
+  },
   setup() {
     const searchQuery = ref('')
+    const mostrarModal = ref(false)
+
+    const abrirModal = () => {
+      mostrarModal.value = true
+    }
+
+    const cerrarModal = () => {
+      mostrarModal.value = false
+    }
+
+    const guardarProducto = (producto) => {
+      console.log('Producto guardado:', producto)
+      // Aquí agregarías la lógica para guardar en tu base de datos
+      cerrarModal()
+    }
 
     return {
-      searchQuery
+      searchQuery,
+      mostrarModal,
+      abrirModal,
+      cerrarModal,
+      guardarProducto
     }
   }
 }

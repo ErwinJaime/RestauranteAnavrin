@@ -6,7 +6,7 @@ import Administrador from '@/views/InventarioPage.vue'
 
 const routes = [
   { path: '/', name: 'Administrador', component: Administrador},
- /* { path: '/', name: 'Login', component: Login },*/
+  { path: '/', name: 'Login', component: Login },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/registro', name: 'Registro', component: Registro },
 ]
