@@ -4,8 +4,8 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">About</a>
+        <router-link to="/">Home</router-link>
+        <router-link to="/about">About</router-link>
         <a href="#">Review</a>
       </div>
       <button class="btn-admin">Admin</button>
@@ -176,16 +176,19 @@ export default {
   margin-left: 30px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links router-link {
   font-size: 14px;
   color: #666;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links router-link:hover {
   color: #6d9fef;
 }
+
 
 .btn-admin {
   padding: 8px 28px;
@@ -197,7 +200,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 580;
-  margin-right: -210px;
+  margin-right: -230px;
 }
 
 .btn-admin:hover {
@@ -214,7 +217,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  margin-right: 470px;
+  margin-right: 440px;
 }
 
 .btn-cerrar-sesion:hover {
@@ -303,7 +306,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   max-width: 350px;
   min-height: 200px;
 }
@@ -337,12 +340,14 @@ export default {
   justify-content: center;
   gap: 12px;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .emoji {
   width: 45px;
   height: 45px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .nombre-usuario {
@@ -351,7 +356,8 @@ export default {
   color: #1a1a1a;
   margin: 0;
   font-family: 'Open Sans', sans-serif;
-  text-align: center;
+  text-align: left;
+  line-height: 45px;
 }
 
 .resena-texto {
