@@ -12,17 +12,126 @@
       <button class="btn-cerrar-sesion">Cerrar Sesión</button>
     </nav>
 
+    <!-- Imagen Naranja superior izquierda -->
+    <img src="@/assets/naranja.png" alt="Naranja" class="img-naranja">
+
+    <!-- Imagen Aceite superior derecha -->
+    <img src="@/assets/aceite.png" alt="Aceite" class="img-aceite">
+
     <!-- Contenido Principal -->
     <div class="main-content">
-      <h1>Reseñas Admin</h1>
-      <p>Contenido de la página de reseñas</p>
+      <h1 class="title">Reseñas</h1>
+
+      <!-- Tarjetas de reseñas -->
+      <div class="resenas-container">
+        <div 
+          v-for="resena in resenasPaginaActual" 
+          :key="resena.id" 
+          class="resena-card"
+        >
+          <button class="btn-eliminar" @click="eliminarResena(resena.id)">✕</button>
+          <div class="resena-header">
+            <img :src="require(`@/assets/${resena.emoji}.png`)" :alt="resena.emoji" class="emoji">
+            <h3 class="nombre-usuario">{{ resena.nombre }}</h3>
+          </div>
+          <p class="resena-texto">{{ resena.texto }}</p>
+        </div>
+      </div> 
+
+      <!-- Flechas de navegación -->
+      <div class="navegacion-flechas">
+        <button class="flecha flecha-izq" @click="paginaAnterior" :disabled="paginaActual === 0">←</button>
+        <button class="flecha flecha-der" @click="paginaSiguiente" :disabled="paginaActual >= totalPaginas - 1">→</button>
+      </div>
     </div>
+
+    <!-- Imagen Guacamole inferior izquierda -->
+    <img src="@/assets/guacamole.png" alt="Guacamole" class="img-guacamole">
+
+    <!-- Estrellas decorativas -->
+    <img src="@/assets/estrellas.png" alt="Estrellas" class="img-estrellas">
   </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue'
+
 export default {
-  name: 'ResenasAdmin'
+  name: 'ResenasAdmin',
+  setup() {
+    const paginaActual = ref(0)
+    const resenasPorPagina = 3
+
+    const todasLasResenas = ref([
+      { 
+        id: 1,
+        nombre: 'Tatiana Gualteros',
+        texto: '"Buena presentación, sabores equilibrados y un ambiente agradable. Ideal para venir con amigos o desconectarse un rato."',
+        emoji: 'feliz'
+      },
+      { 
+        id: 2,
+        nombre: 'Erwin Jaimes',
+        texto: '"Excelente atención y productos de calidad. El menú es variado y todo llega fresco y bien presentado."',
+        emoji: 'feliz'
+      },
+      { 
+        id: 3,
+        nombre: 'Pedro Suárez',
+        texto: '"El plato estaba crudo, el servicio terrible, no lo recomiendo."',
+        emoji: 'triste'
+      },
+      { 
+        id: 4,
+        nombre: 'Tatiana Nieto',
+        texto: '"Excelente servicio, las bebidas son deliciosas."',
+        emoji: 'feliz'
+      }
+    ])
+
+    const resenasPaginaActual = computed(() => {
+      const inicio = paginaActual.value * resenasPorPagina
+      const fin = inicio + resenasPorPagina
+      return todasLasResenas.value.slice(inicio, fin)
+    })
+
+    const totalPaginas = computed(() => {
+      return Math.ceil(todasLasResenas.value.length / resenasPorPagina)
+    })
+
+    const eliminarResena = (id) => {
+      const index = todasLasResenas.value.findIndex(r => r.id === id)
+      if (index !== -1) {
+        todasLasResenas.value.splice(index, 1)
+        
+        // Ajustar página si es necesario
+        if (resenasPaginaActual.value.length === 0 && paginaActual.value > 0) {
+          paginaActual.value--
+        }
+      }
+    }
+
+    const paginaSiguiente = () => {
+      if (paginaActual.value < totalPaginas.value - 1) {
+        paginaActual.value++
+      }
+    }
+
+    const paginaAnterior = () => {
+      if (paginaActual.value > 0) {
+        paginaActual.value--
+      }
+    }
+
+    return {
+      paginaActual,
+      resenasPaginaActual,
+      totalPaginas,
+      eliminarResena,
+      paginaSiguiente,
+      paginaAnterior
+    }
+  }
 }
 </script>
 
@@ -32,6 +141,10 @@ export default {
   width: 100%;
   min-height: 100vh;
   background-color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Navegación */
@@ -84,7 +197,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 580;
-  margin-right: -230px;
+  margin-right: -210px;
 }
 
 .btn-admin:hover {
@@ -101,7 +214,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  margin-right: 440px;
+  margin-right: 470px;
 }
 
 .btn-cerrar-sesion:hover {
@@ -109,12 +222,174 @@ export default {
   color: white;
 }
 
+/* Imágenes decorativas */
+.img-naranja {
+  position: fixed;
+  top: 60px;
+  left: 15px;
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  z-index: 60;
+}
+
+.img-aceite {
+  position: fixed;
+  top: 50px;
+  right: 2px;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  z-index: 5;
+}
+
+.img-guacamole {
+  position: fixed;
+  bottom: -60px;
+  left: 70px;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  z-index: 5;
+}
+
+.img-estrellas {
+  position: fixed;
+  bottom: 0;
+  right: 5px;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  z-index: 5;
+}
+
 /* Contenido Principal */
 .main-content {
-  padding-top: 120px;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-top: 140px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.title {
+  font-size: 45px;
+  font-weight: 800;
+  color: #28233b;
+  margin-bottom: 50px;
+  margin-top: -20px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Contenedor de reseñas */
+.resenas-container {
+  display: grid;
+  grid-template-columns: repeat(3, 350px);
+  gap: 25px;
+  margin-bottom: 40px;
+  padding: 0 20px;
+  min-height: 150px;
+  justify-content: center;
+}
+
+/* Tarjetas de reseña */
+.resena-card {
+  background-color: #e8e5b8;
+  border-radius: 20px;
+  padding: 25px 20px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 350px;
+  min-height: 200px;
+}
+
+.btn-eliminar {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-eliminar:hover {
+  background-color: #c82333;
+  transform: scale(1.1);
+}
+
+.resena-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.emoji {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.nombre-usuario {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+}
+
+.resena-texto {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+}
+
+/* Navegación flechas */
+.navegacion-flechas {
+  display: flex;
+  gap: 0px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.flecha {
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: none;
+  font-size: 40px;
+  color: #ff6b35;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.flecha:hover:not(:disabled) {
+  color: #3b82f6;
+  transform: scale(1.2);
+}
+
+.flecha:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 </style>
