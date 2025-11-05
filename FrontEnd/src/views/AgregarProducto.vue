@@ -127,7 +127,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #e8e8e88e;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,13 +136,13 @@ export default {
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #fff8f8;
   border-radius: 20px;
   padding: 25px 30px; /* Ajusté el padding vertical */
   width: 90%;
   max-width: 450px;
   position: relative;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px #00000014;
 }
 
 .modal-title {
@@ -266,10 +266,10 @@ export default {
 
 .btn-cancelar {
   color: #666;
-  background-color: #f5f5f5;
+  background-color: #e3e1e1;
 }
 
 .btn-cancelar:hover {
-  background-color: #e5e5e5;
+  background-color: #6d9fef;
 }
 </style>
