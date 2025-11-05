@@ -3,9 +3,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '@/views/UserDashboard.vue'
 import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
+import ResenasAdmin from '@/views/ResenasAdmin.vue'
 
 const routes = [
   { path: '/', name: 'Administrador', component: Administrador},
+  { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
   /*{ path: '/', name: 'Login', component: Login },*/
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/registro', name: 'Registro', component: Registro },

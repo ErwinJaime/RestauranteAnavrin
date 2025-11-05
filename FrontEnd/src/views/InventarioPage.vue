@@ -105,7 +105,7 @@ export default {
 .inventario-container {
   width: 100%;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   position: relative;
   overflow: hidden;
 }
@@ -314,10 +314,10 @@ export default {
 
 /* Tabla de productos */
 .table-container {
-  background-color: white;
+  background-color: rgb(253, 252, 252);
   border-radius: 16px;
   padding: 60px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.199);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.336);
   min-height: 320px;
   display: flex;
   align-items: center;
