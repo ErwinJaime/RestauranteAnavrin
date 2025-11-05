@@ -146,11 +146,12 @@ export default {
 }
 
 .modal-title {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 700;
   color: #28233b;
   margin-bottom: 15px; /* Reduje más el margen */
   text-align: center;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /* Upload área */
