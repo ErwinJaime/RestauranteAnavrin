@@ -5,8 +5,8 @@
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
         <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Review</a>
+        <router-link to="/about">About</router-link>
+        <router-link to="/resenasadmin">Review</router-link>
       </div>
       <button class="btn-admin">Admin</button>
       <button class="btn-cerrar-sesion">Cerrar Sesión</button>
@@ -139,14 +139,16 @@ export default {
   margin-left: 30px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links router-link {
   font-size: 14px;
   color: #666;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links router-link:hover {
   color: #6d9fef;
 }
 

@@ -4,10 +4,12 @@ import Dashboard from '@/views/UserDashboard.vue'
 import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
 import ResenasAdmin from '@/views/ResenasAdmin.vue'
+import About from '@/views/AboutPage.vue'
 
 const routes = [
   { path: '/', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
+  { path: '/about', name: 'About', component: About},
   /*{ path: '/', name: 'Login', component: Login },*/
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/registro', name: 'Registro', component: Registro },
