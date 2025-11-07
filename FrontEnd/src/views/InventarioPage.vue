@@ -195,10 +195,11 @@ export default {
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 5%;
-  display: flex;
+  padding: 20px 40px;
+  display: grid;
+  grid-template-columns: 200px 1fr auto auto;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
 }
 
 .logo {
@@ -206,7 +207,8 @@ export default {
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
-  flex-shrink: 0;
+  justify-self: start;
+  padding-left: 20px;
 }
 
 .nav-links {
@@ -225,8 +227,7 @@ export default {
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover,
-.nav-links router-link:hover {
+.nav-links a:hover {
   color: #6d9fef;
 }
 
@@ -239,10 +240,7 @@ export default {
   border-radius: 50px;
   cursor: default;
   font-weight: 580;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  white-space: nowrap;
 }
 
 .btn-cerrar-sesion {
@@ -255,7 +253,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn-cerrar-sesion:hover {
@@ -272,6 +270,7 @@ export default {
   height: 180px;
   object-fit: contain;
   z-index: 60;
+  pointer-events: none;
 }
 
 .hoja-below {
@@ -412,182 +411,24 @@ export default {
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablets (768px - 1024px) */
-@media (max-width: 1024px) {
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
   .navbar {
-    padding: 20px 3%;
-  }
-
-  .logo {
-    font-size: 18px;
-  }
-
-  .nav-links {
-    gap: 30px;
-  }
-
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 13px;
-  }
-
-  .btn-admin {
-    padding: 8px 20px;
-    font-size: 13px;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 8px 18px;
-    font-size: 13px;
-  }
-
-  /* Resto de estilos para tablets... */
-}
-
-/* Pantallas medianas de computador (769px - 1200px) */
-@media (min-width: 769px) and (max-width: 1200px) {
-  .navbar {
-    padding: 20px 4%;
-  }
-
-  .nav-links {
+    padding: 20px 80px;
+    grid-template-columns: 250px 1fr auto auto;
     gap: 40px;
-  }
-
-  /* Resto de estilos... */
-}
-
-/* Tablets pequeñas (600px - 768px) */
-@media (max-width: 768px) {
-  .navbar {
-    padding: 15px 3%;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .logo {
-    font-size: 16px;
-  }
-
-  .nav-links {
-    gap: 20px;
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    padding-top: 10px;
-  }
-
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 12px;
-  }
-
-  .btn-admin {
-    padding: 6px 16px;
-    font-size: 12px;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 6px 14px;
-    font-size: 12px;
-  }
-
-  /* Resto de estilos para móvil... */
-}
-
-/* Pantallas pequeñas de computador (1025px - 1366px) */
-@media (min-width: 1025px) and (max-width: 1366px) {
-  .navbar {
-    padding: 20px 5%;
-  }
-
-  .nav-links {
-    gap: 50px;
-  }
-
-  /* Resto de estilos... */
-}
-
-/* Pantallas de 15.6 pulgadas - 1366x768 (HD) */
-@media (min-width: 1280px) and (max-width: 1440px) {
-  .navbar {
-    padding: 20px 6%;
-  }
-
-  .logo {
-    font-size: 19px;
-  }
-
-  .nav-links {
-    gap: 50px;
-  }
-
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 13.5px;
-  }
-
-  .btn-admin {
-    padding: 8px 26px;
-    font-size: 13.5px;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 8px 20px;
-    font-size: 13.5px;
-  }
-
-  /* Resto de estilos... */
-}
-
-/* Pantallas Full HD - 1920x1080 */
-@media (min-width: 1680px) and (max-width: 1920px) {
-  .navbar {
-    padding: 20px 8%;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .nav-links {
-    gap: 70px;
-  }
-
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 14px;
-  }
-
-  .btn-admin {
-    padding: 8px 28px;
-    font-size: 14px;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 8px 22px;
-    font-size: 14px;
-  }
-
-  /* Resto de estilos... */
-}
-
-/* Pantallas muy grandes (2K, 4K) */
-@media (min-width: 1921px) {
-  .navbar {
-    padding: 20px 12%;
   }
 
   .logo {
     font-size: 22px;
+    padding-left: 40px;
   }
 
   .nav-links {
     gap: 80px;
   }
 
-  .nav-links a,
-  .nav-links router-link {
+  .nav-links a {
     font-size: 15px;
   }
 
@@ -599,6 +440,372 @@ export default {
   .btn-cerrar-sesion {
     padding: 10px 26px;
     font-size: 15px;
+  }
+
+  .main-content {
+    max-width: 1200px;
+    padding: 140px 60px 60px;
+  }
+
+  .title {
+    font-size: 50px;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .navbar {
+    padding: 20px 60px;
+    grid-template-columns: 220px 1fr auto auto;
+    gap: 35px;
+  }
+
+  .logo {
+    font-size: 20px;
+    padding-left: 30px;
+  }
+
+  .nav-links {
+    gap: 70px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .main-content {
+    max-width: 1100px;
+  }
+
+  .title {
+    font-size: 46px;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 50px;
+    grid-template-columns: 200px 1fr auto auto;
+    gap: 30px;
+  }
+
+  .logo {
+    font-size: 19px;
+    padding-left: 25px;
+  }
+
+  .nav-links {
+    gap: 60px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    padding: 8px 26px;
+    font-size: 14px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+
+  .main-content {
+    max-width: 1000px;
+  }
+
+  .title {
+    font-size: 44px;
+  }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: -50px;
+    left: -60px;
+  }
+
+  .hoja-below {
+    width: 80px;
+    height: 80px;
+    top: 420px;
+  }
+
+  .hoja-bottom {
+    width: 70px;
+    height: 70px;
+  }
+
+  .img-mortero {
+    width: 200px;
+    height: 200px;
+    right: -60px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navbar {
+    padding: 20px 40px;
+    grid-template-columns: 180px 1fr auto auto;
+    gap: 25px;
+  }
+
+  .logo {
+    font-size: 18px;
+    padding-left: 20px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 8px 24px;
+    font-size: 13px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    max-width: 900px;
+    padding: 140px 30px 60px;
+  }
+
+  .title {
+    font-size: 42px;
+  }
+
+  .img-grapefruit {
+    width: 140px;
+    height: 140px;
+    top: -45px;
+    left: -55px;
+  }
+
+  .hoja-below {
+    width: 70px;
+    height: 70px;
+    top: 400px;
+    right: 30px;
+  }
+
+  .hoja-bottom {
+    width: 60px;
+    height: 60px;
+    bottom: 120px;
+    left: 50px;
+  }
+
+  .img-mortero {
+    width: 180px;
+    height: 180px;
+    right: -55px;
+    top: 160px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 20px 30px;
+    grid-template-columns: 160px 1fr auto auto;
+    gap: 20px;
+  }
+
+  .logo {
+    font-size: 17px;
+    padding-left: 15px;
+  }
+
+  .nav-links {
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
+  }
+
+  .main-content {
+    max-width: 750px;
+    padding: 130px 25px 50px;
+  }
+
+  .title {
+    font-size: 38px;
+  }
+
+  .img-grapefruit {
+    width: 130px;
+    height: 130px;
+    top: -40px;
+    left: -50px;
+  }
+
+  .hoja-below {
+    width: 60px;
+    height: 60px;
+    top: 380px;
+    right: 20px;
+  }
+
+  .hoja-bottom {
+    width: 55px;
+    height: 55px;
+    bottom: 100px;
+    left: 40px;
+  }
+
+  .img-mortero {
+    width: 160px;
+    height: 160px;
+    right: -50px;
+    top: 170px;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .navbar {
+    padding: 15px 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 15px;
+    justify-items: center;
+  }
+
+  .logo {
+    font-size: 18px;
+    padding-left: 0;
+    grid-column: 1 / -1;
+  }
+
+  .nav-links {
+    gap: 30px;
+    grid-column: 1 / -1;
+    order: 1;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+    order: 2;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
+    order: 3;
+  }
+
+  .img-grapefruit,
+  .hoja-below,
+  .hoja-bottom,
+  .img-mortero {
+    display: none;
+  }
+
+  .main-content {
+    padding: 160px 20px 40px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 32px;
+    margin-bottom: 25px;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-agregar {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 13px;
+  }
+
+  .search-container {
+    max-width: 100%;
+  }
+
+  .search-input {
+    padding: 10px 20px 10px 50px;
+    font-size: 14px;
+  }
+
+  .table-container {
+    padding: 30px 20px;
+    min-height: 240px;
+  }
+
+  .empty-message {
+    font-size: 14px;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    padding: 12px 15px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .btn-admin,
+  .btn-cerrar-sesion {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 170px 15px 30px;
+  }
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .table-container {
+    padding: 25px 15px;
+    min-height: 200px;
   }
 }
 </style>
