@@ -195,11 +195,10 @@ export default {
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 80px;
+  padding: 20px 5%;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 20px;
-  margin-right: -500px;
 }
 
 .logo {
@@ -207,13 +206,15 @@ export default {
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
-  margin-left: 70px;
+  flex-shrink: 0;
 }
 
 .nav-links {
   display: flex;
   gap: 60px;
-  margin-left: 30px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-links a,
@@ -238,7 +239,10 @@ export default {
   border-radius: 50px;
   cursor: default;
   font-weight: 580;
-  margin-right: -230px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-cerrar-sesion {
@@ -251,7 +255,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  margin-right: 440px;
+  flex-shrink: 0;
 }
 
 .btn-cerrar-sesion:hover {
@@ -404,5 +408,197 @@ export default {
   font-size: 16px;
   font-weight:500;
   font-family: 'Montserrat', sans-serif;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 20px 3%;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .nav-links {
+    gap: 30px;
+  }
+
+  .nav-links a,
+  .nav-links router-link {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 8px 20px;
+    font-size: 13px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  /* Resto de estilos para tablets... */
+}
+
+/* Pantallas medianas de computador (769px - 1200px) */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .navbar {
+    padding: 20px 4%;
+  }
+
+  .nav-links {
+    gap: 40px;
+  }
+
+  /* Resto de estilos... */
+}
+
+/* Tablets pequeñas (600px - 768px) */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 3%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 20px;
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    padding-top: 10px;
+  }
+
+  .nav-links a,
+  .nav-links router-link {
+    font-size: 12px;
+  }
+
+  .btn-admin {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  /* Resto de estilos para móvil... */
+}
+
+/* Pantallas pequeñas de computador (1025px - 1366px) */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 5%;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  /* Resto de estilos... */
+}
+
+/* Pantallas de 15.6 pulgadas - 1366x768 (HD) */
+@media (min-width: 1280px) and (max-width: 1440px) {
+  .navbar {
+    padding: 20px 6%;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a,
+  .nav-links router-link {
+    font-size: 13.5px;
+  }
+
+  .btn-admin {
+    padding: 8px 26px;
+    font-size: 13.5px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 20px;
+    font-size: 13.5px;
+  }
+
+  /* Resto de estilos... */
+}
+
+/* Pantallas Full HD - 1920x1080 */
+@media (min-width: 1680px) and (max-width: 1920px) {
+  .navbar {
+    padding: 20px 8%;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 70px;
+  }
+
+  .nav-links a,
+  .nav-links router-link {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    padding: 8px 28px;
+    font-size: 14px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 22px;
+    font-size: 14px;
+  }
+
+  /* Resto de estilos... */
+}
+
+/* Pantallas muy grandes (2K, 4K) */
+@media (min-width: 1921px) {
+  .navbar {
+    padding: 20px 12%;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .nav-links {
+    gap: 80px;
+  }
+
+  .nav-links a,
+  .nav-links router-link {
+    font-size: 15px;
+  }
+
+  .btn-admin {
+    padding: 10px 32px;
+    font-size: 15px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 10px 26px;
+    font-size: 15px;
+  }
 }
 </style>
