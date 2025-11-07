@@ -135,7 +135,7 @@ export default {
         // Verificar si es admin para redirigir
         const esAdmin = response.data.usuario.es_admin
         if (esAdmin) {
-          this.$router.push('/admin-dashboard')
+          this.$router.push('/administracion')
         } else {
           this.$router.push('/dashboard')
         }

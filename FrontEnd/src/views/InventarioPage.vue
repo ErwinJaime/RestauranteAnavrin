@@ -65,8 +65,8 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import AgregarProducto from './AgregarProducto.vue' 
+import { listarProductos, crearProducto, eliminarProducto } from '@/services/productos'
+import AgregarProducto from './AgregarProducto.vue'
 
 export default {
   name: 'InventarioPage',
@@ -79,9 +79,6 @@ export default {
     const productos = ref([])
     const cargando = ref(false)
 
-    const API_URL = 'http://localhost:3000/api' // Ejemplo
-
-    // Cargar productos al montar el componente
     onMounted(() => {
       cargarProductos()
     })
@@ -89,11 +86,18 @@ export default {
     const cargarProductos = async () => {
       try {
         cargando.value = true
-        const response = await axios.get(`${API_URL}/productos`)
+        // Usamos el servicio de productos importado
+        const response = await listarProductos()
         productos.value = response.data
       } catch (error) {
-        console.error('Error al cargar productos:', error)
-        alert('Error al cargar los productos')
+        console.log('No se pudieron cargar los productos')
+        
+        // Manejar error de autenticación
+        if (error.response?.status === 401) {
+          console.log('Error de autenticación al cargar productos')
+        }
+        
+        productos.value = []
       } finally {
         cargando.value = false
       }
@@ -107,48 +111,118 @@ export default {
       mostrarModal.value = false
     }
 
-    const guardarProducto = async (producto) => {
+    const guardarProducto = async (productoData) => {
       try {
         cargando.value = true
-        const response = await axios.post(`${API_URL}/productos`, {
-          nombre: producto.nombreProducto,
-          categoria: producto.categoria,
-          ingredientes: producto.ingredientes,
-          precio: producto.precio,
-          disponible: producto.disponible,
-          imagen: producto.imagen
-        })
+        
+        // Verificar autenticación
+        const token = localStorage.getItem('access_token')
+        if (!token) {
+          alert('No estás autenticado. Por favor, inicia sesión.')
+          mostrarModal.value = false
+          return
+        }
+
+        console.log('📥 Datos recibidos del modal:', productoData)
+        
+        // Preparar los datos para el backend
+        const datosParaEnviar = {
+          nombre: productoData.nombreProducto,
+          categoria: productoData.categoria, // Ya viene en minúsculas del modal
+          ingredientes: productoData.ingredientes,
+          precio: parseFloat(productoData.precio),
+          disponible: Boolean(productoData.disponible),
+        }
+
+        // Agregar imagen solo si existe
+        if (productoData.imagen && productoData.imagen instanceof File) {
+          datosParaEnviar.imagen = productoData.imagen
+        }
+
+        console.log('📤 Datos a enviar al backend:', datosParaEnviar)
+
+        // Crear producto usando el servicio
+        const response = await crearProducto(datosParaEnviar)
+
+        console.log('✅ Producto creado exitosamente:', response.data)
 
         // Agregar el nuevo producto a la lista
         productos.value.push(response.data)
         
+        // Cerrar modal y limpiar
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
-        // Recargar la lista
+        // Recargar la lista completa
         await cargarProductos()
+        
       } catch (error) {
-        console.error('Error al guardar producto:', error)
-        alert('Error al guardar el producto')
+        console.error('❌ Error al guardar producto:', error)
+        
+        // Manejo detallado de errores
+        if (error.response) {
+          const status = error.response.status
+          const errorData = error.response.data
+          
+          console.error('Detalles del error:', errorData)
+          
+          if (status === 400) {
+            // Error de validación
+            let mensajeError = 'Error en los datos del producto:\n'
+            
+            if (typeof errorData === 'object') {
+              Object.keys(errorData).forEach(key => {
+                const errores = Array.isArray(errorData[key]) ? errorData[key] : [errorData[key]]
+                mensajeError += `\n• ${key}: ${errores.join(', ')}`
+              })
+            } else {
+              mensajeError = errorData.toString()
+            }
+            
+            alert(mensajeError)
+          } else if (status === 401) {
+            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.')
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user')
+            // router.push('/login') // Descomenta si tienes router
+          } else if (status === 403) {
+            alert('No tienes permisos para agregar productos.')
+          } else {
+            alert(`Error del servidor (${status}). Por favor, intenta nuevamente.`)
+          }
+        } else if (error.request) {
+          alert('No se pudo conectar con el servidor. Verifica tu conexión.')
+        } else {
+          alert('Error inesperado: ' + error.message)
+        }
       } finally {
         cargando.value = false
       }
     }
 
     const editarProducto = async (id) => {
-      // Aquí implementarás la lógica de editar
       console.log('Editar producto:', id)
       alert('Función de editar en desarrollo')
     }
 
-    const eliminarProducto = async (id) => {
+    const eliminarProductoHandler = async (id) => {
       if (!confirm('¿Estás seguro de eliminar este producto?')) {
         return
       }
 
       try {
         cargando.value = true
-        await axios.delete(`${API_URL}/productos/${id}`)
+        
+        // Verificar autenticación antes de eliminar
+        const token = localStorage.getItem('access_token')
+        if (!token) {
+          alert('No estás autenticado. Por favor, inicia sesión.')
+          return
+        }
+        
+        // Usar el servicio importado eliminarProducto
+        await eliminarProducto(id)
         
         // Eliminar de la lista local
         productos.value = productos.value.filter(p => p.id !== id)
@@ -156,7 +230,20 @@ export default {
         alert('Producto eliminado exitosamente')
       } catch (error) {
         console.error('Error al eliminar producto:', error)
-        alert('Error al eliminar el producto')
+        
+        // Manejar diferentes tipos de errores
+        if (error.response?.status === 401) {
+          alert('Error de autenticación. Tu sesión ha expirado.')
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          localStorage.removeItem('user')
+        } else if (error.response?.status === 403) {
+          alert('No tienes permisos para eliminar productos.')
+        } else if (error.response?.status === 404) {
+          alert('El producto no existe o ya fue eliminado.')
+        } else {
+          alert('Error al eliminar el producto.')
+        }
       } finally {
         cargando.value = false
       }
@@ -171,7 +258,7 @@ export default {
       cerrarModal,
       guardarProducto,
       editarProducto,
-      eliminarProducto
+      eliminarProducto: eliminarProductoHandler
     }
   }
 }
