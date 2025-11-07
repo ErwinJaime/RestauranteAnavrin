@@ -315,7 +315,7 @@ export default {
   font-weight: 800;
   color: #28233b;
   margin-bottom: 30px;
-  margin-top: -80px;
+  margin-top: -50px;
   font-family: 'Open Sans', sans-serif;
 }
 
