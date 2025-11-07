@@ -8,7 +8,7 @@
         <router-link to="/about">About</router-link>
         <router-link to="/resenasadmin">Review</router-link>
       </div>
-      <button class="btn-admin">Admin</button>
+      <span class="btn-admin">Admin</span>
       <button class="btn-cerrar-sesion">Cerrar Sesión</button>
     </nav>
 
@@ -159,14 +159,9 @@ export default {
   background-color: #ff6b35;
   border: none;
   border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  cursor: default;
   font-weight: 580;
   margin-right: -230px;
-}
-
-.btn-admin:hover {
-  background-color: #3b82f6;
 }
 
 .btn-cerrar-sesion {

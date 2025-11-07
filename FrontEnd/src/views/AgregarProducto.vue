@@ -1,9 +1,6 @@
 <template>
   <div v-if="isOpen" class="modal-overlay" @click.self="$emit('cerrar')">
     <div class="modal-content">
-      <!-- Botón cerrar -->
-      <button class="btn-cerrar" @click="$emit('cerrar')">×</button>
-      
       <!-- Título -->
       <h2 class="modal-title">Agregar Nuevo Producto</h2>
       
@@ -36,6 +33,17 @@
       <div class="form-group">
         <label>Ingredientes</label>
         <textarea v-model="ingredientes" rows="3"></textarea>
+      </div>
+
+      <!-- NUEVO: Categoría -->
+      <div class="form-group">
+        <label>Categoría</label>
+        <select v-model="categoria" class="select-categoria">
+          <option value="">Selecciona una categoría</option>
+          <option value="Platillo">Platillo</option>
+          <option value="Postre">Postre</option>
+          <option value="Bebida">Bebida</option>
+        </select>
       </div>
       
       <!-- Precio -->
@@ -74,6 +82,7 @@ export default {
   setup(props, { emit }) {
     const nombreProducto = ref('')
     const ingredientes = ref('')
+    const categoria = ref('')
     const precio = ref('')
     const disponible = ref(false)
     const imagen = ref(null)
@@ -93,6 +102,7 @@ export default {
       emit('guardar', {
         nombreProducto: nombreProducto.value,
         ingredientes: ingredientes.value,
+        categoria: categoria.value,
         precio: precio.value,
         disponible: disponible.value,
         imagen: imagen.value
@@ -101,6 +111,7 @@ export default {
       // Limpiar formulario
       nombreProducto.value = ''
       ingredientes.value = ''
+      categoria.value = ''
       precio.value = ''
       disponible.value = false
       imagen.value = null
@@ -109,6 +120,7 @@ export default {
     return {
       nombreProducto,
       ingredientes,
+      categoria,
       precio,
       disponible,
       imagen,
@@ -138,7 +150,7 @@ export default {
 .modal-content {
   background-color: #fff8f8;
   border-radius: 20px;
-  padding: 25px 30px; /* Ajusté el padding vertical */
+  padding: 20px 25px; /* Ajusté el padding vertical */
   width: 90%;
   max-width: 450px;
   position: relative;
@@ -146,21 +158,43 @@ export default {
 }
 
 .modal-title {
-  font-size: 25px;
+  font-size: 23px;
   font-weight: 700;
   color: #28233b;
-  margin-bottom: 15px; /* Reduje más el margen */
+  margin-bottom: 10px; 
   text-align: center;
   font-family: 'Open Sans', sans-serif;
+}
+
+.select-categoria {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #e5e5e5;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  background-color: white;
+  cursor: pointer;
+}
+
+.select-categoria:focus {
+  outline: none;
+  border-color: #7cb342;
+}
+
+.select-categoria option {
+  padding: 10px;
 }
 
 /* Upload área */
 .upload-area {
   border: 2px dashed #ddd;
   border-radius: 12px;
-  padding: 15px; /* Reduje más el padding */
+  padding: 7px; /* Reduje más el padding */
   text-align: center;
-  margin-bottom: 15px; /* Reduje el margen */
+  margin-bottom: 10px; /* Reduje el margen */
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -179,7 +213,7 @@ export default {
 
 .preview-image {
   max-width: 100%;
-  max-height: 100px; /* Reduje más la altura */
+  max-height: 100px;
   border-radius: 8px;
 }
 
