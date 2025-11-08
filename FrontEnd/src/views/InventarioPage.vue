@@ -455,6 +455,13 @@ export default {
   .title {
     font-size: 50px;
   }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: 50px;
+    left: -70px;
+  }
 }
 
 /* Pantallas medianas-grandes (1367px - 1599px) */
@@ -492,7 +499,7 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top: 80px;
+    top: 100px;
     left: -70px;
   }
 }
