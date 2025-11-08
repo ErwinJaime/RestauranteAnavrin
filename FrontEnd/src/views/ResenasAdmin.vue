@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/administracion">Home</router-link>
+        <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
         <a href="#">Review</a>
       </div>
@@ -290,23 +290,24 @@ const paginaAnterior = () => {
 ------------------------- */
 .resenas-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 30px;
   justify-content: center;
   padding: 0 1rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .resena-card {
   background-color: #e8e5b8;
   border-radius: 20px;
-  padding: 25px 20px;
+  padding: 35px 25px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 400px;
+  width: 350px;
+  min-height: 200px;
   flex-shrink: 0;
 }
 
@@ -421,6 +422,16 @@ const paginaAnterior = () => {
   .btn-cerrar-sesion {
     padding: 10px 26px;
     font-size: 12px;
+  }
+
+  .resena-card {
+    width: 380px;
+    min-height: 220px;
+    padding: 40px 30px;
+  }
+
+  .resenas-container {
+    gap: 40px;
   }
 }
 
@@ -634,6 +645,7 @@ const paginaAnterior = () => {
   .resenas-container {
     flex-direction: column;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .resena-card {
@@ -672,6 +684,10 @@ const paginaAnterior = () => {
 
   .title {
     font-size: 28px;
+  }
+
+  .resenas-container {
+    flex-wrap: wrap;
   }
 
   .resena-card {
