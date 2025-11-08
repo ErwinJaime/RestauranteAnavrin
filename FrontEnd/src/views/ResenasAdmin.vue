@@ -306,7 +306,7 @@ const paginaAnterior = () => {
   text-align: center;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 380px;
+  width: 400px;
   flex-shrink: 0;
 }
 
@@ -421,11 +421,6 @@ const paginaAnterior = () => {
   .btn-cerrar-sesion {
     padding: 10px 26px;
     font-size: 12px;
-  }
-
-  /* AQUÍ AGREGAS EL TAMAÑO DE LAS TARJETAS */
-  .resena-card {
-    width: 450px;  /* Cambia este valor al tamaño que necesites */
   }
 }
 
