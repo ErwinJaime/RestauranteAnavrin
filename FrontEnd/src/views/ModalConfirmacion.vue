@@ -3,10 +3,7 @@
     <div class="confirmation-modal">
       <!-- Icono de alerta -->
       <div class="alert-icon">
-        <svg width="50" height="50" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill="#e74c3c"/>
-          <path d="M12 8V12M12 16H12.01" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+        <img src="@/assets/alerta.png" alt="Alerta" width="55" height="55" />
       </div>
 
       <!-- Título -->
@@ -41,8 +38,8 @@ export default {
   name: 'ModalConfirmacion',
   props: {
     isOpen: { type: Boolean, default: false },
-    titulo: { type: String, default: '¿Estás seguro?' },
-    mensaje: { type: String, default: 'Esta acción no se puede deshacer.' },
+    titulo: { type: String, default: '¿Estás seguro de que quieres eliminar el producto?' },
+    mensaje: { type: String, default: 'Esta acción es permanente. Una vez eliminado, el producto no estará disponible, ni aparecerá en el menú.' },
     textoConfirmar: { type: String, default: 'Confirmar' },
     cargando: { type: Boolean, default: false }
   },
@@ -82,7 +79,7 @@ export default {
   margin-bottom: 20px;
 }
 
-.alert-icon svg {
+.alert-icon img {
   animation: pulse 2s infinite;
 }
 
@@ -105,6 +102,7 @@ export default {
   font-family: 'Open Sans', sans-serif;
   line-height: 1.3;
 }
+
 
 /* Texto del mensaje */
 .confirmation-text {
