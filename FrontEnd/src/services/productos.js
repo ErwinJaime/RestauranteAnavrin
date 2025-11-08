@@ -1,45 +1,81 @@
 // frontend/src/services/productos.js
-import api from './api'
+import axios from 'axios'
+
+const productosAPI = axios.create({
+  baseURL: 'http://127.0.0.1:8000/api/usuarios/',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+// Interceptor para agregar el token automáticamente
+productosAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// ========== FUNCIÓN AUXILIAR ==========
+// Convierte valores a string si son arrays
+function cleanValue(value) {
+  if (Array.isArray(value)) {
+    return value[0] || ''
+  }
+  return value
+}
 
 // ========== PRODUCTOS ==========
 
-/**
- * Listar todos los productos
- */
 export function listarProductos(params = {}) {
-  return api.get('productos/', { params })
+  return productosAPI.get('productos/', { params })
 }
 
-/**
- * Obtener un producto específico por ID
- */
 export function obtenerProducto(id) {
-  return api.get(`productos/${id}/`)
+  return productosAPI.get(`productos/${id}/`)
 }
 
-/**
- * Crear nuevo producto (solo admin)
- * IMPORTANTE: Categorías válidas deben coincidir con el backend
- */
 export function crearProducto(data) {
+  console.log('🔍 Data recibida en crearProducto:', data)
+  
+  // Limpiar datos para evitar arrays
+  const cleanData = {
+    nombre: cleanValue(data.nombre) || '',
+    ingredientes: cleanValue(data.ingredientes) || '',
+    precio: cleanValue(data.precio) || '0',
+    categoria: cleanValue(data.categoria) || '',
+    disponible: data.disponible,
+    imagen: data.imagen
+  }
+  
+  console.log('✨ Data limpia:', cleanData)
+  
   // Si hay imagen, usar FormData
-  if (data.imagen instanceof File) {
+  if (cleanData.imagen instanceof File) {
     const formData = new FormData()
     
-    // Agregar campos uno por uno
-    formData.append('nombre', data.nombre || '')
-    formData.append('ingredientes', data.ingredientes || '')
-    formData.append('precio', data.precio?.toString() || '0')
-    
-    // CRÍTICO: Enviar categoría en minúsculas
-    formData.append('categoria', (data.categoria || '').toLowerCase())
-    
-    formData.append('disponible', data.disponible ? 'true' : 'false')
-    formData.append('imagen', data.imagen)
+    // Asegurar que cada campo se agrega solo UNA vez
+    formData.append('nombre', String(cleanData.nombre))
+    formData.append('ingredientes', String(cleanData.ingredientes))
+    formData.append('precio', String(cleanData.precio))
+    formData.append('categoria', String(cleanData.categoria).toLowerCase())
+    formData.append('disponible', cleanData.disponible ? 'true' : 'false')
+    formData.append('imagen', cleanData.imagen)
     
     console.log('📤 Enviando FormData con imagen')
+    console.log('📋 Campos FormData:')
+    for (let pair of formData.entries()) {
+      console.log(`  ${pair[0]}:`, pair[1])
+    }
     
-    return api.post('productos/crear/', formData, {
+    return productosAPI.post('productos/crear/', formData, {
       headers: { 
         'Content-Type': 'multipart/form-data'
       }
@@ -48,108 +84,113 @@ export function crearProducto(data) {
   
   // Sin imagen, enviar JSON normal
   const jsonData = {
-    nombre: data.nombre || '',
-    ingredientes: data.ingredientes || '',
-    precio: parseFloat(data.precio) || 0,
-    // CRÍTICO: Categoría en minúsculas
-    categoria: (data.categoria || '').toLowerCase(),
-    disponible: Boolean(data.disponible)
+    nombre: String(cleanData.nombre),
+    ingredientes: String(cleanData.ingredientes),
+    precio: parseFloat(cleanData.precio) || 0,
+    categoria: String(cleanData.categoria).toLowerCase(),
+    disponible: Boolean(cleanData.disponible)
   }
   
   console.log('📤 Enviando JSON (sin imagen):', jsonData)
-  return api.post('productos/crear/', jsonData)
+  return productosAPI.post('productos/crear/', jsonData)
 }
 
-/**
- * Actualizar producto existente (solo admin)
- */
 export function actualizarProducto(id, data) {
-  if (data.imagen instanceof File) {
+  // Limpiar datos
+  const cleanData = {
+    nombre: cleanValue(data.nombre) || '',
+    ingredientes: cleanValue(data.ingredientes) || '',
+    precio: cleanValue(data.precio) || '0',
+    categoria: cleanValue(data.categoria) || '',
+    disponible: data.disponible,
+    imagen: data.imagen
+  }
+  
+  if (cleanData.imagen instanceof File) {
     const formData = new FormData()
-    formData.append('nombre', data.nombre)
-    formData.append('ingredientes', data.ingredientes)
-    formData.append('precio', data.precio.toString())
-    formData.append('categoria', (data.categoria || '').toLowerCase())
-    formData.append('disponible', data.disponible ? 'true' : 'false')
-    formData.append('imagen', data.imagen)
+    formData.append('nombre', String(cleanData.nombre))
+    formData.append('ingredientes', String(cleanData.ingredientes))
+    formData.append('precio', String(cleanData.precio))
+    formData.append('categoria', String(cleanData.categoria).toLowerCase())
+    formData.append('disponible', cleanData.disponible ? 'true' : 'false')
+    formData.append('imagen', cleanData.imagen)
     
-    return api.put(`productos/${id}/actualizar/`, formData, {
+    return productosAPI.put(`productos/${id}/actualizar/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   }
   
-  // Asegurar categoría en minúsculas también en JSON
   const jsonData = {
-    ...data,
-    categoria: (data.categoria || '').toLowerCase()
+    nombre: String(cleanData.nombre),
+    ingredientes: String(cleanData.ingredientes),
+    precio: parseFloat(cleanData.precio) || 0,
+    categoria: String(cleanData.categoria).toLowerCase(),
+    disponible: Boolean(cleanData.disponible)
   }
   
-  return api.put(`productos/${id}/actualizar/`, jsonData)
+  return productosAPI.put(`productos/${id}/actualizar/`, jsonData)
 }
 
-/**
- * Eliminar producto (solo admin)
- */
 export function eliminarProducto(id) {
-  return api.delete(`productos/${id}/eliminar/`)
+  return productosAPI.delete(`productos/${id}/eliminar/`)
 }
 
 // ========== PEDIDOS ==========
 
 export function listarMisPedidos(params = {}) {
-  return api.get('pedidos/', { params })
+  return productosAPI.get('pedidos/', { params })
 }
 
 export function listarTodosPedidos(params = {}) {
-  return api.get('pedidos/todos/', { params })
+  return productosAPI.get('pedidos/todos/', { params })
 }
 
 export function obtenerPedido(id) {
-  return api.get(`pedidos/${id}/`)
+  return productosAPI.get(`pedidos/${id}/`)
 }
 
 export function crearPedido(data) {
-  return api.post('pedidos/crear/', data)
+  return productosAPI.post('pedidos/crear/', data)
 }
 
 export function actualizarPedido(id, data) {
-  return api.put(`pedidos/${id}/actualizar/`, data)
+  return productosAPI.put(`pedidos/${id}/actualizar/`, data)
 }
 
 export function cambiarEstadoPedido(id, estado) {
-  return api.patch(`pedidos/${id}/estado/`, { estado })
+  return productosAPI.patch(`pedidos/${id}/estado/`, { estado })
 }
 
 export function cancelarPedido(id) {
-  return api.delete(`pedidos/${id}/cancelar/`)
+  return productosAPI.delete(`pedidos/${id}/cancelar/`)
 }
 
 // ========== RESEÑAS ==========
 
 export function listarResenasProducto(productoId) {
-  return api.get(`productos/${productoId}/resenas/`)
+  return productosAPI.get(`productos/${productoId}/resenas/`)
 }
 
 export function listarMisResenas() {
-  return api.get('resenas/')
+  return productosAPI.get('resenas/')
 }
 
 export function listarTodasResenas(params = {}) {
-  return api.get('resenas/todas/', { params })
+  return productosAPI.get('resenas/todas/', { params })
 }
 
 export function crearResena(data) {
-  return api.post('resenas/crear/', data)
+  return productosAPI.post('resenas/crear/', data)
 }
 
 export function actualizarResena(id, data) {
-  return api.put(`resenas/${id}/actualizar/`, data)
+  return productosAPI.put(`resenas/${id}/actualizar/`, data)
 }
 
 export function eliminarResena(id) {
-  return api.delete(`resenas/${id}/eliminar/`)
+  return productosAPI.delete(`resenas/${id}/eliminar/`)
 }
 
 export function cambiarVisibilidadResena(id, visible) {
-  return api.patch(`resenas/${id}/visibilidad/`, { visible })
+  return productosAPI.patch(`resenas/${id}/visibilidad/`, { visible })
 }

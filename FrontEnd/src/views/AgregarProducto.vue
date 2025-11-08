@@ -187,12 +187,12 @@ export default {
 
       try {
         const productoData = {
-          nombreProducto: nombreProducto.value.trim(),
+          nombre: nombreProducto.value.trim(), // ✅ CAMBIO: era "nombreProducto", ahora es "nombre"
           ingredientes: ingredientes.value.trim(),
           categoria: categoria.value,
           precio: parseFloat(precio.value),
           disponible: disponible.value,
-          imagen: imagenFile.value // Pasar el File directamente
+          imagen: imagenFile.value
         }
 
         emit('guardar', productoData)
@@ -1250,7 +1250,7 @@ export default {
     font-size: 9px;
   }
 
-  .preview-image {
+    .preview-image {
     max-height: 65px;
   }
 

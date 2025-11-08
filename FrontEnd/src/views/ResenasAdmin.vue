@@ -189,7 +189,7 @@ const paginaAnterior = () => {
 }
 
 .nav-links a:hover {
-  color: #ff6b35;
+  color: #35a4ff;
 }
 
 .btn-admin {
@@ -240,27 +240,27 @@ const paginaAnterior = () => {
 }
 
 .img-naranja {
-  top: 80px;
+  top: 70px;
   left: 40px;
-  width: 180px;
+  width: 145px;
 }
 
 .img-aceite {
   top: 50px;
   right: 0px;
-  width: 200px;
+  width: 140px;
 }
 
 .img-guacamole {
   bottom: 0px;
   left: 50px;
-  width: 210px;
+  width: 200px;
 }
 
 .img-estrellas {
   bottom: 0;
   right: 5px;
-  width: 205px;
+  width: 120px;
 }
 
 /* ------------------------
@@ -433,6 +433,40 @@ const paginaAnterior = () => {
   .resenas-container {
     gap: 40px;
   }
+
+  .img-naranja,
+.img-aceite,
+.img-guacamole,
+.img-estrellas {
+  position: fixed;
+  object-fit: contain;
+  z-index: 10;
+  opacity: 0.9;
+}
+
+.img-naranja {
+  top: 100px;
+  left: 40px;
+  width: 180px;
+}
+
+.img-aceite {
+  top: 50px;
+  right: 0px;
+  width: 200px;
+}
+
+.img-guacamole {
+  bottom: 0px;
+  left: 70px;
+  width: 230px;
+}
+
+.img-estrellas {
+  bottom: 0;
+  right: 5px;
+  width: 180px;
+}
 }
 
 /* Pantallas medianas-grandes (1367px - 1599px) */
