@@ -324,7 +324,7 @@ export default {
   font-weight: 800;
   color: #28233b;
   margin-bottom: 30px;
-  margin-top: -30px;
+  margin-top: -35px;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -400,7 +400,7 @@ export default {
   border-radius: 16px;
   padding: 60px 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.336);
-  min-height: 310px;
+  min-height: 290px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -455,6 +455,14 @@ export default {
   .title {
     font-size: 50px;
     margin-top: 0px;
+  }
+
+  .actions-bar {
+    margin-bottom: 60px;
+  }
+
+  .table-container {
+    min-height: 380px;
   }
 
   .img-grapefruit {
