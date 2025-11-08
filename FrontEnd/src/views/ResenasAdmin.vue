@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/adminitracion">Home</router-link>
+        <router-link to="/administracion">Home</router-link>
         <router-link to="/about">About</router-link>
         <a href="#">Review</a>
       </div>
@@ -306,7 +306,7 @@ const paginaAnterior = () => {
   text-align: center;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 320px;
+  width: 400px;
   flex-shrink: 0;
 }
 
