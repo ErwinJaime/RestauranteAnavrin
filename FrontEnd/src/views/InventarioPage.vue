@@ -599,13 +599,13 @@ export default {
 
   .btn-admin {
     padding: 8px 24px;
-    font-size: 13px;
+    font-size: 12px;
     margin-right: 8px !important;
   }
 
   .btn-cerrar-sesion {
     padding: 8px 18px;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .main-content {
@@ -621,8 +621,8 @@ export default {
   .img-grapefruit {
     width: 140px;
     height: 140px;
-    top: -45px;
-    left: -55px;
+    top: 60px;
+    left: -60px;
   }
 
   .hoja-below {

@@ -1,11 +1,10 @@
 <template>
   <div v-if="isOpen" class="modal-overlay" @click.self="$emit('cerrar')">
     <div class="modal-content">
-      <!-- Título -->
-      <h2 class="modal-title">Agregar Nuevo Producto</h2>
+      <h2 class="modal-title">Editar</h2>
       
-      <!-- Upload de imagen -->
-      <div class="upload-area" @click="$refs.fileInput.click()">
+      <!-- Upload de imagen - Cuadrada al inicio, redonda con imagen -->
+      <div class="upload-area-container">
         <input
           ref="fileInput"
           type="file"
@@ -14,39 +13,57 @@
           style="display: none"
         />
         
-        <img v-if="imagenPreview" :src="imagenPreview" alt="Preview" class="preview-image" />
-        <div v-else class="upload-placeholder">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="#999" stroke-width="2"/>
-            <circle cx="12" cy="13" r="4" stroke="#999" stroke-width="2"/>
-          </svg>
-          <p>Subir imagen del producto</p>
+        <!-- Vista SIN imagen (cuadrada) -->
+        <div 
+          v-if="!imagenPreview" 
+          class="upload-area-square" 
+          @click="$refs.fileInput.click()"
+        >
+          <div class="upload-placeholder">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="#999" stroke-width="2"/>
+              <circle cx="12" cy="13" r="4" stroke="#999" stroke-width="2"/>
+            </svg>
+            <p>Subir imagen del producto</p>
+          </div>
+        </div>
+
+        <!-- Vista CON imagen (redonda) -->
+        <div v-else class="upload-area-circular">
+          <div class="image-preview-container" @click="$refs.fileInput.click()">
+            <img 
+              :src="imagenPreview" 
+              alt="Preview" 
+              class="preview-image-circular" 
+            />
+          </div>
+
+          <!-- Botón Eliminar Imagen -->
+          <button 
+            class="btn-eliminar-imagen" 
+            @click.stop="confirmarEliminarImagen"
+            type="button"
+          >
+            Eliminar Imagen
+          </button>
         </div>
       </div>
       
       <!-- Nombre del Producto -->
       <div class="form-group">
-        <label>Nombre del Producto *</label>
-        <input 
-          type="text" 
-          v-model="nombreProducto" 
-          required
-        />
+        <label>Nombre del Producto</label>
+        <input type="text" v-model="nombreProducto" required />
       </div>
       
       <!-- Ingredientes -->
       <div class="form-group">
-        <label>Ingredientes *</label>
-        <textarea 
-          v-model="ingredientes" 
-          rows="3"
-          required
-        ></textarea>
+        <label>Ingredientes</label>
+        <textarea v-model="ingredientes" rows="3" required></textarea>
       </div>
 
       <!-- Categoría -->
       <div class="form-group">
-        <label>Categoría *</label>
+        <label>Categoría</label>
         <select v-model="categoria" class="select-categoria" required>
           <option value="">Platillo</option>
           <option value="postre">Postre</option>
@@ -56,18 +73,11 @@
       
       <!-- Precio -->
       <div class="form-group">
-        <label>Precio ($) *</label>
-        <input 
-          type="number" 
-          v-model="precio" 
-          step="0.01"
-          min="0"
-          placeholder="0.00"
-          required
-        />
+        <label>Precio ($)</label>
+        <input type="number" v-model="precio" step="0.01" min="0" placeholder="0.00" required />
       </div>
       
-      <!-- Checkbox -->
+      <!-- Checkbox personalizado -->
       <div class="checkbox-group">
         <label class="custom-checkbox">
           <input type="checkbox" v-model="disponible" />
@@ -75,13 +85,8 @@
           <span class="checkbox-label">Disponible en el Menú</span>
         </label>
       </div>
-    
-      
 
-      <!-- Mensaje de error -->
-      <div v-if="errorMsg" class="error-message">
-        {{ errorMsg }}
-      </div>
+      <div v-if="errorMsg" class="error-message">{{ errorMsg }}</div>
       
       <!-- Botones -->
       <div class="modal-buttons">
@@ -93,6 +98,18 @@
         </button>
       </div>
     </div>
+
+    <!-- Modal de confirmación para eliminar imagen -->
+    <div v-if="mostrarConfirmacion" class="confirmation-overlay" @click.self="cerrarConfirmacion">
+      <div class="confirmation-modal">
+        <h3 class="confirmation-title">¿Estás seguro?</h3>
+        <p class="confirmation-text">Al eliminar la imagen, esta será removida del producto.</p>
+        <div class="confirmation-buttons">
+          <button class="btn-eliminar-confirm" @click="eliminarImagen">Eliminar</button>
+          <button class="btn-cancelar-confirm" @click="cerrarConfirmacion">Cancelar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -100,12 +117,10 @@
 import { ref, watch } from 'vue'
 
 export default {
-  name: 'AgregarProductoModal',
+  name: 'EditarProductoModal',
   props: {
-    isOpen: {
-      type: Boolean,
-      default: false
-    }
+    isOpen: { type: Boolean, default: false },
+    producto: { type: Object, default: null }
   },
   emits: ['cerrar', 'guardar'],
   setup(props, { emit }) {
@@ -118,38 +133,60 @@ export default {
     const imagenPreview = ref(null)
     const errorMsg = ref('')
     const guardando = ref(false)
+    const mostrarConfirmacion = ref(false)
 
-    // Limpiar formulario cuando se cierra el modal
+    // Cargar datos del producto cuando se abre el modal
     watch(() => props.isOpen, (newVal) => {
-      if (!newVal) {
+      if (newVal && props.producto) {
+        cargarProducto()
+      } else if (!newVal) {
         limpiarFormulario()
       }
     })
 
+    const cargarProducto = () => {
+      if (props.producto) {
+        nombreProducto.value = props.producto.nombre || ''
+        ingredientes.value = props.producto.ingredientes || ''
+        categoria.value = props.producto.categoria || ''
+        precio.value = props.producto.precio || ''
+        disponible.value = props.producto.disponible !== false
+        imagenPreview.value = props.producto.imagen || null
+        imagenFile.value = null
+      }
+    }
+
     const handleImageUpload = (event) => {
       const file = event.target.files[0]
       if (file) {
-        // Validar tipo de archivo
         if (!file.type.startsWith('image/')) {
           errorMsg.value = 'Por favor selecciona un archivo de imagen válido'
           return
         }
-
-        // Validar tamaño (máx 5MB)
         if (file.size > 5 * 1024 * 1024) {
           errorMsg.value = 'La imagen no debe superar 5MB'
           return
         }
-
         imagenFile.value = file
-        
         const reader = new FileReader()
-        reader.onload = (e) => {
-          imagenPreview.value = e.target.result
-        }
+        reader.onload = (e) => { imagenPreview.value = e.target.result }
         reader.readAsDataURL(file)
         errorMsg.value = ''
       }
+    }
+
+    const confirmarEliminarImagen = () => {
+      mostrarConfirmacion.value = true
+    }
+
+    const eliminarImagen = () => {
+      imagenPreview.value = null
+      imagenFile.value = null
+      mostrarConfirmacion.value = false
+    }
+
+    const cerrarConfirmacion = () => {
+      mostrarConfirmacion.value = false
     }
 
     const validarFormulario = () => {
@@ -157,47 +194,36 @@ export default {
         errorMsg.value = 'El nombre del producto es obligatorio'
         return false
       }
-
       if (!ingredientes.value.trim()) {
         errorMsg.value = 'Los ingredientes son obligatorios'
         return false
       }
-
       if (!categoria.value) {
         errorMsg.value = 'Debes seleccionar una categoría'
         return false
       }
-
       if (!precio.value || parseFloat(precio.value) <= 0) {
         errorMsg.value = 'El precio debe ser mayor a 0'
         return false
       }
-
       return true
     }
 
     const handleGuardar = async () => {
       errorMsg.value = ''
-
-      if (!validarFormulario()) {
-        return
-      }
-
+      if (!validarFormulario()) return
       guardando.value = true
-
       try {
-        const productoData = {
+        emit('guardar', {
+          id: props.producto?.id,
           nombreProducto: nombreProducto.value.trim(),
           ingredientes: ingredientes.value.trim(),
           categoria: categoria.value,
           precio: parseFloat(precio.value),
           disponible: disponible.value,
-          imagen: imagenFile.value // Pasar el File directamente
-        }
-
-        emit('guardar', productoData)
+          imagen: imagenFile.value || imagenPreview.value
+        })
       } catch (error) {
-        console.error('Error al preparar datos:', error)
         errorMsg.value = 'Error al preparar los datos del producto'
         guardando.value = false
       }
@@ -218,6 +244,7 @@ export default {
       imagenPreview.value = null
       errorMsg.value = ''
       guardando.value = false
+      mostrarConfirmacion.value = false
     }
 
     return {
@@ -229,7 +256,11 @@ export default {
       imagenPreview,
       errorMsg,
       guardando,
+      mostrarConfirmacion,
       handleImageUpload,
+      confirmarEliminarImagen,
+      eliminarImagen,
+      cerrarConfirmacion,
       handleGuardar,
       handleCancelar
     }
@@ -238,7 +269,6 @@ export default {
 </script>
 
 <style scoped>
-/* Modal overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -256,20 +286,192 @@ export default {
 .modal-content {
   background-color: #fff8f8;
   border-radius: 20px;
-  padding: 14px 18px;
+  padding: 14px 17px;
   width: 90%;
-  max-width: 400px;
+  max-width: 430px;
   position: relative;
   box-shadow: 0 10px 40px #00000014;
 }
 
 .modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #28233b;
+  margin-bottom: 12px;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Upload área */
+.upload-area-square {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-area-square:hover {
+  border-color: #7cb342;
+}
+
+.upload-placeholder svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 5px;
+}
+
+.upload-placeholder p {
+  color: #999;
+  font-size: 11px;
+  margin: 5px 0 0 0;
+}
+
+/* Upload área CIRCULAR */
+.upload-area-circular {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.image-preview-container {
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  border: 2px dashed #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.image-preview-container:hover {
+  border-color: #7cb342;
+}
+
+.preview-image-circular {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.upload-placeholder-circular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-placeholder-circular svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Botón Eliminar Imagen */
+.btn-eliminar-imagen {
+  margin-top: 10px;
+  padding: 6px 20px;
+  font-size: 11px;
+  color: #e74c3c;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: underline;
+}
+
+.btn-eliminar-imagen:hover {
+  color: #c0392b;
+}
+
+/* Modal de confirmación */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.confirmation-modal {
+  background-color: white;
+  border-radius: 16px;
+  padding: 25px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.confirmation-title {
   font-size: 18px;
   font-weight: 700;
   color: #28233b;
-  margin-bottom: 12px; 
+  margin-bottom: 10px;
   text-align: center;
   font-family: 'Open Sans', sans-serif;
+}
+
+.confirmation-text {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-eliminar-confirm {
+  padding: 8px 24px;
+  font-size: 12px;
+  color: white;
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-eliminar-confirm:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+}
+
+.btn-cancelar-confirm {
+  padding: 8px 24px;
+  font-size: 12px;
+  color: #666;
+  background-color: #e3e1e1;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-cancelar-confirm:hover {
+  background-color: #d0d0d0;
+  transform: translateY(-2px);
 }
 
 .select-categoria {
@@ -298,59 +500,6 @@ export default {
   border-color: #7cb342;
 }
 
-/* Upload área */
-.upload-area {
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.upload-area:hover {
-  border-color: #7cb342;
-}
-
-.upload-placeholder {
-  border: 2px dashed #ddd;
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.upload-placeholder:hover {
-  border-color: #bdbdbd;
-}
-
-.upload-placeholder svg {
-  width: 32px;
-  height: 32px;
-  margin-bottom: 5px;
-}
-
-.upload-placeholder p {
-  color: #999;
-  font-size: 11px;
-  margin: 5px 0 0 0;
-}
-
-.preview-image {
-  width: 100px;           
-  height: 100px;
-  border-radius: 50%;     
-  object-fit: cover;     
-  border: 3px solid #ddd;
-  display: block;
-  margin: 0 auto 10px auto; 
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Form groups */
 .form-group {
   margin-bottom: 10px;
 }
@@ -386,7 +535,6 @@ export default {
   min-height: 50px;
 }
 
-/* Checkbox */
 .checkbox-group {
   margin-bottom: 12px;
   display: flex;
@@ -402,7 +550,6 @@ export default {
   position: relative;
 }
 
-/* Ocultar checkbox original */
 .custom-checkbox input[type="checkbox"] {
   position: absolute;
   opacity: 0;
@@ -411,7 +558,6 @@ export default {
   width: 0;
 }
 
-/* Crear checkbox personalizado */
 .checkmark {
   position: relative;
   height: 18px;
@@ -427,13 +573,11 @@ export default {
   border-color: #6d9fef;
 }
 
-/* Cuando está checked - Color morado */
 .custom-checkbox input:checked ~ .checkmark {
   background-color: #6d9fef;
   border-color: #6d9fef;
 }
 
-/* Crear el check mark */
 .checkmark:after {
   content: "";
   position: absolute;
@@ -447,7 +591,6 @@ export default {
   transform: rotate(45deg);
 }
 
-/* Mostrar check cuando está checked */
 .custom-checkbox input:checked ~ .checkmark:after {
   display: block;
 }
@@ -457,7 +600,6 @@ export default {
   color: #666;
 }
 
-/* Mensaje de error */
 .error-message {
   background-color: #fee;
   color: #c33;
@@ -468,17 +610,16 @@ export default {
   text-align: center;
 }
 
-/* Botones */
 .modal-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   margin-top: 8px;
 }
 
 .btn-guardar,
 .btn-cancelar {
-  padding: 7px 20px;
+  padding: 8px 28px;
   font-size: 11px;
   font-weight: 600;
   border: none;
@@ -517,6 +658,68 @@ export default {
 .btn-cancelar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Responsive para 1600px+ */
+@media (min-width: 1600px) {
+  .modal-content {
+    max-width: 500px;
+    padding: 25px 30px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .image-preview-container {
+    width: 140px;
+    height: 140px;
+  }
+
+  .upload-placeholder-circular svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .btn-eliminar-imagen {
+    font-size: 12px;
+    padding: 7px 22px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 10px 32px;
+    font-size: 13px;
+  }
+
+  .confirmation-modal {
+    max-width: 380px;
+    padding: 28px;
+  }
+
+  .confirmation-title {
+    font-size: 20px;
+  }
+
+  .confirmation-text {
+    font-size: 14px;
+  }
 }
 
 /* ===== RESPONSIVE PARA MODAL ===== */
@@ -624,8 +827,8 @@ export default {
 /* Pantallas medianas (1280px - 1366px) - 15.6" HD */
 @media (min-width: 1280px) and (max-width: 1366px) {
   .modal-content {
-    max-width: 370px;
-    padding: 12px 16px;
+    max-width: 450px;
+    padding: 20px 25px;
   }
 
   .modal-title {
