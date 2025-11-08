@@ -189,7 +189,7 @@ const paginaAnterior = () => {
 }
 
 .nav-links a:hover {
-  color: #ff6b35;
+  color: #35a4ff;
 }
 
 .btn-admin {
