@@ -40,7 +40,53 @@
       <!-- Tabla de productos -->
       <div class="table-container">
         <div v-if="cargando" class="loader"></div>
-        <p v-else class="empty-message">Gestiona todos tus productos</p>
+        <p v-else-if="productosFiltrados.length === 0" class="empty-message">
+          {{ searchQuery ? 'No se encontraron productos' : 'Gestiona todos tus productos' }}
+        </p>
+        <div v-else class="table-wrapper">
+          <table class="productos-table">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Disponibilidad</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="producto in productosFiltrados" :key="producto.id">
+                <td>
+                  <div class="img-container">
+                    <img 
+                      :src="obtenerUrlImagen(producto.imagen)" 
+                      :alt="producto.nombre"
+                      class="producto-img"
+                      @error="onImageError"
+                    >
+                  </div>
+                </td>
+                <td class="producto-nombre">{{ producto.nombre }}</td>
+                <td class="producto-descripcion">{{ producto.ingredientes }}</td>
+                <td class="producto-precio">${{ formatearPrecio(producto.precio) }}</td>
+                <td>
+                  <span :class="['badge-disponibilidad', producto.disponible ? 'disponible' : 'no-disponible']">
+                    {{ producto.disponible ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="td-opciones">
+                  <button class="btn-editar" @click="editarProducto(producto.id)">
+                    Editar
+                  </button>
+                  <button class="btn-eliminar" @click="eliminarProducto(producto.id)">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -63,8 +109,8 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, computed } from 'vue'
+import { listarProductos, crearProducto, eliminarProducto as eliminarProductoAPI } from '@/services/productos'
 import AgregarProducto from './AgregarProducto.vue' 
 
 export default {
@@ -78,7 +124,17 @@ export default {
     const productos = ref([])
     const cargando = ref(false)
 
-    const API_URL = 'http://localhost:3000/api' // Ejemplo
+    // Productos filtrados según búsqueda
+    const productosFiltrados = computed(() => {
+      if (!searchQuery.value) {
+        return productos.value
+      }
+      const query = searchQuery.value.toLowerCase()
+      return productos.value.filter(p => 
+        p.nombre.toLowerCase().includes(query) ||
+        p.ingredientes.toLowerCase().includes(query)
+      )
+    })
 
     // Cargar productos al montar el componente
     onMounted(() => {
@@ -88,11 +144,15 @@ export default {
     const cargarProductos = async () => {
       try {
         cargando.value = true
-        const response = await axios.get(`${API_URL}/productos`)
+        const response = await listarProductos()
         productos.value = response.data
+        console.log('✅ Productos cargados:', productos.value)
       } catch (error) {
-        console.error('Error al cargar productos:', error)
-        alert('Error al cargar los productos')
+        console.error('❌ Error al cargar productos:', error)
+        if (error.response) {
+          console.error('Respuesta del servidor:', error.response.data)
+        }
+        alert('Error al cargar los productos. Verifica que el backend esté corriendo.')
       } finally {
         cargando.value = false
       }
@@ -109,34 +169,37 @@ export default {
     const guardarProducto = async (producto) => {
       try {
         cargando.value = true
-        const response = await axios.post(`${API_URL}/productos`, {
-          nombre: producto.nombreProducto,
-          categoria: producto.categoria,
-          ingredientes: producto.ingredientes,
-          precio: producto.precio,
-          disponible: producto.disponible,
-          imagen: producto.imagen
-        })
-
-        // Agregar el nuevo producto a la lista
-        productos.value.push(response.data)
+        console.log('📦 Guardando producto:', producto)
+        
+        const response = await crearProducto(producto)
+        
+        console.log('✅ Producto guardado:', response.data)
         
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
-        // Recargar la lista
+        // Recargar la lista completa
         await cargarProductos()
       } catch (error) {
-        console.error('Error al guardar producto:', error)
-        alert('Error al guardar el producto')
+        console.error('❌ Error al guardar producto:', error)
+        
+        // Mensaje de error más detallado
+        if (error.response) {
+          console.error('Respuesta del servidor:', error.response.data)
+          const errorMsg = error.response.data.error || error.response.data.message || JSON.stringify(error.response.data)
+          alert(`Error: ${errorMsg}`)
+        } else if (error.request) {
+          alert('Error de conexión. Verifica que el backend esté corriendo en http://127.0.0.1:8000')
+        } else {
+          alert('Error al guardar el producto')
+        }
       } finally {
         cargando.value = false
       }
     }
 
     const editarProducto = async (id) => {
-      // Aquí implementarás la lógica de editar
-      console.log('Editar producto:', id)
+      console.log('✏️ Editar producto:', id)
       alert('Función de editar en desarrollo')
     }
 
@@ -147,30 +210,59 @@ export default {
 
       try {
         cargando.value = true
-        await axios.delete(`${API_URL}/productos/${id}`)
+        await eliminarProductoAPI(id)
         
         // Eliminar de la lista local
         productos.value = productos.value.filter(p => p.id !== id)
         
-        alert('Producto eliminado exitosamente')
+        alert('✅ Producto eliminado exitosamente')
       } catch (error) {
-        console.error('Error al eliminar producto:', error)
+        console.error('❌ Error al eliminar producto:', error)
         alert('Error al eliminar el producto')
       } finally {
         cargando.value = false
       }
     }
 
+    // Formatear precio en pesos colombianos
+    const formatearPrecio = (precio) => {
+      return new Intl.NumberFormat('es-CO').format(precio)
+    }
+
+    // Obtener URL de imagen
+    const obtenerUrlImagen = (imagenUrl) => {
+      if (!imagenUrl) {
+        return 'https://via.placeholder.com/100x100?text=Sin+Imagen'
+      }
+      
+      // Si ya es una URL completa, devolverla
+      if (imagenUrl.startsWith('http://') || imagenUrl.startsWith('https://')) {
+        return imagenUrl
+      }
+      
+      // Si es una ruta relativa, agregar la base del backend
+      return `http://127.0.0.1:8000${imagenUrl}`
+    }
+
+    // Manejo de error de imagen
+    const onImageError = (event) => {
+      event.target.src = 'https://via.placeholder.com/100x100?text=Error'
+    }
+
     return {
       searchQuery,
       mostrarModal,
       productos,
+      productosFiltrados,
       cargando,
       abrirModal,
       cerrarModal,
       guardarProducto,
       editarProducto,
-      eliminarProducto
+      eliminarProducto,
+      formatearPrecio,
+      obtenerUrlImagen,
+      onImageError
     }
   }
 }
@@ -180,10 +272,10 @@ export default {
 /* General */
 .inventario-container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #ffffff;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Navegación */
@@ -200,6 +292,7 @@ export default {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .logo {
@@ -220,8 +313,7 @@ export default {
   margin-left: 100px;
 }
 
-.nav-links a,
-.nav-links router-link {
+.nav-links a {
   font-size: 14px;
   color: #666;
   text-decoration: none;
@@ -337,8 +429,9 @@ export default {
   margin-bottom: 40px;
   max-width: 900px;
   margin-left: auto;
-  margin-right: 35px;
+  margin-right: auto;
   margin-top: -20px;
+  padding: 0 20px;
 }
 
 .btn-agregar {
@@ -355,8 +448,9 @@ export default {
 }
 
 .btn-agregar:hover {
-  background-color: #6d9fef;
+  background-color: #6a9f38;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(124, 179, 66, 0.3);
 }
 
 /* Buscador */
@@ -398,325 +492,199 @@ export default {
 .table-container {
   background-color: rgb(253, 252, 252);
   border-radius: 16px;
-  padding: 60px 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.336);
+  padding: 30px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-height: 290px;
+  margin-top: -30px;
+  margin: 0 20px;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.productos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.productos-table thead {
+  background-color: #e8d7a8;
+}
+
+.productos-table th {
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+.productos-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.productos-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.productos-table td {
+  padding: 16px 12px;
+  font-size: 13px;
+  color: #555;
+  vertical-align: middle;
+}
+
+/* Columna de imagen */
+.img-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -30px;
+  background-color: #f5f5f5;
+}
+
+.producto-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Columna de nombre */
+.producto-nombre {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Columna de descripción */
+.producto-descripcion {
+  max-width: 200px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Columna de precio */
+.producto-precio {
+  font-weight: 600;
+  color: #7cb342;
+  font-size: 14px;
+}
+
+/* Badge de disponibilidad */
+.badge-disponibilidad {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-disponibilidad.disponible {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-disponibilidad.no-disponible {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Botones de opciones */
+.td-opciones {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-editar,
+.btn-eliminar {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-editar {
+  background-color: #ff9f43;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #ff8800;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(255, 159, 67, 0.3);
+}
+
+.btn-eliminar {
+  background-color: #ee5a6f;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #d63447;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(238, 90, 111, 0.3);
+}
+
+/* Loader */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #7cb342;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 60px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .empty-message {
   color: #8b8585b0;
   font-size: 16px;
-  font-weight:500;
+  font-weight: 500;
   font-family: 'Montserrat', sans-serif;
+  padding: 60px 20px;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-
-/* Pantallas grandes (1600px+) */
-@media (min-width: 1600px) {
-  .navbar {
-    padding: 20px 5% !important;
-    gap: 20px !important;
-  }
-
-  .logo {
-    font-size: 22px;
-    margin-right: 40px;
-  }
-
-  .nav-links {
-    gap: 80px;
-  }
-
-  .nav-links a {
-    font-size: 15px;
-  }
-
-  .btn-admin {
-    padding: 10px 32px;
-    font-size: 12px;
-    margin-right: 4px !important;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 10px 26px;
-    font-size: 12px;
-  }
-
+/* RESPONSIVE DESIGN */
+@media (max-width: 1023px) {
   .main-content {
-    max-width: 1200px;
-    padding: 180px 60px 60px;
-  }
-
-  .title {
-    font-size: 50px;
-    margin-top: 10px;
-  }
-
-  .actions-bar {
-    margin-bottom: 60px;
+    max-width: 100%;
+    padding: 130px 20px 50px;
   }
 
   .table-container {
-    min-height: 380px;
+    margin: 0 10px;
   }
 
-  .img-grapefruit {
-    width: 160px;
-    height: 160px;
-    top:100px;
-    left:-70px;
-  }
-}
-
-/* Pantallas medianas-grandes (1367px - 1599px) */
-@media (min-width: 1367px) and (max-width: 1599px) {
-  .navbar {
-    padding: 20px 4% !important;
-    gap: 18px !important;
-  }
-
-  .logo {
-    font-size: 20px;
-    margin-right: 35px;
-  }
-
-  .nav-links {
-    gap: 70px;
-  }
-
-  .nav-links a {
-    font-size: 14px;
-  }
-
-  .btn-admin {
-    margin-right: 12px !important;
-  }
-
-  .main-content {
-    max-width: 1100px;
-  }
-
-  .title {
-    font-size: 46px;
-  }
-
-  .img-grapefruit {
-    width: 160px;
-    height: 160px;
-    top: 40px;
-    left: -70px;
-  }
-}
-
-/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
-@media (min-width: 1280px) and (max-width: 1366px) {
-  .navbar {
-    padding: 20px 3% !important;
-    gap: 12px !important;
-  }
-
-  .logo {
-    font-size: 19px;
-    margin-right: 30px;
-  }
-
-  .nav-links {
-    gap: 60px;
-  }
-
-  .nav-links a {
-    font-size: 14px;
-  }
-
-  .btn-admin {
-    padding: 8px 26px;
-    font-size: 12px;
-    margin-right: 4px !important;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 8px 20px;
+  .productos-table th,
+  .productos-table td {
+    padding: 10px 8px;
     font-size: 12px;
   }
 
-  .main-content {
-    max-width: 1000px;
-  }
-
-  .title {
-    font-size: 44px;
-  }
-
-  .img-grapefruit {
-    width: 160px;
-    height: 160px;
-    top: 70px;
-    left: -70px;
-  }
-
-  .hoja-below {
-    width: 80px;
-    height: 80px;
-    top: 420px;
-  }
-
-  .hoja-bottom {
-    width: 70px;
-    height: 70px;
-  }
-
-  .img-mortero {
-    width: 200px;
-    height: 200px;
-    right: -60px;
-  }
-}
-
-/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  .navbar {
-    padding: 20px 2% !important;
-    gap: 10px !important;
-  }
-
-  .logo {
-    font-size: 18px;
-    margin-right: 25px;
-  }
-
-  .nav-links {
-    gap: 50px;
-  }
-
-  .nav-links a {
-    font-size: 13px;
-  }
-
-  .btn-admin {
-    padding: 8px 24px;
-    font-size: 13px;
-    margin-right: 8px !important;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 8px 18px;
-    font-size: 13px;
-  }
-
-  .main-content {
-    max-width: 900px;
-    padding: 140px 30px 60px;
-  }
-
-  .title {
-    font-size: 42px;
-    margin-top: -40px;
-  }
-
-  .img-grapefruit {
-    width: 140px;
-    height: 140px;
-    top: -45px;
-    left: -55px;
-  }
-
-  .hoja-below {
-    width: 70px;
-    height: 70px;
-    top: 400px;
-    right: 30px;
-  }
-
-  .hoja-bottom {
+  .img-container {
     width: 60px;
     height: 60px;
-    bottom: 120px;
-    left: 50px;
-  }
-
-  .img-mortero {
-    width: 180px;
-    height: 180px;
-    right: -55px;
-    top: 160px;
   }
 }
 
-/* Tablets (768px - 1023px) */
-@media (max-width: 1023px) {
-  .navbar {
-    padding: 20px 2% !important;
-    gap: 10px !important;
-  }
-
-  .logo {
-    font-size: 17px;
-    margin-right: 20px;
-  }
-
-  .nav-links {
-    gap: 40px;
-  }
-
-  .nav-links a {
-    font-size: 13px;
-  }
-
-  .btn-admin {
-    padding: 7px 20px;
-    font-size: 12px;
-    margin-right: 8px !important;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 7px 16px;
-    font-size: 12px;
-  }
-
-  .main-content {
-    max-width: 750px;
-    padding: 130px 25px 50px;
-  }
-
-  .title {
-    font-size: 38px;
-  }
-
-  .img-grapefruit {
-    width: 130px;
-    height: 130px;
-    top: -40px;
-    left: -50px;
-  }
-
-  .hoja-below {
-    width: 60px;
-    height: 60px;
-    top: 380px;
-    right: 20px;
-  }
-
-  .hoja-bottom {
-    width: 55px;
-    height: 55px;
-    bottom: 100px;
-    left: 40px;
-  }
-
-  .img-mortero {
-    width: 160px;
-    height: 160px;
-    right: -50px;
-    top: 170px;
-  }
-}
-
-/* Tablets pequeñas (600px - 767px) */
 @media (max-width: 767px) {
   .navbar {
     padding: 15px 20px !important;
@@ -729,30 +697,19 @@ export default {
     font-size: 18px;
     width: 100%;
     text-align: center;
-    margin-right: 0;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
   }
 
   .nav-links {
     gap: 30px;
     width: 100%;
     justify-content: center;
-  }
-
-  .nav-links a {
-    font-size: 13px;
+    margin-left: 0;
   }
 
   .btn-admin {
-    padding: 7px 20px;
-    font-size: 12px;
     margin-left: 0 !important;
     margin-right: 5px !important;
-  }
-
-  .btn-cerrar-sesion {
-    padding: 7px 16px;
-    font-size: 12px;
   }
 
   .img-grapefruit,
@@ -763,83 +720,61 @@ export default {
   }
 
   .main-content {
-    padding: 160px 20px 40px;
-    max-width: 100%;
+    padding: 160px 15px 40px;
   }
 
   .title {
     font-size: 32px;
-    margin-bottom: 25px;
-    margin-top: -20px;
   }
 
   .actions-bar {
     flex-direction: column;
     gap: 15px;
+    padding: 0 10px;
   }
 
   .btn-agregar {
     width: 100%;
-    padding: 12px 24px;
-    font-size: 13px;
   }
 
   .search-container {
     max-width: 100%;
   }
 
-  .search-input {
-    padding: 10px 20px 10px 50px;
-    font-size: 14px;
-  }
-
   .table-container {
-    padding: 30px 20px;
-    min-height: 240px;
+    padding: 20px 10px;
+    margin: 0 10px;
   }
 
-  .empty-message {
-    font-size: 14px;
-  }
-}
-
-/* Móviles (hasta 599px) */
-@media (max-width: 599px) {
-  .navbar {
-    padding: 12px 15px !important;
-  }
-
-  .logo {
-    font-size: 16px;
-  }
-
-  .nav-links {
-    gap: 20px;
-  }
-
-  .nav-links a {
-    font-size: 12px;
-  }
-
-  .btn-admin,
-  .btn-cerrar-sesion {
-    padding: 6px 16px;
+  .productos-table {
     font-size: 11px;
   }
 
-  .main-content {
-    padding: 170px 15px 30px;
+  .productos-table th,
+  .productos-table td {
+    padding: 8px 6px;
   }
 
-  .title {
-    font-size: 28px;
-    margin-bottom: 20px;
-    margin-top: -10px;
+  .img-container {
+    width: 50px;
+    height: 50px;
   }
 
-    .table-container {
-    padding: 25px 15px;
-    min-height: 200px;
+  .producto-descripcion {
+    max-width: 120px;
+    font-size: 11px;
+  }
+
+  .td-opciones {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .btn-editar,
+  .btn-eliminar {
+    padding: 6px 12px;
+    font-size: 11px;
+    width: 100%;
   }
 }
 </style>
