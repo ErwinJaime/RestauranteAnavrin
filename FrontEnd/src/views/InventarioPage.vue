@@ -439,7 +439,7 @@ export default {
   .btn-admin {
     padding: 10px 32px;
     font-size: 15px;
-    margin-right: 12px !important;
+    margin-right: 5px !important;
   }
 
   .btn-cerrar-sesion {
@@ -487,6 +487,13 @@ export default {
 
   .title {
     font-size: 46px;
+  }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: 80px;
+    left: -70px;
   }
 }
 
