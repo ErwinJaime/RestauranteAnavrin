@@ -1,8 +1,21 @@
 <template>
   <div v-if="isOpen" class="confirmation-overlay" @click.self="$emit('cerrar')">
     <div class="confirmation-modal">
+      <!-- Icono de alerta -->
+      <div class="alert-icon">
+        <svg width="50" height="50" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#e74c3c"/>
+          <path d="M12 8V12M12 16H12.01" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Título -->
       <h3 class="confirmation-title">{{ titulo }}</h3>
+      
+      <!-- Mensaje -->
       <p class="confirmation-text">{{ mensaje }}</p>
+      
+      <!-- Botones -->
       <div class="confirmation-buttons">
         <button 
           class="btn-eliminar-confirm" 
@@ -49,43 +62,70 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 1100;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .confirmation-modal {
   background-color: white;
   border-radius: 16px;
-  padding: 25px;
+  padding: 35px 30px 25px;
   width: 90%;
-  max-width: 350px;
+  max-width: 380px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
+/* Icono de alerta */
+.alert-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.alert-icon svg {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Título */
 .confirmation-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: #28233b;
-  margin-bottom: 10px;
+  color: #2c3e50;
+  margin-bottom: 12px;
   text-align: center;
   font-family: 'Open Sans', sans-serif;
+  line-height: 1.3;
 }
 
+/* Texto del mensaje */
 .confirmation-text {
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #555;
   text-align: center;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: 25px;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
+/* Botones */
 .confirmation-buttons {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
 }
 
 .btn-eliminar-confirm {
-  padding: 8px 24px;
-  font-size: 12px;
+  padding: 11px 30px;
+  font-size: 14px;
   color: white;
   background-color: #e74c3c;
   border: none;
@@ -94,11 +134,13 @@ export default {
   transition: all 0.3s ease;
   font-weight: 600;
   font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
 .btn-eliminar-confirm:hover:not(:disabled) {
   background-color: #c0392b;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
 }
 
 .btn-eliminar-confirm:disabled {
@@ -107,10 +149,10 @@ export default {
 }
 
 .btn-cancelar-confirm {
-  padding: 8px 24px;
-  font-size: 12px;
-  color: #666;
-  background-color: #e3e1e1;
+  padding: 11px 30px;
+  font-size: 14px;
+  color: #555;
+  background-color: #e0e0e0;
   border: none;
   border-radius: 50px;
   cursor: pointer;
@@ -120,12 +162,45 @@ export default {
 }
 
 .btn-cancelar-confirm:hover:not(:disabled) {
-  background-color: #d0d0d0;
+  background-color: #bdbdbd;
   transform: translateY(-2px);
 }
 
 .btn-cancelar-confirm:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .confirmation-modal {
+    max-width: 320px;
+    padding: 30px 25px 20px;
+  }
+
+  .alert-icon svg {
+    width: 45px;
+    height: 45px;
+  }
+
+  .confirmation-title {
+    font-size: 18px;
+  }
+
+  .confirmation-text {
+    font-size: 13px;
+  }
+
+  .confirmation-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-eliminar-confirm,
+  .btn-cancelar-confirm {
+    width: 100%;
+    padding: 10px 24px;
+    font-size: 13px;
+  }
 }
 </style>

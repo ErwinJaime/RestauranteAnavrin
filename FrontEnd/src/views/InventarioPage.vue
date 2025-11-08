@@ -741,7 +741,7 @@ export default {
 /* Columna de precio */
 .producto-precio {
   font-weight: 600;
-  color: #69A003;
+  color: #639702;
   font-size: 14px;
 }
 
@@ -948,9 +948,15 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top: 100px;
+    top: 70px;
     left: -70px;
   }
+
+  .producto-precio {
+  font-weight: 600;
+  color: #639702;
+  font-size: 14px;
+}
 }
 
 /* Pantallas medianas-grandes (1367px - 1599px) */
