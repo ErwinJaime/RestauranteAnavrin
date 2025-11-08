@@ -4,12 +4,12 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
+        <router-link to="/administracion">Home</router-link>
         <router-link to="/about">About</router-link>
-        <a href="#">Review</a>
+        <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>
-      <button class="btn-cerrar-sesion">Cerrar Sesión</button>
+      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
     </nav>
 
     <!-- Imágenes decorativas -->
@@ -67,6 +67,16 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const cerrarSesion = () => {
+  localStorage.removeItem('usuario')
+  localStorage.removeItem('correo')
+  sessionStorage.clear()
+  router.push('/')
+}
 
 const paginaActual = ref(0);
 const resenasPorPagina = 3;

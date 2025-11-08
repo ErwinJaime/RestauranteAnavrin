@@ -9,7 +9,7 @@
         <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>
-      <button class="btn-cerrar-sesion">Cerrar Sesión</button>
+      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
     </nav>
 
     <!-- Imagen superior -->
@@ -96,7 +96,16 @@
 </template>
 
 <script setup>
-// No se necesita lógica adicional por ahora
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const cerrarSesion = () => {
+  localStorage.removeItem('usuario')
+  localStorage.removeItem('correo')
+  sessionStorage.clear()
+  router.push('/')
+}
 </script>
 
 <style scoped>
