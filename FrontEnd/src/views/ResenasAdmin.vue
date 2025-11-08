@@ -262,7 +262,7 @@ const paginaAnterior = () => {
 .main-content {
   width: min(90%, 1400px); /* ✅ flexible y centrado */
   margin: 0 auto;
-  padding-top: 140px;
+  padding-top: 180px;
   text-align: center;
 }
 
