@@ -286,12 +286,6 @@
   color: white;
 }
 
-.card p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0;
-  text-align: center;
-}
 
 /* ------------------------
    NUESTRA HISTORIA
@@ -388,7 +382,7 @@
   }
 
   .hero-image img {
-    height: 320px;
+    height: 450px;
   }
 
   .card {
@@ -402,8 +396,9 @@
   }
 
   .bottom-image img {
-    height: 450px;
+  height: 520px;
   }
+
 }
 
 /* Pantallas medianas-grandes (1367px - 1599px) */
