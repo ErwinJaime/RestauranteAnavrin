@@ -9,7 +9,8 @@
         <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>
-      <button class="btn-cerrar-sesion">Cerrar Sesión</button>
+      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
+
     </nav>
 
     <!-- Contenido Principal -->
@@ -158,6 +159,7 @@ import {
 import AgregarProducto from './AgregarProducto.vue' 
 import EditarProducto from './EditarProducto.vue'
 import ModalConfirmacion from './ModalConfirmacion.vue'
+import { useRouter } from 'vue-router'
 
 
 export default {
@@ -176,6 +178,19 @@ export default {
     const cargando = ref(false)
     const mostrarConfirmacionEliminar = ref(false)
     const productoAEliminar = ref(null)
+
+    const router = useRouter()
+
+    const cerrarSesion = () => {
+      // Eliminar cualquier dato de sesión guardado (puedes ajustar según tu implementación)
+      localStorage.removeItem('usuario')
+      localStorage.removeItem('correo')
+      sessionStorage.clear()
+
+      // Redirigir al login
+      router.push('/')
+    }
+
     // Productos filtrados según búsqueda
     const productosFiltrados = computed(() => {
       if (!searchQuery.value) {
@@ -372,7 +387,8 @@ const eliminarProducto = async () => {
       eliminarProducto,
       formatearPrecio,
       obtenerUrlImagen,
-      onImageError
+      onImageError,
+      cerrarSesion
     }
   }
 }
