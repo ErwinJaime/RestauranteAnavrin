@@ -1,17 +1,15 @@
 <template>
   <div class="resenas-admin-container">
-    <!-- Navegación -->
+    <!-- Navegación (actualizada desde inventario) -->
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
+        <router-link to="/adminitracion">Home</router-link>
         <router-link to="/about">About</router-link>
         <a href="#">Review</a>
       </div>
-      <div class="buttons">
-        <button class="btn-admin">Admin</button>
-        <button class="btn-cerrar-sesion">Cerrar Sesión</button>
-      </div>
+      <span class="btn-admin">Admin</span>
+      <button class="btn-cerrar-sesion">Cerrar Sesión</button>
     </nav>
 
     <!-- Imágenes decorativas -->
@@ -145,78 +143,87 @@ const paginaAnterior = () => {
 }
 
 /* ------------------------
-   NAVBAR
+   NAVBAR (actualizada desde inventario)
 ------------------------- */
 .navbar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 60px;
   z-index: 50;
-  flex-wrap: wrap;
+  background-color: #ffffff;
+  padding: 20px 3% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
   box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   color: #1a1a1a;
+  letter-spacing: 1px;
+  margin-left: 30px;
+  flex-shrink: 0;
 }
 
 .nav-links {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
+  display: flex !important;
+  gap: 60px;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin-left: 100px;
 }
 
-.nav-links a {
-  font-size: 0.95rem;
-  color: #444;
+.nav-links a,
+.nav-links router-link {
+  font-size: 14px;
+  color: #666;
   text-decoration: none;
   transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
   color: #ff6b35;
 }
 
-.buttons {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.btn-admin,
-.btn-cerrar-sesion {
-  padding: 8px 20px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
 .btn-admin {
+  padding: 8px 28px;
+  font-size: 14px;
+  color: #000;
   background-color: #ff6b35;
   border: none;
-  color: white;
+  border-radius: 50px;
+  cursor: default;
+  font-weight: 580;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto !important;
+  margin-right: 10px !important;
 }
 
-
 .btn-cerrar-sesion {
-  background: transparent;
+  padding: 8px 22px;
+  font-size: 14px;
+  color: #070707;
   border: 2px solid #ddd;
-  color: #333;
+  background-color: transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-cerrar-sesion:hover {
   background-color: #6d9fef;
-  color: #fff;
+  color: rgb(21, 3, 3);
 }
 
 /* ------------------------
@@ -235,35 +242,39 @@ const paginaAnterior = () => {
 .img-naranja {
   top: 80px;
   left: 40px;
-  width: 130px;
+  width: 180px;
 }
 
 .img-aceite {
   top: 50px;
   right: 0px;
-  width: 150px;
+  width: 200px;
 }
 
 .img-guacamole {
   bottom: 0px;
   left: 50px;
-  width: 160px;
+  width: 210px;
 }
 
 .img-estrellas {
   bottom: 0;
   right: 5px;
-  width: 155px;
+  width: 205px;
 }
 
 /* ------------------------
    CONTENIDO PRINCIPAL
 ------------------------- */
 .main-content {
-  width: min(90%, 1400px); /* ✅ flexible y centrado */
+  width: min(90%, 1400px);
   margin: 0 auto;
-  padding-top: 180px;
+  padding-top: 140px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 140px);
 }
 
 .title {
@@ -278,11 +289,13 @@ const paginaAnterior = () => {
    TARJETAS
 ------------------------- */
 .resenas-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
   padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .resena-card {
@@ -293,6 +306,8 @@ const paginaAnterior = () => {
   text-align: center;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 320px;
+  flex-shrink: 0;
 }
 
 .resena-card:hover {
@@ -374,49 +389,231 @@ const paginaAnterior = () => {
 }
 
 /* ------------------------
-   MEDIA QUERIES
+   MEDIA QUERIES (desde inventario)
 ------------------------- */
 
-/* Tablets medianas */
-@media (max-width: 992px) {
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
   .navbar {
-    padding: 15px 30px;
+    padding: 20px 5% !important;
+    gap: 20px !important;
+  }
+
+  .logo {
+    font-size: 22px;
+    margin-right: 40px;
+  }
+
+  .nav-links {
+    gap: 80px;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+  }
+
+  .btn-admin {
+    padding: 10px 32px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 10px 26px;
+    font-size: 12px;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .navbar {
+    padding: 20px 4% !important;
+    gap: 18px !important;
+  }
+
+  .logo {
+    font-size: 20px;
+    margin-right: 35px;
+  }
+
+  .nav-links {
+    gap: 70px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    margin-right: 12px !important;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 3% !important;
+    gap: 12px !important;
+  }
+
+  .logo {
+    font-size: 19px;
+    margin-right: 30px;
+  }
+
+  .nav-links {
+    gap: 60px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    padding: 8px 26px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navbar {
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 18px;
+    margin-right: 25px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 8px 24px;
+    font-size: 13px;
+    margin-right: 8px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    padding-top: 140px;
+  }
+
+  .resena-card {
+    width: 280px;
   }
 
   .img-naranja,
   .img-aceite,
   .img-guacamole,
   .img-estrellas {
-    width: 90px;
+    width: 120px;
   }
 }
 
-/* Tablets y móviles */
-@media (max-width: 768px) {
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
   .navbar {
-    flex-direction: column;
-    gap: 10px;
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 17px;
+    margin-right: 20px;
   }
 
   .nav-links {
-    justify-content: center;
-    gap: 1rem;
+    gap: 40px;
   }
 
-  .buttons {
-    justify-content: center;
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-right: 8px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
   }
 
   .main-content {
-    padding-top: 180px;
-  }
-
-  .title {
-    font-size: 1.8rem;
+    padding-top: 130px;
   }
 
   .resena-card {
-    padding: 20px 15px;
+    width: 280px;
+  }
+
+  .img-naranja,
+  .img-aceite,
+  .img-guacamole,
+  .img-estrellas {
+    width: 110px;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .navbar {
+    padding: 15px 20px !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    justify-content: center !important;
+  }
+
+  .logo {
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    margin-right: 0;
+    margin-bottom: 10px;
+    margin-left: 0;
+  }
+
+  .nav-links {
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-left: 0 !important;
+    margin-right: 5px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
   }
 
   .img-naranja,
@@ -425,26 +622,60 @@ const paginaAnterior = () => {
   .img-estrellas {
     display: none;
   }
-}
 
-/* Celulares pequeños */
-@media (max-width: 480px) {
-  .navbar {
-    padding: 10px 20px;
+  .main-content {
+    padding-top: 160px;
   }
 
-  .logo {
-    font-size: 1.3rem;
+  .title {
+    font-size: 32px;
   }
 
   .resenas-container {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .resena-card {
+    width: 320px;
+    max-width: 90%;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    padding: 12px 15px !important;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
   }
 
   .btn-admin,
   .btn-cerrar-sesion {
-    font-size: 0.8rem;
-    padding: 6px 14px;
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding-top: 170px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .resena-card {
+    padding: 20px 15px;
   }
 }
 </style>
