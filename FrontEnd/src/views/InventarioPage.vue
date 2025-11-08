@@ -685,7 +685,6 @@ export default {
 
 .productos-table tbody tr:hover {
   background-color: #f9f9f9;
-  border-bottom: 2px solid #e0e0e0; 
 }
 
 .productos-table td {
@@ -695,7 +694,6 @@ export default {
   vertical-align: middle;
   background-color: transparent;
   text-align: center !important;
-  border-bottom: 1px solid #e8e8e8;
 }
 
 /* Asegurar que la primera fila del cuerpo tenga borde superior sutil */
@@ -748,9 +746,9 @@ export default {
 
 /* Badge de disponibilidad */
 .badge-disponibilidad {
-  padding: 6px 16px;
+  padding: 7px 17px;
   border-radius: 20px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   display: inline-block;
 }
