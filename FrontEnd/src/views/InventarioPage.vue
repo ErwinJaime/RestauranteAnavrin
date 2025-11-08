@@ -270,7 +270,7 @@ export default {
 /* Imágenes decorativas */
 .img-grapefruit {
   position: fixed;
-  top: 80px;
+  top: 70px;
   left: -70px;
   width: 180px;
   height: 180px;
@@ -546,7 +546,7 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top: 80px;
+    top: 200px;
     left: -70px;
   }
 
