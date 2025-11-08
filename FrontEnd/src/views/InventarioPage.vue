@@ -324,7 +324,7 @@ export default {
   font-weight: 800;
   color: #28233b;
   margin-bottom: 30px;
-  margin-top: -35px;
+  margin-top: -30px;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -400,7 +400,7 @@ export default {
   border-radius: 16px;
   padding: 60px 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.336);
-  min-height: 320px;
+  min-height: 310px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -438,13 +438,13 @@ export default {
 
   .btn-admin {
     padding: 10px 32px;
-    font-size: 14px;
-    margin-right: 5px !important;
+    font-size: 12px;
+    margin-right: 4px !important;
   }
 
   .btn-cerrar-sesion {
     padding: 10px 26px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .main-content {
@@ -453,8 +453,8 @@ export default {
   }
 
   .title {
-    font-size: 50px;
-    margin-top: -20px;
+    font-size: 44px;
+    margin-top: -10px;
   }
 
   .img-grapefruit {
