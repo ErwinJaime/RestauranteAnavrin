@@ -240,27 +240,27 @@ const paginaAnterior = () => {
 }
 
 .img-naranja {
-  top: 80px;
+  top: 70px;
   left: 40px;
-  width: 180px;
+  width: 145px;
 }
 
 .img-aceite {
   top: 50px;
   right: 0px;
-  width: 200px;
+  width: 140px;
 }
 
 .img-guacamole {
   bottom: 0px;
   left: 50px;
-  width: 210px;
+  width: 200px;
 }
 
 .img-estrellas {
   bottom: 0;
   right: 5px;
-  width: 205px;
+  width: 120px;
 }
 
 /* ------------------------

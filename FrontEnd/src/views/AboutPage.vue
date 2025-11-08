@@ -5,6 +5,7 @@
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
         <router-link to="/administracion">Home</router-link>
+        <router-link to="">About</router-link>
         <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>
@@ -225,7 +226,7 @@
 .quienes-somos {
   text-align: center;
   margin-bottom: 80px;
-  padding: 0 40px;
+  padding: 0;
 }
 
 .title {
@@ -249,16 +250,14 @@
   justify-content: space-between;
   align-items: stretch;
   flex-wrap: nowrap;
-  gap: 8px; /* medio centímetro aprox */
-  margin: 0;
+  gap: 8px; /* medio cm aprox */
+  margin: 0 auto;
   padding: 0;
-  width: 100vw; /* ocupa todo el ancho de la ventana */
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  width: 100%; /* usa el ancho del contenedor, sin desbordar */
+  max-width: 1920px; /* evita que se corte en pantallas grandes */
+  box-sizing: border-box;
 }
+
 
 .card {
   flex: 1;
@@ -347,7 +346,7 @@
 
 .bottom-image img {
   width: 100%;
-  height: 600px;
+  height: 450px;
   object-fit: cover;
   display: block;
   border-radius: 0;
