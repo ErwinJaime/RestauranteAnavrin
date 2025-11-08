@@ -10,7 +10,6 @@
       </div>
       <span class="btn-admin">Admin</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
-
     </nav>
 
     <!-- Contenido Principal -->
@@ -42,7 +41,7 @@
       <div class="table-container">
         <div v-if="cargando" class="loader"></div>
         <p v-else-if="productosFiltrados.length === 0" class="empty-message">
-          {{ searchQuery ? 'No se encontraron productos' : 'Gestiona todos tus productos' }}
+          {{ searchQuery ? 'No se encontraron productos' : 'No hay productos en el inventario' }}
         </p>
         <div v-else class="table-wrapper">
           <table class="productos-table">
@@ -57,15 +56,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="producto in productosFiltrados" :key="producto.id" class="table-row">
+              <tr v-for="producto in productosPaginados" :key="producto.id">
                 <td class="text-center">
                   <div class="img-container">
-                  <img 
-                    :src="producto.imagen || 'https://via.placeholder.com/100x100?text=Sin+Imagen'" 
-                    :alt="producto.nombre"
-                    class="producto-img"
-                    @error="onImageError"
-                  >
+                    <img 
+                      :src="producto.imagen || 'https://via.placeholder.com/100x100?text=Sin+Imagen'" 
+                      :alt="producto.nombre"
+                      class="producto-img"
+                      @error="onImageError"
+                    >
                   </div>
                 </td>
                 <td class="producto-nombre text-center">{{ producto.nombre || 'Sin nombre' }}</td>
@@ -89,6 +88,27 @@
               </tr>
             </tbody>
           </table>
+          
+          <!-- PAGINACIÓN SIMPLE Y LIMPIA -->
+          <div v-if="totalPaginas > 1" class="paginacion">
+            <button 
+              class="btn-paginacion anterior"
+              @click="cambiarPagina(paginaActual - 1)" 
+              :disabled="paginaActual === 1"
+            >
+              <span class="flecha">‹</span> Anterior
+            </button>
+
+            
+
+            <button 
+              class="btn-paginacion siguiente"
+              @click="cambiarPagina(paginaActual + 1)" 
+              :disabled="paginaActual === totalPaginas"
+            >
+              Siguiente <span class="flecha">›</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -128,27 +148,10 @@
       @confirmar="eliminarProducto"
     />
   </div>
-    <!-- Modal de confirmación para eliminar producto -->
-<div v-if="mostrarConfirmacionEliminar" class="confirmation-overlay" @click.self="cerrarConfirmacionEliminar">
-  <div class="confirmation-modal">
-    <h3 class="confirmation-title">¿Estás seguro?</h3>
-    <p class="confirmation-text">
-      Esta acción eliminará el producto permanentemente y no se puede deshacer.
-    </p>
-    <div class="confirmation-buttons">
-      <button class="btn-eliminar-confirm" @click="eliminarProducto" :disabled="cargando">
-        {{ cargando ? 'Eliminando...' : 'Eliminar' }}
-      </button>
-      <button class="btn-cancelar-confirm" @click="cerrarConfirmacionEliminar" :disabled="cargando">
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { 
   listarProductos, 
   crearProducto, 
@@ -160,7 +163,6 @@ import AgregarProducto from './AgregarProducto.vue'
 import EditarProducto from './EditarProducto.vue'
 import ModalConfirmacion from './ModalConfirmacion.vue'
 import { useRouter } from 'vue-router'
-
 
 export default {
   name: 'InventarioPage',
@@ -179,15 +181,15 @@ export default {
     const mostrarConfirmacionEliminar = ref(false)
     const productoAEliminar = ref(null)
 
+    const paginaActual = ref(1)
+    const elementosPorPagina = ref(2)
+
     const router = useRouter()
 
     const cerrarSesion = () => {
-      // Eliminar cualquier dato de sesión guardado (puedes ajustar según tu implementación)
       localStorage.removeItem('usuario')
       localStorage.removeItem('correo')
       sessionStorage.clear()
-
-      // Redirigir al login
       router.push('/')
     }
 
@@ -203,6 +205,30 @@ export default {
       )
     })
 
+    // Productos paginados
+    const productosPaginados = computed(() => {
+      const inicio = (paginaActual.value - 1) * elementosPorPagina.value
+      const fin = inicio + elementosPorPagina.value
+      return productosFiltrados.value.slice(inicio, fin)
+    })
+
+    // Total de páginas
+    const totalPaginas = computed(() => {
+      return Math.ceil(productosFiltrados.value.length / elementosPorPagina.value)
+    })
+
+    // Cambiar de página
+    const cambiarPagina = (pagina) => {
+      if (pagina >= 1 && pagina <= totalPaginas.value) {
+        paginaActual.value = pagina
+      }
+    }
+
+    // Resetear a página 1 cuando cambia la búsqueda
+    watch(searchQuery, () => {
+      paginaActual.value = 1
+    })
+
     // Cargar productos al montar el componente
     onMounted(() => {
       cargarProductos()
@@ -215,12 +241,8 @@ export default {
         productos.value = response.data
         console.log('✅ Productos cargados:', productos.value)
         
-        // DEBUG: Verificar la estructura completa de los datos
         if (productos.value.length > 0) {
           console.log('🔍 Estructura completa del primer producto:', JSON.stringify(productos.value[0], null, 2))
-          console.log('📷 Campo imagen:', productos.value[0].imagen)
-          console.log('📋 Campo ingredientes:', productos.value[0].ingredientes)
-          console.log('🗂️ Todos los campos disponibles:', Object.keys(productos.value[0]))
         }
       } catch (error) {
         console.error('❌ Error al cargar productos:', error)
@@ -237,23 +259,19 @@ export default {
     const cerrarModalAgregar = () => {
       mostrarModalAgregar.value = false
     }
+
     const guardarProducto = async (producto) => {
       try {
         cargando.value = true
         console.log('📦 Guardando producto:', producto)
         
         const response = await crearProducto(producto)
-        
         console.log('✅ Producto guardado:', response.data)
         
         cerrarModalAgregar()
-        /*alert('¡Producto agregado exitosamente!')*/
-        
-        // Recargar la lista completa
         await cargarProductos()
       } catch (error) {
         console.error('❌ Error al guardar producto:', error)
-        /*alert('Error al guardar el producto: ' + (error.response?.data?.message || error.message))*/
       } finally {
         cargando.value = false
       }
@@ -264,7 +282,6 @@ export default {
         cargando.value = true
         console.log('✏️ Editando producto:', id)
         
-        // Obtener los datos completos del producto
         const response = await obtenerProducto(id)
         productoSeleccionado.value = response.data
         
@@ -273,7 +290,6 @@ export default {
         mostrarModalEditar.value = true
       } catch (error) {
         console.error('❌ Error al obtener producto:', error)
-        /*alert('Error al cargar el producto para editar')*/
       } finally {
         cargando.value = false
       }
@@ -289,7 +305,6 @@ export default {
         cargando.value = true
         console.log('🔄 Actualizando producto:', productoActualizado)
         
-        // Preparar datos para enviar
         const dataToSend = {
           nombre: productoActualizado.nombreProducto,
           ingredientes: productoActualizado.ingredientes,
@@ -300,13 +315,9 @@ export default {
         }
         
         const response = await actualizarProductoAPI(productoActualizado.id, dataToSend)
-        
         console.log('✅ Producto actualizado:', response.data)
         
         cerrarModalEditar()
-        /*alert('¡Producto actualizado exitosamente!')*/
-        
-        // Recargar la lista completa
         await cargarProductos()
       } catch (error) {
         console.error('❌ Error al actualizar producto:', error)
@@ -317,52 +328,41 @@ export default {
     }
 
     const confirmarEliminarProducto = (id) => {
-  productoAEliminar.value = id
-  mostrarConfirmacionEliminar.value = true
-}
-
-const cerrarConfirmacionEliminar = () => {
-  mostrarConfirmacionEliminar.value = false
-  productoAEliminar.value = null
-}
-
-const eliminarProducto = async () => {
-  if (!productoAEliminar.value) return
-
-    try {
-      cargando.value = true
-      await eliminarProductoAPI(productoAEliminar.value)
-      
-      // Eliminar de la lista local
-      productos.value = productos.value.filter(p => p.id !== productoAEliminar.value)
-      
-      cerrarConfirmacionEliminar()
-      /*alert('✅ Producto eliminado exitosamente')*/
-    } catch (error) {
-      console.error('❌ Error al eliminar producto:', error)
-      alert('Error al eliminar el producto')
-    } finally {
-      cargando.value = false
+      productoAEliminar.value = id
+      mostrarConfirmacionEliminar.value = true
     }
-  }
+
+    const cerrarConfirmacionEliminar = () => {
+      mostrarConfirmacionEliminar.value = false
+      productoAEliminar.value = null
+    }
+
+    const eliminarProducto = async () => {
+      if (!productoAEliminar.value) return
+
+      try {
+        cargando.value = true
+        await eliminarProductoAPI(productoAEliminar.value)
+        
+        productos.value = productos.value.filter(p => p.id !== productoAEliminar.value)
+        
+        cerrarConfirmacionEliminar()
+      } catch (error) {
+        console.error('❌ Error al eliminar producto:', error)
+        alert('Error al eliminar el producto')
+      } finally {
+        cargando.value = false
+      }
+    }
 
     // Formatear precio
     const formatearPrecio = (precio) => {
       return new Intl.NumberFormat('es-CO').format(precio || 0)
     }
 
-    // Obtener URL de imagen - MEJORADA
-    const obtenerUrlImagen = (imagenUrl) => {
-      if (!imagenUrl) {
-        return 'https://via.placeholder.com/100x100?text=Sin+Imagen'
-      }
-      return imagenUrl
-    }
-
     // Manejo de error de imagen
     const onImageError = (event) => {
       console.error('❌ Error cargando imagen:', event.target.src)
-      // Usar data URL como fallback
       event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj5FcnJvciBJbWFnZW48L3RleHQ+Cjwvc3ZnPg=='
     }
 
@@ -370,23 +370,26 @@ const eliminarProducto = async () => {
       searchQuery,
       mostrarModalAgregar,
       mostrarModalEditar,
-      mostrarConfirmacionEliminar,    // ✅ Nuevo
+      mostrarConfirmacionEliminar,
       productos,
       productoSeleccionado,
-      productoAEliminar,              // ✅ Nuevo
+      productoAEliminar,
       productosFiltrados,
+      productosPaginados,
       cargando,
+      paginaActual,
+      totalPaginas,
       abrirModalAgregar,
       cerrarModalAgregar,
       cerrarModalEditar,
       actualizarProducto,
       guardarProducto,
       editarProducto,
-      confirmarEliminarProducto,      // ✅ Nuevo
-      cerrarConfirmacionEliminar,     // ✅ Nuevo
+      confirmarEliminarProducto,
+      cerrarConfirmacionEliminar,
       eliminarProducto,
+      cambiarPagina,
       formatearPrecio,
-      obtenerUrlImagen,
       onImageError,
       cerrarSesion
     }
@@ -824,6 +827,54 @@ const eliminarProducto = async () => {
   padding: 60px 20px;
 }
 
+/* PAGINACIÓN SIMPLE Y LIMPIA */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e8d7a8;
+}
+
+.btn-paginacion {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.btn-paginacion:disabled {
+  color: #999;
+  cursor: not-allowed;
+  background: #f9f9f9;
+}
+
+.flecha {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.paginacion-info {
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Pantallas grandes (1600px+) */
@@ -1258,6 +1309,12 @@ const eliminarProducto = async () => {
     font-size: 11px;
     width: 75px;
   }
+
+  .paginacion {
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+  }
 }
 
 /* Móviles pequeños (menos de 600px) */
@@ -1319,6 +1376,19 @@ const eliminarProducto = async () => {
     width: 65px;
     padding: 5px 8px;
     font-size: 10px;
+  }
+
+  .paginacion {
+    padding: 12px;
+  }
+
+  .btn-paginacion {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .paginacion-info {
+    font-size: 13px;
   }
 }
 </style>
