@@ -270,8 +270,8 @@ export default {
 /* Imágenes decorativas */
 .img-grapefruit {
   position: fixed;
-  top: -80px;
-  left: 70px;
+  top: 80px;
+  left: -70px;
   width: 180px;
   height: 180px;
   object-fit: contain;
@@ -324,7 +324,7 @@ export default {
   font-weight: 800;
   color: #28233b;
   margin-bottom: 30px;
-  margin-top: -40px;
+  margin-top: -35px;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -438,13 +438,13 @@ export default {
 
   .btn-admin {
     padding: 10px 32px;
-    font-size: 15px;
+    font-size: 14px;
     margin-right: 5px !important;
   }
 
   .btn-cerrar-sesion {
     padding: 10px 26px;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .main-content {
@@ -459,8 +459,8 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top:40px;
-    left: -70px;
+    top:20px;
+    left:-70px;
   }
 }
 
@@ -526,13 +526,13 @@ export default {
 
   .btn-admin {
     padding: 8px 26px;
-    font-size: 14px;
+    font-size: 12px;
     margin-right: 4px !important;
   }
 
   .btn-cerrar-sesion {
     padding: 8px 20px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .main-content {
