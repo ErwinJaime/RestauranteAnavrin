@@ -685,6 +685,7 @@ export default {
 
 .productos-table tbody tr:hover {
   background-color: #f9f9f9;
+  border-bottom: 2px solid #e0e0e0; 
 }
 
 .productos-table td {
@@ -694,6 +695,7 @@ export default {
   vertical-align: middle;
   background-color: transparent;
   text-align: center !important;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 /* Asegurar que la primera fila del cuerpo tenga borde superior sutil */
@@ -703,8 +705,8 @@ export default {
 
 /* Columna de imagen */
 .img-container {
-  width: 80px;
-  height: 80px;
+  width: 110px;
+  height: 110px;
   border-radius: 0px;
   overflow: hidden;
   display: flex;
@@ -740,15 +742,15 @@ export default {
 /* Columna de precio */
 .producto-precio {
   font-weight: 600;
-  color: #191b17;
+  color: #69A003;
   font-size: 14px;
 }
 
 /* Badge de disponibilidad */
 .badge-disponibilidad {
-  padding: 5px 14px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   display: inline-block;
 }
