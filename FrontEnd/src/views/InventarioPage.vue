@@ -46,7 +46,7 @@
         <div v-else class="table-wrapper">
           <table class="productos-table">
             <thead>
-              <tr>
+              <tr class="table-header">
                 <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
@@ -56,7 +56,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="producto in productosFiltrados" :key="producto.id">
+              <tr v-for="producto in productosFiltrados" :key="producto.id" class="table-row">
                 <td>
                   <div class="img-container">
                     <img 
@@ -76,12 +76,14 @@
                   </span>
                 </td>
                 <td class="td-opciones">
-                  <button class="btn-editar" @click="editarProducto(producto.id)">
-                    Editar
-                  </button>
-                  <button class="btn-eliminar" @click="eliminarProducto(producto.id)">
-                    Eliminar
-                  </button>
+                  <div class="opciones-container">
+                    <button class="btn-editar" @click="editarProducto(producto.id)">
+                      Editar
+                    </button>
+                    <button class="btn-eliminar" @click="eliminarProducto(producto.id)">
+                      Eliminar
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -149,9 +151,6 @@ export default {
         console.log('✅ Productos cargados:', productos.value)
       } catch (error) {
         console.error('❌ Error al cargar productos:', error)
-        if (error.response) {
-          console.error('Respuesta del servidor:', error.response.data)
-        }
         alert('Error al cargar los productos. Verifica que el backend esté corriendo.')
       } finally {
         cargando.value = false
@@ -175,6 +174,9 @@ export default {
         
         console.log('✅ Producto guardado:', response.data)
         
+        // Agregar el nuevo producto a la lista
+        productos.value.push(response.data)
+        
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
@@ -186,8 +188,7 @@ export default {
         // Mensaje de error más detallado
         if (error.response) {
           console.error('Respuesta del servidor:', error.response.data)
-          const errorMsg = error.response.data.error || error.response.data.message || JSON.stringify(error.response.data)
-          alert(`Error: ${errorMsg}`)
+          alert(`Error: ${JSON.stringify(error.response.data)}`)
         } else if (error.request) {
           alert('Error de conexión. Verifica que el backend esté corriendo en http://127.0.0.1:8000')
         } else {
@@ -224,7 +225,7 @@ export default {
       }
     }
 
-    // Formatear precio en pesos colombianos
+    // Formatear precio
     const formatearPrecio = (precio) => {
       return new Intl.NumberFormat('es-CO').format(precio)
     }
@@ -292,7 +293,7 @@ export default {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -313,7 +314,8 @@ export default {
   margin-left: 100px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links router-link {
   font-size: 14px;
   color: #666;
   text-decoration: none;
@@ -429,9 +431,8 @@ export default {
   margin-bottom: 40px;
   max-width: 900px;
   margin-left: auto;
-  margin-right: auto;
+  margin-right: 35px;
   margin-top: -20px;
-  padding: 0 20px;
 }
 
 .btn-agregar {
@@ -448,9 +449,8 @@ export default {
 }
 
 .btn-agregar:hover {
-  background-color: #6a9f38;
+  background-color: #6d9fef;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(124, 179, 66, 0.3);
 }
 
 /* Buscador */
@@ -488,15 +488,17 @@ export default {
   color: #999;
 }
 
-/* Tabla de productos */
+/* Tabla de productos - DISEÑO UNIFICADO CON BORDES REDONDEADOS */
 .table-container {
   background-color: rgb(253, 252, 252);
   border-radius: 16px;
-  padding: 30px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.336);
   min-height: 290px;
   margin-top: -30px;
-  margin: 0 20px;
+  overflow: hidden;
+  border: 1px solid #e8d7a8;
+  height: auto;
 }
 
 .table-wrapper {
@@ -508,24 +510,38 @@ export default {
   width: 100%;
   border-collapse: collapse;
   font-family: 'Montserrat', sans-serif;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
+/* Encabezado de la tabla */
 .productos-table thead {
   background-color: #e8d7a8;
 }
 
-.productos-table th {
-  padding: 14px 12px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 13px;
-  color: #333;
-  border-bottom: 2px solid #ddd;
+.table-header {
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
 }
 
-.productos-table tbody tr {
-  border-bottom: 1px solid #eee;
+.productos-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #000000;
+  border-bottom: 2px solid #d4c18b;
+}
+
+/* Filas del cuerpo */
+.table-row {
+  border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s ease;
+  background-color: white;
+}
+
+.table-row:last-child {
+  border-bottom: none;
 }
 
 .productos-table tbody tr:hover {
@@ -535,8 +551,14 @@ export default {
 .productos-table td {
   padding: 16px 12px;
   font-size: 13px;
-  color: #555;
+  color: #000000;
   vertical-align: middle;
+  background-color: transparent;
+}
+
+/* Asegurar que la primera fila del cuerpo tenga borde superior sutil */
+.productos-table tbody tr:first-child td {
+  border-top: 1px solid #f0f0f0;
 }
 
 /* Columna de imagen */
@@ -575,7 +597,7 @@ export default {
 /* Columna de precio */
 .producto-precio {
   font-weight: 600;
-  color: #7cb342;
+  color: #191b17;
   font-size: 14px;
 }
 
@@ -691,15 +713,305 @@ export default {
   }
 }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 1023px) {
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
+  .navbar {
+    padding: 20px 5% !important;
+    gap: 20px !important;
+  }
+
+  .logo {
+    font-size: 22px;
+    margin-right: 40px;
+  }
+
+  .nav-links {
+    gap: 80px;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+  }
+
+  .btn-admin {
+    padding: 10px 32px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 10px 26px;
+    font-size: 12px;
+  }
+
   .main-content {
-    max-width: 100%;
-    padding: 130px 20px 50px;
+    max-width: 1200px;
+    padding: 180px 60px 60px;
+  }
+
+  .title {
+    font-size: 50px;
+    margin-top: 10px;
+  }
+
+  .actions-bar {
+    margin-bottom: 60px;
   }
 
   .table-container {
-    margin: 0 10px;
+    min-height: 380px;
+  }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: 100px;
+    left: -70px;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .navbar {
+    padding: 20px 4% !important;
+    gap: 18px !important;
+  }
+
+  .logo {
+    font-size: 20px;
+    margin-right: 35px;
+  }
+
+  .nav-links {
+    gap: 70px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    margin-right: 12px !important;
+  }
+
+  .main-content {
+    max-width: 1100px;
+  }
+
+  .title {
+    font-size: 46px;
+  }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: 40px;
+    left: -70px;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 3% !important;
+    gap: 12px !important;
+  }
+
+  .logo {
+    font-size: 19px;
+    margin-right: 30px;
+  }
+
+  .nav-links {
+    gap: 60px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-admin {
+    padding: 8px 26px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+
+  .main-content {
+    max-width: 1000px;
+  }
+
+  .title {
+    font-size: 44px;
+  }
+
+  .img-grapefruit {
+    width: 160px;
+    height: 160px;
+    top: 70px;
+    left: -70px;
+  }
+
+  .hoja-below {
+    width: 80px;
+    height: 80px;
+    top: 420px;
+  }
+
+  .hoja-bottom {
+    width: 70px;
+    height: 70px;
+  }
+
+  .img-mortero {
+    width: 200px;
+    height: 200px;
+    right: -60px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navbar {
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 18px;
+    margin-right: 25px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 8px 24px;
+    font-size: 13px;
+    margin-right: 8px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    max-width: 900px;
+    padding: 140px 30px 60px;
+  }
+
+  .title {
+    font-size: 42px;
+    margin-top: -40px;
+  }
+
+  .img-grapefruit {
+    width: 140px;
+    height: 140px;
+    top: -45px;
+    left: -55px;
+  }
+
+  .hoja-below {
+    width: 70px;
+    height: 70px;
+    top: 400px;
+    right: 30px;
+  }
+
+  .hoja-bottom {
+    width: 60px;
+    height: 60px;
+    bottom: 120px;
+    left: 50px;
+  }
+
+  .img-mortero {
+    width: 180px;
+    height: 180px;
+    right: -55px;
+    top: 160px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 17px;
+    margin-right: 20px;
+  }
+
+  .nav-links {
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-right: 8px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
+  }
+
+  .main-content {
+    max-width: 750px;
+    padding: 130px 25px 50px;
+  }
+
+  .title {
+    font-size: 38px;
+  }
+
+  .img-grapefruit {
+    width: 130px;
+    height: 130px;
+    top: -40px;
+    left: -50px;
+  }
+
+  .hoja-below {
+    width: 60px;
+    height: 60px;
+    top: 380px;
+    right: 20px;
+  }
+
+  .hoja-bottom {
+    width: 55px;
+    height: 55px;
+    bottom: 100px;
+    left: 40px;
+  }
+
+  .img-mortero {
+    width: 160px;
+    height: 160px;
+    right: -50px;
+    top: 170px;
   }
 
   .productos-table th,
@@ -714,6 +1026,7 @@ export default {
   }
 }
 
+/* Tablets pequeñas (600px - 767px) */
 @media (max-width: 767px) {
   .navbar {
     padding: 15px 20px !important;
@@ -726,19 +1039,30 @@ export default {
     font-size: 18px;
     width: 100%;
     text-align: center;
-    margin: 0 0 10px 0;
+    margin-right: 0;
+    margin-bottom: 10px;
   }
 
   .nav-links {
     gap: 30px;
     width: 100%;
     justify-content: center;
-    margin-left: 0;
+  }
+
+  .nav-links a {
+    font-size: 13px;
   }
 
   .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
     margin-left: 0 !important;
     margin-right: 5px !important;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
   }
 
   .img-grapefruit,
@@ -749,34 +1073,49 @@ export default {
   }
 
   .main-content {
-    padding: 160px 15px 40px;
+    padding: 160px 20px 40px;
+    max-width: 100%;
   }
 
   .title {
     font-size: 32px;
+    margin-bottom: 25px;
+    margin-top: -20px;
   }
 
   .actions-bar {
     flex-direction: column;
     gap: 15px;
-    padding: 0 10px;
   }
 
   .btn-agregar {
     width: 100%;
+    padding: 12px 24px;
+    font-size: 13px;
   }
 
   .search-container {
     max-width: 100%;
   }
 
+  .search-input {
+    padding: 10px 20px 10px 50px;
+    font-size: 14px;
+  }
+
   .table-container {
     padding: 20px 10px;
-    margin: 0 10px;
+    min-height: 240px;
+    border-radius: 12px;
+  }
+
+  .empty-message {
+    font-size: 14px;
   }
 
   .productos-table {
     font-size: 11px;
+    border-radius: 12px;
   }
 
   .productos-table th,
@@ -790,12 +1129,15 @@ export default {
   }
 
   .producto-descripcion {
-    max-width: 120px;
+    max-width: 150px;
     font-size: 11px;
   }
 
   .td-opciones {
-    flex-direction: column;
+    min-width: auto;
+  }
+
+  .opciones-container {
     gap: 5px;
   }
 
@@ -803,7 +1145,69 @@ export default {
   .btn-eliminar {
     padding: 6px 12px;
     font-size: 11px;
-    width: 100%;
+    width: 75px;
+  }
+}
+
+/* Móviles pequeños (menos de 600px) */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 12px 15px !important;
+  }
+
+  .logo {
+    font-size: 16px;
+    margin-left: 0;
+  }
+
+  .nav-links {
+    gap: 20px;
+    margin-left: 0;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .btn-admin {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 6px 14px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 140px 15px 30px;
+  }
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .table-container {
+    padding: 15px 5px;
+  }
+
+  .productos-table th,
+  .productos-table td {
+    padding: 6px 4px;
+    font-size: 10px;
+  }
+
+  .img-container {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-editar,
+  .btn-eliminar {
+    width: 65px;
+    padding: 5px 8px;
+    font-size: 10px;
   }
 }
 </style>
