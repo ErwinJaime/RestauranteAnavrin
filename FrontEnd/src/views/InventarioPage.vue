@@ -59,12 +59,12 @@
               <tr v-for="producto in productosFiltrados" :key="producto.id" class="table-row">
                 <td class="text-center">
                   <div class="img-container">
-                    <img 
-                      :src="obtenerUrlImagen(producto)" 
-                      :alt="producto.nombre"
-                      class="producto-img"
-                      @error="onImageError"
-                    >
+                  <img 
+                    :src="producto.imagen || 'https://via.placeholder.com/100x100?text=Sin+Imagen'" 
+                    :alt="producto.nombre"
+                    class="producto-img"
+                    @error="onImageError"
+                  >
                   </div>
                 </td>
                 <td class="producto-nombre text-center">{{ producto.nombre || 'Sin nombre' }}</td>
@@ -337,30 +337,11 @@ const eliminarProducto = async () => {
     }
 
     // Obtener URL de imagen - MEJORADA
-    const obtenerUrlImagen = (producto) => {
-      const imagenUrl = producto.imagen
-      
-      console.log('🖼️ Procesando imagen para producto:', producto.nombre)
-      console.log('📁 Campo imagen:', imagenUrl)
-      
+    const obtenerUrlImagen = (imagenUrl) => {
       if (!imagenUrl) {
-        // Usar data URL como fallback para evitar errores de red
-        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj5TaW4gSW1hZ2VuPC90ZXh0Pgo8L3N2Zz4='
+        return 'https://via.placeholder.com/100x100?text=Sin+Imagen'
       }
-      
-      // Si ya es una URL completa, devolverla
-      if (imagenUrl.startsWith('http://') || imagenUrl.startsWith('https://')) {
-        return imagenUrl
-      }
-      
-      // Si es una ruta relativa, construir la URL completa
-      // Asumiendo que las imágenes se sirven desde /media/
-      if (imagenUrl.startsWith('/media/')) {
-        return `http://127.0.0.1:8000${imagenUrl}`
-      }
-      
-      // Si es solo el nombre del archivo
-      return `http://127.0.0.1:8000/media/${imagenUrl}`
+      return imagenUrl
     }
 
     // Manejo de error de imagen

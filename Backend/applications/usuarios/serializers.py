@@ -79,24 +79,15 @@ class UsuarioPerfilSerializer(serializers.ModelSerializer):
 
 class ProductoSerializer(serializers.ModelSerializer):
     """Serializer completo para Producto"""
-    imagen_url = serializers.SerializerMethodField()
     promedio_calificacion = serializers.SerializerMethodField()
     total_resenas = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
         fields = ['id', 'nombre', 'ingredientes', 'precio', 'imagen', 
-                  'imagen_url', 'categoria', 'disponible', 'creadoen',
+                  'categoria', 'disponible', 'creadoen',
                   'promedio_calificacion', 'total_resenas']
         read_only_fields = ['id', 'creadoen']
-
-    def get_imagen_url(self, obj):
-        if obj.imagen:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.imagen.url)
-            return obj.imagen.url
-        return None
 
     def get_promedio_calificacion(self, obj):
         resenas = obj.resenas.filter(visible=True)
@@ -106,33 +97,50 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_total_resenas(self, obj):
         return obj.resenas.filter(visible=True).count()
+    
+    def to_representation(self, instance):
+        """Personalizar la representación para incluir URL completa de imagen"""
+        representation = super().to_representation(instance)
+        
+        # Convertir la imagen a URL completa
+        if instance.imagen:
+            request = self.context.get('request')
+            if request:
+                representation['imagen'] = request.build_absolute_uri(instance.imagen.url)
+            else:
+                representation['imagen'] = instance.imagen.url
+        
+        return representation
 
 
 class ProductoListSerializer(serializers.ModelSerializer):
     """Serializer simplificado para listado de productos"""
-    imagen_url = serializers.SerializerMethodField()
     promedio_calificacion = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'precio', 'imagen_url', 'categoria', 
+        fields = ['id', 'nombre', 'ingredientes', 'precio', 'imagen', 'categoria', 
                   'disponible', 'promedio_calificacion']
-
-    def get_imagen_url(self, obj):
-        if obj.imagen:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.imagen.url)
-            return obj.imagen.url
-        return None
 
     def get_promedio_calificacion(self, obj):
         resenas = obj.resenas.filter(visible=True)
         if resenas.exists():
             return round(sum(r.calificacion for r in resenas) / resenas.count(), 1)
         return None
-
-
+    
+    def to_representation(self, instance):
+        """Personalizar la representación para incluir URL completa de imagen"""
+        representation = super().to_representation(instance)
+        
+        # Convertir la imagen a URL completa
+        if instance.imagen:
+            request = self.context.get('request')
+            if request:
+                representation['imagen'] = request.build_absolute_uri(instance.imagen.url)
+            else:
+                representation['imagen'] = instance.imagen.url
+        
+        return representation
 # ========== PEDIDO SERIALIZERS ==========
 
 class PedidoSerializer(serializers.ModelSerializer):

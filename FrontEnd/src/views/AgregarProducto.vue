@@ -36,7 +36,7 @@
       
       <!-- Ingredientes -->
       <div class="form-group">
-        <label>Ingredientes *</label>
+        <label>Descripción *</label>
         <textarea 
           v-model="ingredientes" 
           rows="3"
