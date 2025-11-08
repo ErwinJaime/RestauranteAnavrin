@@ -98,7 +98,7 @@ export default {
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 12px;
-  text-align: center;
+  text-align: left;
   font-family: 'Open Sans', sans-serif;
   line-height: 1.3;
 }
