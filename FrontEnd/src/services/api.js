@@ -3,6 +3,7 @@ import router from '@/routers'
 
 // Lee automáticamente la variable según el entorno (.env o .env.production)
 const baseURL = process.env.VUE_APP_API_BASE_URL
+console.log("🌍 BaseURL detectada:", process.env.VUE_APP_API_BASE_URL)
 
 const api = axios.create({
   baseURL: baseURL,
