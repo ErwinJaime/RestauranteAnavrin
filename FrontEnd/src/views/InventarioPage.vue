@@ -19,7 +19,7 @@
       <!-- Barra de acciones -->
       <div class="actions-bar">
         <!-- Botón Agregar Nuevo Plato -->
-        <button class="btn-agregar" @click="abrirModal">
+        <button class="btn-agregar" @click="abrirModalAgregar">
           + Agregar Nuevo Plato
         </button>
 
@@ -80,7 +80,7 @@
                     <button class="btn-editar" @click="editarProducto(producto.id)">
                       Editar
                     </button>
-                    <button class="btn-eliminar" @click="eliminarProducto(producto.id)">
+                    <button class="btn-eliminar" @click="confirmarEliminarProducto(producto.id)">
                       Eliminar
                     </button>
                   </div>
@@ -103,29 +103,79 @@
     <img src="@/assets/mortero.png" alt="Mortero" class="img-mortero">
 
     <AgregarProducto
-      :isOpen="mostrarModal"
-      @cerrar="cerrarModal"
+      :isOpen="mostrarModalAgregar"
+      @cerrar="cerrarModalAgregar"
       @guardar="guardarProducto"
     />
+
+    <!-- Modal Editar Producto -->
+    <EditarProducto
+      :isOpen="mostrarModalEditar"
+      :producto="productoSeleccionado"
+      @cerrar="cerrarModalEditar"
+      @guardar="actualizarProducto"
+    />
+
+    <!-- Modal de confirmación para eliminar producto -->
+    <ModalConfirmacion
+      :isOpen="mostrarConfirmacionEliminar"
+      titulo="¿Eliminar producto?"
+      mensaje="Esta acción eliminará el producto permanentemente y no se puede deshacer."
+      textoConfirmar="Eliminar"
+      :cargando="cargando"
+      @cerrar="cerrarConfirmacionEliminar"
+      @confirmar="eliminarProducto"
+    />
   </div>
+    <!-- Modal de confirmación para eliminar producto -->
+<div v-if="mostrarConfirmacionEliminar" class="confirmation-overlay" @click.self="cerrarConfirmacionEliminar">
+  <div class="confirmation-modal">
+    <h3 class="confirmation-title">¿Estás seguro?</h3>
+    <p class="confirmation-text">
+      Esta acción eliminará el producto permanentemente y no se puede deshacer.
+    </p>
+    <div class="confirmation-buttons">
+      <button class="btn-eliminar-confirm" @click="eliminarProducto" :disabled="cargando">
+        {{ cargando ? 'Eliminando...' : 'Eliminar' }}
+      </button>
+      <button class="btn-cancelar-confirm" @click="cerrarConfirmacionEliminar" :disabled="cargando">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue'
-import { listarProductos, crearProducto, eliminarProducto as eliminarProductoAPI } from '@/services/productos'
+import { 
+  listarProductos, 
+  crearProducto, 
+  obtenerProducto, 
+  actualizarProducto as actualizarProductoAPI,
+  eliminarProducto as eliminarProductoAPI 
+} from '@/services/productos'
 import AgregarProducto from './AgregarProducto.vue' 
+import EditarProducto from './EditarProducto.vue'
+import ModalConfirmacion from './ModalConfirmacion.vue'
+
 
 export default {
   name: 'InventarioPage',
   components: {
-    AgregarProducto
+    AgregarProducto,
+    EditarProducto,
+    ModalConfirmacion
   },
   setup() {
     const searchQuery = ref('')
-    const mostrarModal = ref(false)
+    const mostrarModalAgregar = ref(false)
+    const mostrarModalEditar = ref(false)
+    const productoSeleccionado = ref(null)
     const productos = ref([])
     const cargando = ref(false)
-
+    const mostrarConfirmacionEliminar = ref(false)
+    const productoAEliminar = ref(null)
     // Productos filtrados según búsqueda
     const productosFiltrados = computed(() => {
       if (!searchQuery.value) {
@@ -165,14 +215,13 @@ export default {
       }
     }
 
-    const abrirModal = () => {
-      mostrarModal.value = true
+    const abrirModalAgregar = () => {
+      mostrarModalAgregar.value = true
     }
 
-    const cerrarModal = () => {
-      mostrarModal.value = false
+    const cerrarModalAgregar = () => {
+      mostrarModalAgregar.value = false
     }
-
     const guardarProducto = async (producto) => {
       try {
         cargando.value = true
@@ -182,7 +231,7 @@ export default {
         
         console.log('✅ Producto guardado:', response.data)
         
-        cerrarModal()
+        cerrarModalAgregar()
         alert('¡Producto agregado exitosamente!')
         
         // Recargar la lista completa
@@ -196,30 +245,91 @@ export default {
     }
 
     const editarProducto = async (id) => {
-      console.log('✏️ Editar producto:', id)
-      alert('Función de editar en desarrollo')
-    }
-
-    const eliminarProducto = async (id) => {
-      if (!confirm('¿Estás seguro de eliminar este producto?')) {
-        return
-      }
-
       try {
         cargando.value = true
-        await eliminarProductoAPI(id)
+        console.log('✏️ Editando producto:', id)
         
-        // Eliminar de la lista local
-        productos.value = productos.value.filter(p => p.id !== id)
+        // Obtener los datos completos del producto
+        const response = await obtenerProducto(id)
+        productoSeleccionado.value = response.data
         
-        alert('✅ Producto eliminado exitosamente')
+        console.log('📋 Producto obtenido:', productoSeleccionado.value)
+        
+        mostrarModalEditar.value = true
       } catch (error) {
-        console.error('❌ Error al eliminar producto:', error)
-        alert('Error al eliminar el producto')
+        console.error('❌ Error al obtener producto:', error)
+        alert('Error al cargar el producto para editar')
       } finally {
         cargando.value = false
       }
     }
+
+    const cerrarModalEditar = () => {
+      mostrarModalEditar.value = false
+      productoSeleccionado.value = null
+    }
+
+    const actualizarProducto = async (productoActualizado) => {
+      try {
+        cargando.value = true
+        console.log('🔄 Actualizando producto:', productoActualizado)
+        
+        // Preparar datos para enviar
+        const dataToSend = {
+          nombre: productoActualizado.nombreProducto,
+          ingredientes: productoActualizado.ingredientes,
+          precio: productoActualizado.precio,
+          categoria: productoActualizado.categoria,
+          disponible: productoActualizado.disponible,
+          imagen: productoActualizado.imagen
+        }
+        
+        const response = await actualizarProductoAPI(productoActualizado.id, dataToSend)
+        
+        console.log('✅ Producto actualizado:', response.data)
+        
+        cerrarModalEditar()
+        alert('¡Producto actualizado exitosamente!')
+        
+        // Recargar la lista completa
+        await cargarProductos()
+      } catch (error) {
+        console.error('❌ Error al actualizar producto:', error)
+        alert('Error al actualizar el producto: ' + (error.response?.data?.message || error.message))
+      } finally {
+        cargando.value = false
+      }
+    }
+
+    const confirmarEliminarProducto = (id) => {
+  productoAEliminar.value = id
+  mostrarConfirmacionEliminar.value = true
+}
+
+const cerrarConfirmacionEliminar = () => {
+  mostrarConfirmacionEliminar.value = false
+  productoAEliminar.value = null
+}
+
+const eliminarProducto = async () => {
+  if (!productoAEliminar.value) return
+
+    try {
+      cargando.value = true
+      await eliminarProductoAPI(productoAEliminar.value)
+      
+      // Eliminar de la lista local
+      productos.value = productos.value.filter(p => p.id !== productoAEliminar.value)
+      
+      cerrarConfirmacionEliminar()
+      alert('✅ Producto eliminado exitosamente')
+    } catch (error) {
+      console.error('❌ Error al eliminar producto:', error)
+      alert('Error al eliminar el producto')
+    } finally {
+      cargando.value = false
+    }
+  }
 
     // Formatear precio
     const formatearPrecio = (precio) => {
@@ -262,14 +372,22 @@ export default {
 
     return {
       searchQuery,
-      mostrarModal,
+      mostrarModalAgregar,
+      mostrarModalEditar,
+      mostrarConfirmacionEliminar,    // ✅ Nuevo
       productos,
+      productoSeleccionado,
+      productoAEliminar,              // ✅ Nuevo
       productosFiltrados,
       cargando,
-      abrirModal,
-      cerrarModal,
+      abrirModalAgregar,
+      cerrarModalAgregar,
+      cerrarModalEditar,
+      actualizarProducto,
       guardarProducto,
       editarProducto,
+      confirmarEliminarProducto,      // ✅ Nuevo
+      cerrarConfirmacionEliminar,     // ✅ Nuevo
       eliminarProducto,
       formatearPrecio,
       obtenerUrlImagen,

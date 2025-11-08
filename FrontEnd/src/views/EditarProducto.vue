@@ -216,12 +216,12 @@ export default {
       try {
         emit('guardar', {
           id: props.producto?.id,
-          nombreProducto: nombreProducto.value.trim(),
+          nombreProducto: nombreProducto.value.trim(),  // ✅ Mantenemos nombreProducto
           ingredientes: ingredientes.value.trim(),
           categoria: categoria.value,
           precio: parseFloat(precio.value),
           disponible: disponible.value,
-          imagen: imagenFile.value || imagenPreview.value
+          imagen: imagenFile.value  // ✅ Solo File, no la preview
         })
       } catch (error) {
         errorMsg.value = 'Error al preparar los datos del producto'

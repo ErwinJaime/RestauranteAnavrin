@@ -48,7 +48,7 @@
       <div class="form-group">
         <label>Categoría *</label>
         <select v-model="categoria" class="select-categoria" required>
-          <option value="">Platillo</option>
+          <option value="platillo">Platillo</option>
           <option value="postre">Postre</option>
           <option value="bebida">Bebida</option>
         </select>
