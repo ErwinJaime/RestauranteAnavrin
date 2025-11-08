@@ -4,8 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
+        <router-link to="/administracion">Home</router-link>
         <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>
@@ -127,7 +126,7 @@
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
 }
 
 .logo {
@@ -158,7 +157,7 @@
 }
 
 .nav-links a:hover {
-  color: #ff6b35;
+  color: #3597ff;
 }
 
 .btn-admin {
@@ -206,7 +205,7 @@
 
 .hero-image img {
   width: 100%;
-  height: 280px;
+  height: 400px;
   object-fit: cover;
   display: block;
 }
@@ -215,9 +214,9 @@
    CONTENIDO PRINCIPAL
 ------------------------- */
 .main-content {
-  max-width: 1400px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 60px 40px;
+  padding: 60px 0;
 }
 
 /* ------------------------
@@ -226,6 +225,7 @@
 .quienes-somos {
   text-align: center;
   margin-bottom: 80px;
+  padding: 0 40px;
 }
 
 .title {
@@ -246,18 +246,41 @@
 
 .cards-container {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 40px;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 8px; /* medio centímetro aprox */
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* ocupa todo el ancho de la ventana */
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .card {
-  border-radius: 12px;
-  padding: 35px 30px;
-  width: 280px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex; /* permite centrar contenido */
+  align-items: center; /* centra verticalmente */
+  justify-content: center; /* centra horizontalmente */
+  border-radius: 0;
+  padding: 40px;
+  background-color: #ff6b35;
+  color: white;
+  text-align: center;
+  box-shadow: none;
+  margin: 0;
 }
+
+.card p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
 
 .card-orange {
   background-color: #ff6b35;
@@ -276,6 +299,7 @@
 ------------------------- */
 .nuestra-historia {
   margin-bottom: 60px;
+  padding: 0 40px;
 }
 
 .section-title {
@@ -299,7 +323,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
-  max-width: 1100px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -316,17 +340,17 @@
 ------------------------- */
 .bottom-image {
   width: 100%;
-  margin-top: 60px;
-  border-radius: 12px;
+  margin-top: 20px;
+  border-radius: 0;
   overflow: hidden;
 }
 
 .bottom-image img {
   width: 100%;
-  height: 400px;
+  height: 600px;
   object-fit: cover;
   display: block;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 /* ------------------------
@@ -369,8 +393,13 @@
   }
 
   .card {
-    width: 320px;
-    padding: 40px 35px;
+    width: 100%;
+    height: 220px;
+    padding: 0;
+  }
+
+  .card p {
+    padding: 35px;
   }
 
   .bottom-image img {
@@ -467,7 +496,13 @@
   }
 
   .card {
-    width: 260px;
+    width: 100%;
+    height: 200px;
+  }
+
+  .card p {
+    padding: 30px;
+    font-size: 0.9rem;
   }
 
   .bottom-image img {
@@ -512,13 +547,17 @@
   }
 
   .cards-container {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .card {
     width: 100%;
-    max-width: 400px;
+    height: 220px;
+  }
+
+  .card p {
+    padding: 30px;
   }
 }
 
@@ -564,7 +603,15 @@
   }
 
   .main-content {
-    padding: 40px 20px;
+    padding: 40px 0;
+  }
+
+  .quienes-somos {
+    padding: 0 20px;
+  }
+
+  .nuestra-historia {
+    padding: 0 20px;
   }
 
   .title {
