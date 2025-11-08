@@ -1,8 +1,13 @@
 // frontend/src/services/productos.js
 import axios from 'axios'
 
+// Detectar entorno y usar la baseURL correcta
+const baseURL = import.meta.env.VITE_API_BASE_URL || process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000/api/usuarios/'
+
+console.log('🌍 BaseURL usada en productosAPI:', baseURL)
+
 const productosAPI = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/usuarios/',
+  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -18,13 +23,10 @@ productosAPI.interceptors.request.use(
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
 // ========== FUNCIÓN AUXILIAR ==========
-// Convierte valores a string si son arrays
 function cleanValue(value) {
   if (Array.isArray(value)) {
     return value[0] || ''
@@ -33,7 +35,6 @@ function cleanValue(value) {
 }
 
 // ========== PRODUCTOS ==========
-
 export function listarProductos(params = {}) {
   return productosAPI.get('productos/', { params })
 }
@@ -44,8 +45,7 @@ export function obtenerProducto(id) {
 
 export function crearProducto(data) {
   console.log('🔍 Data recibida en crearProducto:', data)
-  
-  // Limpiar datos para evitar arrays
+
   const cleanData = {
     nombre: cleanValue(data.nombre) || '',
     ingredientes: cleanValue(data.ingredientes) || '',
@@ -54,35 +54,21 @@ export function crearProducto(data) {
     disponible: data.disponible,
     imagen: data.imagen
   }
-  
-  console.log('✨ Data limpia:', cleanData)
-  
-  // Si hay imagen, usar FormData
+
   if (cleanData.imagen instanceof File) {
     const formData = new FormData()
-    
-    // Asegurar que cada campo se agrega solo UNA vez
     formData.append('nombre', String(cleanData.nombre))
     formData.append('ingredientes', String(cleanData.ingredientes))
     formData.append('precio', String(cleanData.precio))
     formData.append('categoria', String(cleanData.categoria).toLowerCase())
     formData.append('disponible', cleanData.disponible ? 'true' : 'false')
     formData.append('imagen', cleanData.imagen)
-    
-    console.log('📤 Enviando FormData con imagen')
-    console.log('📋 Campos FormData:')
-    for (let pair of formData.entries()) {
-      console.log(`  ${pair[0]}:`, pair[1])
-    }
-    
+
     return productosAPI.post('productos/crear/', formData, {
-      headers: { 
-        'Content-Type': 'multipart/form-data'
-      }
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
   }
-  
-  // Sin imagen, enviar JSON normal
+
   const jsonData = {
     nombre: String(cleanData.nombre),
     ingredientes: String(cleanData.ingredientes),
@@ -90,13 +76,11 @@ export function crearProducto(data) {
     categoria: String(cleanData.categoria).toLowerCase(),
     disponible: Boolean(cleanData.disponible)
   }
-  
-  console.log('📤 Enviando JSON (sin imagen):', jsonData)
+
   return productosAPI.post('productos/crear/', jsonData)
 }
 
 export function actualizarProducto(id, data) {
-  // Limpiar datos
   const cleanData = {
     nombre: cleanValue(data.nombre) || '',
     ingredientes: cleanValue(data.ingredientes) || '',
@@ -105,7 +89,7 @@ export function actualizarProducto(id, data) {
     disponible: data.disponible,
     imagen: data.imagen
   }
-  
+
   if (cleanData.imagen instanceof File) {
     const formData = new FormData()
     formData.append('nombre', String(cleanData.nombre))
@@ -114,12 +98,12 @@ export function actualizarProducto(id, data) {
     formData.append('categoria', String(cleanData.categoria).toLowerCase())
     formData.append('disponible', cleanData.disponible ? 'true' : 'false')
     formData.append('imagen', cleanData.imagen)
-    
+
     return productosAPI.put(`productos/${id}/actualizar/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   }
-  
+
   const jsonData = {
     nombre: String(cleanData.nombre),
     ingredientes: String(cleanData.ingredientes),
@@ -127,7 +111,7 @@ export function actualizarProducto(id, data) {
     categoria: String(cleanData.categoria).toLowerCase(),
     disponible: Boolean(cleanData.disponible)
   }
-  
+
   return productosAPI.put(`productos/${id}/actualizar/`, jsonData)
 }
 
@@ -136,7 +120,6 @@ export function eliminarProducto(id) {
 }
 
 // ========== PEDIDOS ==========
-
 export function listarMisPedidos(params = {}) {
   return productosAPI.get('pedidos/', { params })
 }
@@ -166,7 +149,6 @@ export function cancelarPedido(id) {
 }
 
 // ========== RESEÑAS ==========
-
 export function listarResenasProducto(productoId) {
   return productosAPI.get(`productos/${productoId}/resenas/`)
 }
