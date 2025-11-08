@@ -499,7 +499,7 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top: 100px;
+    top: 200px;
     left: -70px;
   }
 }
