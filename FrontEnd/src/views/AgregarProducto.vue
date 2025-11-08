@@ -441,34 +441,83 @@ export default {
 /* Pantallas grandes (1600px+) */
 @media (min-width: 1600px) {
   .modal-content {
-    max-width: 480px;
-    padding: 22px 28px;
+    max-width: 550px; /* Aumentado de 480px */
+    padding: 28px 35px; /* Aumentado de 22px 28px */
   }
 
   .modal-title {
-    font-size: 22px;
-    margin-bottom: 14px;
+    font-size: 26px; /* Aumentado de 22px */
+    margin-bottom: 18px; /* Aumentado de 14px */
+  }
+
+  .upload-area {
+    padding: 18px; /* Aumentado */
+    margin-bottom: 16px;
+  }
+
+  .upload-placeholder svg {
+    width: 45px; /* Aumentado de 32px */
+    height: 45px;
+    margin-bottom: 8px;
+  }
+
+  .upload-placeholder p {
+    font-size: 14px; /* Aumentado de 11px */
+  }
+
+  .preview-image {
+    max-height: 120px; /* Aumentado de 90px */
+  }
+
+  .form-group {
+    margin-bottom: 14px; /* Aumentado de 10px */
   }
 
   .form-group label {
-    font-size: 14px;
+    font-size: 15px; /* Aumentado de 14px */
+    margin-bottom: 6px;
   }
 
   .form-group input,
   .form-group textarea,
   .select-categoria {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 14px; /* Aumentado de 13px */
+    padding: 10px 14px; /* Aumentado de 8px 12px */
+  }
+
+  .form-group textarea {
+    min-height: 65px; /* Aumentado */
+  }
+
+  .checkbox-group {
+    margin-bottom: 16px;
+    gap: 10px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 18px; /* Aumentado de 15px */
+    height: 18px;
   }
 
   .checkbox-group label {
+    font-size: 14px; /* Aumentado de 13px */
+  }
+
+  .error-message {
     font-size: 13px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+  }
+
+  .modal-buttons {
+    gap: 14px;
+    margin-top: 10px;
   }
 
   .btn-guardar,
   .btn-cancelar {
-    padding: 9px 32px;
-    font-size: 12px;
+    padding: 11px 38px; /* Aumentado de 9px 32px */
+    font-size: 14px; /* Aumentado de 12px */
   }
 }
 
