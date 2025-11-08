@@ -2,7 +2,8 @@
 import axios from 'axios'
 
 // Detectar entorno y usar la baseURL correcta
-const baseURL = import.meta.env.VITE_API_BASE_URL || process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000/api/usuarios/'
+const baseURL = process.env.VUE_APP_API_BASE_URL || 'http://127.0.0.1:8000/api/usuarios/'
+
 
 console.log('🌍 BaseURL usada en productosAPI:', baseURL)
 
