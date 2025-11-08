@@ -270,8 +270,8 @@ export default {
 /* Imágenes decorativas */
 .img-grapefruit {
   position: fixed;
-  top: 80px;
-  left: -70px;
+  top: -80px;
+  left: 70px;
   width: 180px;
   height: 180px;
   object-fit: contain;
@@ -513,7 +513,7 @@ export default {
   .btn-admin {
     padding: 8px 26px;
     font-size: 14px;
-    margin-right: 10px !important;
+    margin-right: 4px !important;
   }
 
   .btn-cerrar-sesion {
