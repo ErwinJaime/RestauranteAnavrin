@@ -68,9 +68,14 @@
       
       <!-- Checkbox -->
       <div class="checkbox-group">
-        <input type="checkbox" id="disponible" v-model="disponible" />
-        <label for="disponible">Disponible en el Menú</label>
+        <label class="custom-checkbox">
+          <input type="checkbox" v-model="disponible" />
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Disponible en el Menú</span>
+        </label>
       </div>
+    
+      
 
       <!-- Mensaje de error -->
       <div v-if="errorMsg" class="error-message">
@@ -277,6 +282,14 @@ export default {
   box-sizing: border-box;
   background-color: white;
   cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 35px;
 }
 
 .select-categoria:focus {
@@ -358,20 +371,70 @@ export default {
   margin-bottom: 12px;
   display: flex;
   align-items: center;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.checkbox-group input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-}
-
-.checkbox-group label {
-  font-size: 12px;
-  color: #666;
   cursor: pointer;
   user-select: none;
+  position: relative;
+}
+
+/* Ocultar checkbox original */
+.custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Crear checkbox personalizado */
+.checkmark {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 2px solid #e5e5e5;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.custom-checkbox:hover .checkmark {
+  border-color: #6d9fef;
+}
+
+/* Cuando está checked - Color morado */
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #6d9fef;
+  border-color: #6d9fef;
+}
+
+/* Crear el check mark */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Mostrar check cuando está checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-label {
+  font-size: 12px;
+  color: #666;
 }
 
 /* Mensaje de error */
