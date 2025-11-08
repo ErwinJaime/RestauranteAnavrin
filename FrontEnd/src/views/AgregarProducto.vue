@@ -13,7 +13,7 @@
           @change="handleImageUpload"
           style="display: none"
         />
-        <img v-if="imagen" :src="imagen" alt="Preview" class="preview-image" />
+        <img v-if="imagenPreview" :src="imagenPreview" alt="Preview" class="preview-image" />
         <div v-else class="upload-placeholder">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="#999" stroke-width="2"/>
@@ -25,31 +25,48 @@
       
       <!-- Nombre del Producto -->
       <div class="form-group">
-        <label>Nombre del Producto</label>
-        <input type="text" v-model="nombreProducto" />
+        <label>Nombre del Producto *</label>
+        <input 
+          type="text" 
+          v-model="nombreProducto" 
+          placeholder="Ej: Tacos al pastor"
+          required
+        />
       </div>
       
       <!-- Ingredientes -->
       <div class="form-group">
-        <label>Ingredientes</label>
-        <textarea v-model="ingredientes" rows="3"></textarea>
+        <label>Ingredientes *</label>
+        <textarea 
+          v-model="ingredientes" 
+          rows="3"
+          placeholder="Ej: Tortillas, carne, cebolla, cilantro"
+          required
+        ></textarea>
       </div>
 
-      <!-- NUEVO: Categoría -->
+      <!-- Categoría -->
       <div class="form-group">
-        <label>Categoría</label>
-        <select v-model="categoria" class="select-categoria">
+        <label>Categoría *</label>
+        <select v-model="categoria" class="select-categoria" required>
           <option value="">Selecciona una categoría</option>
-          <option value="Platillo">Platillo</option>
-          <option value="Postre">Postre</option>
-          <option value="Bebida">Bebida</option>
+          <option value="platillo">Platillo</option>
+          <option value="postre">Postre</option>
+          <option value="bebida">Bebida</option>
         </select>
       </div>
       
       <!-- Precio -->
       <div class="form-group">
-        <label>Precio ($)</label>
-        <input type="number" v-model="precio" />
+        <label>Precio ($) *</label>
+        <input 
+          type="number" 
+          v-model="precio" 
+          step="0.01"
+          min="0"
+          placeholder="0.00"
+          required
+        />
       </div>
       
       <!-- Checkbox -->
@@ -57,18 +74,27 @@
         <input type="checkbox" id="disponible" v-model="disponible" />
         <label for="disponible">Disponible en el Menú</label>
       </div>
+
+      <!-- Mensaje de error -->
+      <div v-if="errorMsg" class="error-message">
+        {{ errorMsg }}
+      </div>
       
       <!-- Botones -->
       <div class="modal-buttons">
-        <button class="btn-guardar" @click="handleGuardar">Guardar</button>
-        <button class="btn-cancelar" @click="$emit('cerrar')">Cancelar</button>
+        <button class="btn-guardar" @click="handleGuardar" :disabled="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <button class="btn-cancelar" @click="handleCancelar" :disabled="guardando">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 export default {
   name: 'AgregarProductoModal',
@@ -84,37 +110,111 @@ export default {
     const ingredientes = ref('')
     const categoria = ref('')
     const precio = ref('')
-    const disponible = ref(false)
-    const imagen = ref(null)
+    const disponible = ref(true)
+    const imagenFile = ref(null)
+    const imagenPreview = ref(null)
+    const errorMsg = ref('')
+    const guardando = ref(false)
+
+    // Limpiar formulario cuando se cierra el modal
+    watch(() => props.isOpen, (newVal) => {
+      if (!newVal) {
+        limpiarFormulario()
+      }
+    })
 
     const handleImageUpload = (event) => {
       const file = event.target.files[0]
       if (file) {
+        // Validar tipo de archivo
+        if (!file.type.startsWith('image/')) {
+          errorMsg.value = 'Por favor selecciona un archivo de imagen válido'
+          return
+        }
+
+        // Validar tamaño (máx 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          errorMsg.value = 'La imagen no debe superar 5MB'
+          return
+        }
+
+        imagenFile.value = file
+        
         const reader = new FileReader()
         reader.onload = (e) => {
-          imagen.value = e.target.result
+          imagenPreview.value = e.target.result
         }
         reader.readAsDataURL(file)
+        errorMsg.value = ''
       }
     }
 
-    const handleGuardar = () => {
-      emit('guardar', {
-        nombreProducto: nombreProducto.value,
-        ingredientes: ingredientes.value,
-        categoria: categoria.value,
-        precio: precio.value,
-        disponible: disponible.value,
-        imagen: imagen.value
-      })
-      
-      // Limpiar formulario
+    const validarFormulario = () => {
+      if (!nombreProducto.value.trim()) {
+        errorMsg.value = 'El nombre del producto es obligatorio'
+        return false
+      }
+
+      if (!ingredientes.value.trim()) {
+        errorMsg.value = 'Los ingredientes son obligatorios'
+        return false
+      }
+
+      if (!categoria.value) {
+        errorMsg.value = 'Debes seleccionar una categoría'
+        return false
+      }
+
+      if (!precio.value || parseFloat(precio.value) <= 0) {
+        errorMsg.value = 'El precio debe ser mayor a 0'
+        return false
+      }
+
+      return true
+    }
+
+    const handleGuardar = async () => {
+      errorMsg.value = ''
+
+      if (!validarFormulario()) {
+        return
+      }
+
+      guardando.value = true
+
+      try {
+        const productoData = {
+          nombreProducto: nombreProducto.value.trim(),
+          ingredientes: ingredientes.value.trim(),
+          categoria: categoria.value,
+          precio: parseFloat(precio.value),
+          disponible: disponible.value,
+          imagen: imagenFile.value // Pasar el File directamente
+        }
+
+        emit('guardar', productoData)
+      } catch (error) {
+        console.error('Error al preparar datos:', error)
+        errorMsg.value = 'Error al preparar los datos del producto'
+        guardando.value = false
+      }
+    }
+
+    const handleCancelar = () => {
+      limpiarFormulario()
+      emit('cerrar')
+    }
+
+    const limpiarFormulario = () => {
       nombreProducto.value = ''
       ingredientes.value = ''
       categoria.value = ''
       precio.value = ''
-      disponible.value = false
-      imagen.value = null
+      disponible.value = true
+      imagenFile.value = null
+      imagenPreview.value = null
+      errorMsg.value = ''
+      guardando.value = false
     }
 
     return {
@@ -123,9 +223,12 @@ export default {
       categoria,
       precio,
       disponible,
-      imagen,
+      imagenPreview,
+      errorMsg,
+      guardando,
       handleImageUpload,
-      handleGuardar
+      handleGuardar,
+      handleCancelar
     }
   }
 }
@@ -150,11 +253,13 @@ export default {
 .modal-content {
   background-color: #fff8f8;
   border-radius: 20px;
-  padding: 20px 25px; /* Ajusté el padding vertical */
+  padding: 20px 25px;
   width: 90%;
   max-width: 450px;
   position: relative;
   box-shadow: 0 10px 40px #00000014;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-title {
@@ -184,30 +289,30 @@ export default {
   border-color: #7cb342;
 }
 
-.select-categoria option {
-  padding: 10px;
-}
-
 /* Upload área */
 .upload-area {
   border: 2px dashed #ddd;
   border-radius: 12px;
-  padding: 7px; /* Reduje más el padding */
+  padding: 7px;
   text-align: center;
-  margin-bottom: 10px; /* Reduje el margen */
+  margin-bottom: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.upload-area:hover {
+  border-color: #7cb342;
+}
+
 .upload-placeholder svg {
-  width: 35px; /* Reduje el tamaño del icono */
+  width: 35px;
   height: 35px;
   margin-bottom: 5px;
 }
 
 .upload-placeholder p {
   color: #999;
-  font-size: 12px; /* Reduje la fuente */
+  font-size: 12px;
   margin: 5px 0 0 0;
 }
 
@@ -219,21 +324,21 @@ export default {
 
 /* Form groups */
 .form-group {
-  margin-bottom: 12px; /* Reduje más el margen */
+  margin-bottom: 12px;
 }
 
 .form-group label {
   display: block;
   font-size: 13px;
   color: #666;
-  margin-bottom: 5px; /* Reduje el margen */
+  margin-bottom: 5px;
   font-weight: 500;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 8px 12px; /* Reduje más el padding */
+  padding: 8px 12px;
   border: 2px solid #e5e5e5;
   border-radius: 10px;
   font-size: 13px;
@@ -242,21 +347,27 @@ export default {
   box-sizing: border-box;
 }
 
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #7cb342;
+}
+
 .form-group textarea {
   resize: vertical;
-  min-height: 60px; /* Reduje la altura mínima del textarea */
+  min-height: 60px;
 }
 
 /* Checkbox */
 .checkbox-group {
-  margin-bottom: 15px; /* Reduje el margen */
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .checkbox-group input[type="checkbox"] {
-  width: 16px; /* Reduje el tamaño */
+  width: 16px;
   height: 16px;
   cursor: pointer;
 }
@@ -268,17 +379,28 @@ export default {
   user-select: none;
 }
 
+/* Mensaje de error */
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 /* Botones */
 .modal-buttons {
   display: flex;
   gap: 12px;
-  justify-content: center; /* Esto ya centra los botones */
-  margin-top: 5px; /* Reduje el margen superior */
+  justify-content: center;
+  margin-top: 5px;
 }
 
 .btn-guardar,
 .btn-cancelar {
-  padding: 9px 32px; /* Ajusté el padding */
+  padding: 9px 32px;
   font-size: 13px;
   font-weight: 600;
   border: none;
@@ -293,9 +415,14 @@ export default {
   background-color: #7cb342;
 }
 
-.btn-guardar:hover {
+.btn-guardar:hover:not(:disabled) {
   background-color: #6d9fef;
   transform: translateY(-2px);
+}
+
+.btn-guardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-cancelar {
@@ -303,7 +430,13 @@ export default {
   background-color: #e3e1e1;
 }
 
-.btn-cancelar:hover {
+.btn-cancelar:hover:not(:disabled) {
   background-color: #6d9fef;
+  color: white;
+}
+
+.btn-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>

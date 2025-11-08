@@ -65,8 +65,8 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import AgregarProducto from './AgregarProducto.vue' 
+import { listarProductos, crearProducto, eliminarProducto } from '@/services/productos'
+import AgregarProducto from './AgregarProducto.vue'
 
 export default {
   name: 'InventarioPage',
@@ -79,9 +79,6 @@ export default {
     const productos = ref([])
     const cargando = ref(false)
 
-    const API_URL = 'http://localhost:3000/api' // Ejemplo
-
-    // Cargar productos al montar el componente
     onMounted(() => {
       cargarProductos()
     })
@@ -89,11 +86,18 @@ export default {
     const cargarProductos = async () => {
       try {
         cargando.value = true
-        const response = await axios.get(`${API_URL}/productos`)
+        // Usamos el servicio de productos importado
+        const response = await listarProductos()
         productos.value = response.data
       } catch (error) {
-        console.error('Error al cargar productos:', error)
-        alert('Error al cargar los productos')
+        console.log('No se pudieron cargar los productos')
+        
+        // Manejar error de autenticación
+        if (error.response?.status === 401) {
+          console.log('Error de autenticación al cargar productos')
+        }
+        
+        productos.value = []
       } finally {
         cargando.value = false
       }
@@ -107,48 +111,118 @@ export default {
       mostrarModal.value = false
     }
 
-    const guardarProducto = async (producto) => {
+    const guardarProducto = async (productoData) => {
       try {
         cargando.value = true
-        const response = await axios.post(`${API_URL}/productos`, {
-          nombre: producto.nombreProducto,
-          categoria: producto.categoria,
-          ingredientes: producto.ingredientes,
-          precio: producto.precio,
-          disponible: producto.disponible,
-          imagen: producto.imagen
-        })
+        
+        // Verificar autenticación
+        const token = localStorage.getItem('access_token')
+        if (!token) {
+          alert('No estás autenticado. Por favor, inicia sesión.')
+          mostrarModal.value = false
+          return
+        }
+
+        console.log('📥 Datos recibidos del modal:', productoData)
+        
+        // Preparar los datos para el backend
+        const datosParaEnviar = {
+          nombre: productoData.nombreProducto,
+          categoria: productoData.categoria, // Ya viene en minúsculas del modal
+          ingredientes: productoData.ingredientes,
+          precio: parseFloat(productoData.precio),
+          disponible: Boolean(productoData.disponible),
+        }
+
+        // Agregar imagen solo si existe
+        if (productoData.imagen && productoData.imagen instanceof File) {
+          datosParaEnviar.imagen = productoData.imagen
+        }
+
+        console.log('📤 Datos a enviar al backend:', datosParaEnviar)
+
+        // Crear producto usando el servicio
+        const response = await crearProducto(datosParaEnviar)
+
+        console.log('✅ Producto creado exitosamente:', response.data)
 
         // Agregar el nuevo producto a la lista
         productos.value.push(response.data)
         
+        // Cerrar modal y limpiar
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
-        // Recargar la lista
+        // Recargar la lista completa
         await cargarProductos()
+        
       } catch (error) {
-        console.error('Error al guardar producto:', error)
-        alert('Error al guardar el producto')
+        console.error('❌ Error al guardar producto:', error)
+        
+        // Manejo detallado de errores
+        if (error.response) {
+          const status = error.response.status
+          const errorData = error.response.data
+          
+          console.error('Detalles del error:', errorData)
+          
+          if (status === 400) {
+            // Error de validación
+            let mensajeError = 'Error en los datos del producto:\n'
+            
+            if (typeof errorData === 'object') {
+              Object.keys(errorData).forEach(key => {
+                const errores = Array.isArray(errorData[key]) ? errorData[key] : [errorData[key]]
+                mensajeError += `\n• ${key}: ${errores.join(', ')}`
+              })
+            } else {
+              mensajeError = errorData.toString()
+            }
+            
+            alert(mensajeError)
+          } else if (status === 401) {
+            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.')
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user')
+            // router.push('/login') // Descomenta si tienes router
+          } else if (status === 403) {
+            alert('No tienes permisos para agregar productos.')
+          } else {
+            alert(`Error del servidor (${status}). Por favor, intenta nuevamente.`)
+          }
+        } else if (error.request) {
+          alert('No se pudo conectar con el servidor. Verifica tu conexión.')
+        } else {
+          alert('Error inesperado: ' + error.message)
+        }
       } finally {
         cargando.value = false
       }
     }
 
     const editarProducto = async (id) => {
-      // Aquí implementarás la lógica de editar
       console.log('Editar producto:', id)
       alert('Función de editar en desarrollo')
     }
 
-    const eliminarProducto = async (id) => {
+    const eliminarProductoHandler = async (id) => {
       if (!confirm('¿Estás seguro de eliminar este producto?')) {
         return
       }
 
       try {
         cargando.value = true
-        await axios.delete(`${API_URL}/productos/${id}`)
+        
+        // Verificar autenticación antes de eliminar
+        const token = localStorage.getItem('access_token')
+        if (!token) {
+          alert('No estás autenticado. Por favor, inicia sesión.')
+          return
+        }
+        
+        // Usar el servicio importado eliminarProducto
+        await eliminarProducto(id)
         
         // Eliminar de la lista local
         productos.value = productos.value.filter(p => p.id !== id)
@@ -156,7 +230,20 @@ export default {
         alert('Producto eliminado exitosamente')
       } catch (error) {
         console.error('Error al eliminar producto:', error)
-        alert('Error al eliminar el producto')
+        
+        // Manejar diferentes tipos de errores
+        if (error.response?.status === 401) {
+          alert('Error de autenticación. Tu sesión ha expirado.')
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          localStorage.removeItem('user')
+        } else if (error.response?.status === 403) {
+          alert('No tienes permisos para eliminar productos.')
+        } else if (error.response?.status === 404) {
+          alert('El producto no existe o ya fue eliminado.')
+        } else {
+          alert('Error al eliminar el producto.')
+        }
       } finally {
         cargando.value = false
       }
@@ -171,7 +258,7 @@ export default {
       cerrarModal,
       guardarProducto,
       editarProducto,
-      eliminarProducto
+      eliminarProducto: eliminarProductoHandler
     }
   }
 }
@@ -195,11 +282,11 @@ export default {
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 80px;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  margin-right: -500px;
+  padding: 20px 40px;
+  display: grid;
+  grid-template-columns: 200px 1fr auto auto;
+  align-items: center;
+  gap: 30px;
 }
 
 .logo {
@@ -207,13 +294,16 @@ export default {
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
-  margin-left: 70px;
+  justify-self: start;
+  padding-left: 20px;
 }
 
 .nav-links {
   display: flex;
   gap: 60px;
-  margin-left: 30px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-links a,
@@ -224,8 +314,7 @@ export default {
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover,
-.nav-links router-link:hover {
+.nav-links a:hover {
   color: #6d9fef;
 }
 
@@ -238,7 +327,7 @@ export default {
   border-radius: 50px;
   cursor: default;
   font-weight: 580;
-  margin-right: -230px;
+  white-space: nowrap;
 }
 
 .btn-cerrar-sesion {
@@ -251,7 +340,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  margin-right: 440px;
+  white-space: nowrap;
 }
 
 .btn-cerrar-sesion:hover {
@@ -268,6 +357,7 @@ export default {
   height: 180px;
   object-fit: contain;
   z-index: 60;
+  pointer-events: none;
 }
 
 .hoja-below {
@@ -315,7 +405,7 @@ export default {
   font-weight: 800;
   color: #28233b;
   margin-bottom: 30px;
-  margin-top: -80px;
+  margin-top: -40px;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -408,296 +498,114 @@ export default {
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablets (768px - 1024px) */
-@media (max-width: 1024px) {
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
   .navbar {
-    padding: 20px 40px;
-    margin-right: 0;
-    justify-content: space-between;
-  }
-
-  .logo {
-    margin-left: 0;
-    font-size: 18px;
-  }
-
-  .nav-links {
-    gap: 30px;
-    margin-left: 20px;
-  }
-
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 13px;
-  }
-
-  .btn-admin {
-    margin-right: 0;
-    padding: 8px 20px;
-    font-size: 13px;
-  }
-
-  .btn-cerrar-sesion {
-    margin-right: 0;
-    padding: 8px 18px;
-    font-size: 13px;
-  }
-
-  /* Imágenes decorativas más pequeñas */
-  .img-grapefruit {
-    width: 140px;
-    height: 140px;
-    top: -45px;
-    left: -50px;
-  }
-
-  .hoja-below {
-    width: 70px;
-    height: 70px;
-    top: 400px;
-    right: 20px;
-  }
-
-  .hoja-bottom {
-    width: 60px;
-    height: 60px;
-    bottom: 120px;
-    left: 40px;
-  }
-
-  .img-mortero {
-    width: 180px;
-    height: 180px;
-    right: -50px;
-    top: 160px;
-  }
-
-  .main-content {
-    max-width: 700px;
-    padding: 120px 30px 60px;
-  }
-
-  .title {
-    font-size: 38px;
-    margin-top: -60px;
-  }
-
-  .actions-bar {
-    max-width: 100%;
-    margin-left: 0;
-    gap: 15px;
-  }
-
-  .btn-agregar {
-    margin-left: 0;
-    padding: 10px 24px;
-    font-size: 11px;
-  }
-
-  .search-container {
-    max-width: 350px;
-  }
-
-  .table-container {
-    padding: 40px 30px;
-    min-height: 280px;
-  }
-}
-
-/* Pantallas medianas de computador (769px - 1200px) */
-@media (min-width: 769px) and (max-width: 1200px) {
-  .navbar {
-    padding: 20px 50px;
-  }
-
-  .logo {
-    margin-left: 20px;
-  }
-
-  .nav-links {
+    padding: 20px 80px;
+    grid-template-columns: 250px 1fr auto auto;
     gap: 40px;
-    margin-left: 25px;
-  }
-
-  .btn-admin {
-    margin-right: -100px;
-  }
-
-  .btn-cerrar-sesion {
-    margin-right: 200px;
-  }
-
-  .main-content {
-    max-width: 800px;
-  }
-
-  .title {
-    font-size: 40px;
-  }
-
-  .btn-agregar {
-    margin-left: 80px;
-  }
-
-  .img-mortero {
-    right: -55px;
-  }
-}
-
-/* Tablets pequeñas (600px - 768px) */
-@media (max-width: 768px) {
-  .navbar {
-    padding: 15px 20px;
-    flex-wrap: wrap;
-    gap: 10px;
   }
 
   .logo {
-    font-size: 16px;
-    margin-left: 0;
+    font-size: 22px;
+    padding-left: 40px;
   }
 
   .nav-links {
-    gap: 20px;
-    margin-left: 0;
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    padding-top: 10px;
+    gap: 80px;
   }
 
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 12px;
+  .nav-links a {
+    font-size: 15px;
   }
 
   .btn-admin {
-    padding: 6px 16px;
-    font-size: 12px;
-    margin-right: 0;
+    padding: 10px 32px;
+    font-size: 15px;
   }
 
   .btn-cerrar-sesion {
-    padding: 6px 14px;
-    font-size: 12px;
-    margin-right: 0;
-  }
-
-  /* Ocultar imágenes decorativas en tablets pequeñas */
-  .img-grapefruit,
-  .hoja-below,
-  .hoja-bottom,
-  .img-mortero {
-    display: none;
+    padding: 10px 26px;
+    font-size: 15px;
   }
 
   .main-content {
-    padding: 140px 20px 40px;
-    max-width: 100%;
+    max-width: 1200px;
+    padding: 140px 60px 60px;
   }
 
   .title {
-    font-size: 32px;
-    margin-top: -40px;
-    margin-bottom: 25px;
-  }
-
-  .actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-    margin-bottom: 30px;
-  }
-
-  .btn-agregar {
-    margin-left: 0;
-    margin-top: 0;
-    width: 100%;
-    padding: 12px 24px;
-    font-size: 13px;
-  }
-
-  .search-container {
-    max-width: 100%;
-    margin-top: 0;
-  }
-
-  .search-input {
-    padding: 10px 20px 10px 50px;
-    font-size: 14px;
-  }
-
-  .table-container {
-    padding: 30px 20px;
-    min-height: 240px;
-    margin-top: 0;
-  }
-
-  .empty-message {
-    font-size: 14px;
+    font-size: 50px;
   }
 }
 
-/* Pantallas pequeñas de computador (1025px - 1366px) */
-@media (min-width: 1025px) and (max-width: 1366px) {
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
   .navbar {
     padding: 20px 60px;
-    margin-right: -300px;
+    grid-template-columns: 220px 1fr auto auto;
+    gap: 35px;
   }
 
   .logo {
-    margin-left: 40px;
-  }
-
-  .btn-admin {
-    margin-right: -150px;
-  }
-
-  .btn-cerrar-sesion {
-    margin-right: 300px;
-  }
-
-  .main-content {
-    max-width: 850px;
-  }
-
-  .btn-agregar {
-    margin-left: 120px;
-  }
-}
-
-/* Pantallas de 15.6 pulgadas - 1366x768 (HD) */
-@media (min-width: 1280px) and (max-width: 1440px) {
-  .navbar {
-    padding: 18px 60px;
-    margin-right: -250px;
-  }
-
-  .logo {
-    margin-left: 50px;
-    font-size: 19px;
+    font-size: 20px;
+    padding-left: 30px;
   }
 
   .nav-links {
-    gap: 50px;
-    margin-left: 25px;
+    gap: 70px;
   }
 
-  .nav-links a,
-  .nav-links router-link {
-    font-size: 13.5px;
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .main-content {
+    max-width: 1100px;
+  }
+
+  .title {
+    font-size: 46px;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 50px;
+    grid-template-columns: 200px 1fr auto auto;
+    gap: 30px;
+  }
+
+  .logo {
+    font-size: 19px;
+    padding-left: 25px;
+  }
+
+  .nav-links {
+    gap: 60px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
   }
 
   .btn-admin {
-    margin-right: -180px;
     padding: 8px 26px;
-    font-size: 13.5px;
+    font-size: 14px;
   }
 
   .btn-cerrar-sesion {
-    margin-right: 350px;
     padding: 8px 20px;
-    font-size: 13.5px;
+    font-size: 14px;
+  }
+
+  .main-content {
+    max-width: 1000px;
+  }
+
+  .title {
+    font-size: 44px;
   }
 
   .img-grapefruit {
@@ -711,115 +619,280 @@ export default {
     width: 80px;
     height: 80px;
     top: 420px;
-    right: 30px;
   }
 
   .hoja-bottom {
     width: 70px;
     height: 70px;
-    bottom: 130px;
-    left: 60px;
   }
 
   .img-mortero {
     width: 200px;
     height: 200px;
     right: -60px;
-    top: 150px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navbar {
+    padding: 20px 40px;
+    grid-template-columns: 180px 1fr auto auto;
+    gap: 25px;
+  }
+
+  .logo {
+    font-size: 18px;
+    padding-left: 20px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 8px 24px;
+    font-size: 13px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 8px 18px;
+    font-size: 13px;
   }
 
   .main-content {
-    max-width: 850px;
-    padding-top: 130px;
+    max-width: 900px;
+    padding: 140px 30px 60px;
   }
 
   .title {
     font-size: 42px;
-    margin-top: -70px;
-  }
-
-  .actions-bar {
-    margin-bottom: 35px;
-  }
-
-  .btn-agregar {
-    margin-left: 140px;
-    padding: 10px 30px;
-    font-size: 12px;
-  }
-
-  .search-container {
-    max-width: 380px;
-  }
-
-  .table-container {
-    padding: 55px 35px;
-    min-height: 300px;
-  }
-}
-
-/* Pantallas de 15.6 pulgadas - 1920x1080 (Full HD) */
-@media (min-width: 1680px) and (max-width: 1920px) {
-  .navbar {
-    padding: 20px 100px;
-    margin-right: -400px;
-  }
-
-  .logo {
-    margin-left: 80px;
-  }
-
-  .nav-links {
-    gap: 70px;
-    margin-left: 40px;
-  }
-
-  .btn-admin {
-    margin-right: -200px;
-  }
-
-  .btn-cerrar-sesion {
-    margin-right: 380px;
   }
 
   .img-grapefruit {
-    width: 200px;
-    height: 200px;
-    top: -60px;
-    left: -70px;
+    width: 140px;
+    height: 140px;
+    top: -45px;
+    left: -55px;
   }
 
   .hoja-below {
-    width: 100px;
-    height: 100px;
-    top: 480px;
-    right: 50px;
+    width: 70px;
+    height: 70px;
+    top: 400px;
+    right: 30px;
   }
 
   .hoja-bottom {
-    width: 90px;
-    height: 90px;
-    bottom: 150px;
-    left: 80px;
+    width: 60px;
+    height: 60px;
+    bottom: 120px;
+    left: 50px;
   }
 
   .img-mortero {
-    width: 250px;
-    height: 250px;
-    right: -70px;
-    top: 130px;
+    width: 180px;
+    height: 180px;
+    right: -55px;
+    top: 160px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 20px 30px;
+    grid-template-columns: 160px 1fr auto auto;
+    gap: 20px;
+  }
+
+  .logo {
+    font-size: 17px;
+    padding-left: 15px;
+  }
+
+  .nav-links {
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
   }
 
   .main-content {
-    max-width: 1000px;
+    max-width: 750px;
+    padding: 130px 25px 50px;
   }
 
   .title {
-    font-size: 48px;
+    font-size: 38px;
+  }
+
+  .img-grapefruit {
+    width: 130px;
+    height: 130px;
+    top: -40px;
+    left: -50px;
+  }
+
+  .hoja-below {
+    width: 60px;
+    height: 60px;
+    top: 380px;
+    right: 20px;
+  }
+
+  .hoja-bottom {
+    width: 55px;
+    height: 55px;
+    bottom: 100px;
+    left: 40px;
+  }
+
+  .img-mortero {
+    width: 160px;
+    height: 160px;
+    right: -50px;
+    top: 170px;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .navbar {
+    padding: 15px 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 15px;
+    justify-items: center;
+  }
+
+  .logo {
+    font-size: 18px;
+    padding-left: 0;
+    grid-column: 1 / -1;
+  }
+
+  .nav-links {
+    gap: 30px;
+    grid-column: 1 / -1;
+    order: 1;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-admin {
+    padding: 7px 20px;
+    font-size: 12px;
+    order: 2;
+  }
+
+  .btn-cerrar-sesion {
+    padding: 7px 16px;
+    font-size: 12px;
+    order: 3;
+  }
+
+  .img-grapefruit,
+  .hoja-below,
+  .hoja-bottom,
+  .img-mortero {
+    display: none;
+  }
+
+  .main-content {
+    padding: 160px 20px 40px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 32px;
+    margin-bottom: 25px;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+    gap: 15px;
   }
 
   .btn-agregar {
-    margin-left: 180px;
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 13px;
+  }
+
+  .search-container {
+    max-width: 100%;
+  }
+
+  .search-input {
+    padding: 10px 20px 10px 50px;
+    font-size: 14px;
+  }
+
+  .table-container {
+    padding: 30px 20px;
+    min-height: 240px;
+  }
+
+  .empty-message {
+    font-size: 14px;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    padding: 12px 15px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .btn-admin,
+  .btn-cerrar-sesion {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 170px 15px 30px;
+  }
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .table-container {
+    padding: 25px 15px;
+    min-height: 200px;
   }
 }
 </style>
