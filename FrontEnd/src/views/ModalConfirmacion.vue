@@ -94,7 +94,7 @@ export default {
 
 /* Título */
 .confirmation-title {
-  font-size: 27px;
+  font-size: 24px;
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 12px;
@@ -106,9 +106,9 @@ export default {
 
 /* Texto del mensaje */
 .confirmation-text {
-  font-size: 14px;
+  font-size: 15px;
   color: #555;
-  text-align: center;
+  text-align: left;
   margin-bottom: 25px;
   line-height: 1.6;
   font-weight: 400;
