@@ -47,8 +47,7 @@
       <div class="form-group">
         <label>Categoría *</label>
         <select v-model="categoria" class="select-categoria" required>
-          <option value="">Selecciona una categoría</option>
-          <option value="platillo">Platillo</option>
+          <option value="">Platillo</option>
           <option value="postre">Postre</option>
           <option value="bebida">Bebida</option>
         </select>
@@ -325,7 +324,7 @@ export default {
 
 .form-group label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
   margin-bottom: 4px;
   font-weight: 500;
@@ -429,10 +428,777 @@ export default {
 .btn-cancelar:hover:not(:disabled) {
   background-color: #6d9fef;
   color: white;
+  transform: translateY(-2px);
 }
 
 .btn-cancelar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE PARA MODAL ===== */
+
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
+  .modal-content {
+    max-width: 480px;
+    padding: 22px 28px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .checkbox-group label {
+    font-size: 13px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 9px 32px;
+    font-size: 12px;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .modal-content {
+    max-width: 460px;
+    padding: 21px 26px;
+  }
+
+  .modal-title {
+    font-size: 21px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 8px 30px;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .modal-content {
+    max-width: 450px;
+    padding: 20px 25px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .modal-content {
+    max-width: 430px;
+    padding: 18px 23px;
+  }
+
+  .modal-title {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .upload-placeholder svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .preview-image {
+    max-height: 80px;
+  }
+
+  .form-group {
+    margin-bottom: 9px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .form-group textarea {
+    min-height: 45px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 10px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .checkbox-group label {
+    font-size: 11px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 26px;
+    font-size: 11px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .modal-content {
+    max-width: 400px;
+    padding: 18px 22px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area {
+    padding: 10px;
+  }
+
+  .upload-placeholder svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .preview-image {
+    max-height: 75px;
+  }
+
+  .form-group {
+    margin-bottom: 8px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 9px;
+  }
+
+  .form-group textarea {
+    min-height: 42px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 9px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+  }
+
+  .checkbox-group label {
+    font-size: 11px;
+  }
+
+  .error-message {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 24px;
+    font-size: 10px;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal-content {
+    max-width: 380px;
+    padding: 16px 20px;
+  }
+
+  .modal-title {
+    font-size: 17px;
+    margin-bottom: 9px;
+  }
+
+  .upload-area {
+    padding: 9px;
+    margin-bottom: 9px;
+  }
+
+  .upload-placeholder svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .upload-placeholder p {
+    font-size: 10px;
+  }
+
+  .preview-image {
+    max-height: 70px;
+  }
+
+  .form-group {
+    margin-bottom: 7px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .form-group textarea {
+    min-height: 40px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 8px;
+  }
+
+  .modal-buttons {
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 22px;
+    font-size: 10px;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    padding: 15px 18px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .upload-area {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  .upload-placeholder svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .upload-placeholder p {
+    font-size: 9px;
+  }
+
+  .preview-image {
+    max-height: 65px;
+  }
+
+  .form-group {
+    margin-bottom: 7px;
+  }
+
+  .form-group label {
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .form-group textarea {
+    min-height: 38px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 7px;
+    gap: 6px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+  }
+
+  .checkbox-group label {
+    font-size: 10px;
+  }
+
+  .error-message {
+    font-size: 9px;
+    padding: 4px 7px;
+    margin-bottom: 7px;
+  }
+
+  .modal-buttons {
+    gap: 7px;
+    margin-top: 5px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 6px 20px;
+    font-size: 10px;
+  }
+}
+
+/* Pantallas muy pequeñas (menos de 400px) */
+@media (max-width: 399px) {
+  .modal-content {
+    padding: 12px 15px;
+  }
+
+  .modal-title {
+    font-size: 15px;
+  }
+
+  .form-group label {
+    font-size: 9px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 9px;
+    padding: 5px 7px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 6px 18px;
+    font-size: 9px;
+  }
+}
+
+/* ===== RESPONSIVE PARA MODAL ===== */
+
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
+  .modal-content {
+    max-width: 480px;
+    padding: 22px 28px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .checkbox-group label {
+    font-size: 13px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 9px 32px;
+    font-size: 12px;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .modal-content {
+    max-width: 460px;
+    padding: 21px 26px;
+  }
+
+  .modal-title {
+    font-size: 21px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 8px 30px;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .modal-content {
+    max-width: 450px;
+    padding: 20px 25px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .modal-content {
+    max-width: 430px;
+    padding: 18px 23px;
+  }
+
+  .modal-title {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .upload-placeholder svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .preview-image {
+    max-height: 80px;
+  }
+
+  .form-group {
+    margin-bottom: 9px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .form-group textarea {
+    min-height: 45px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 10px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .checkbox-group label {
+    font-size: 11px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 26px;
+    font-size: 11px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .modal-content {
+    max-width: 400px;
+    padding: 18px 22px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .upload-area {
+    padding: 10px;
+  }
+
+  .upload-placeholder svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .preview-image {
+    max-height: 75px;
+  }
+
+  .form-group {
+    margin-bottom: 8px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 9px;
+  }
+
+  .form-group textarea {
+    min-height: 42px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 9px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+  }
+
+  .checkbox-group label {
+    font-size: 11px;
+  }
+
+  .error-message {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 24px;
+    font-size: 10px;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal-content {
+    max-width: 380px;
+    padding: 16px 20px;
+  }
+
+  .modal-title {
+    font-size: 17px;
+    margin-bottom: 9px;
+  }
+
+  .upload-area {
+    padding: 9px;
+    margin-bottom: 9px;
+  }
+
+  .upload-placeholder svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .upload-placeholder p {
+    font-size: 10px;
+  }
+
+  .preview-image {
+    max-height: 70px;
+  }
+
+  .form-group {
+    margin-bottom: 7px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .form-group textarea {
+    min-height: 40px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 8px;
+  }
+
+  .modal-buttons {
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 7px 22px;
+    font-size: 10px;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    padding: 15px 18px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .upload-area {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  .upload-placeholder svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .upload-placeholder p {
+    font-size: 9px;
+  }
+
+  .preview-image {
+    max-height: 65px;
+  }
+
+  .form-group {
+    margin-bottom: 7px;
+  }
+
+  .form-group label {
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .form-group textarea {
+    min-height: 38px;
+  }
+
+  .checkbox-group {
+    margin-bottom: 7px;
+    gap: 6px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+  }
+
+  .checkbox-group label {
+    font-size: 10px;
+  }
+
+  .error-message {
+    font-size: 9px;
+    padding: 4px 7px;
+    margin-bottom: 7px;
+  }
+
+  .modal-buttons {
+    gap: 7px;
+    margin-top: 5px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 6px 20px;
+    font-size: 10px;
+  }
+}
+
+/* Pantallas muy pequeñas (menos de 400px) */
+@media (max-width: 399px) {
+  .modal-content {
+    padding: 12px 15px;
+  }
+
+  .modal-title {
+    font-size: 15px;
+  }
+
+  .form-group label {
+    font-size: 9px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .select-categoria {
+    font-size: 9px;
+    padding: 5px 7px;
+  }
+
+  .btn-guardar,
+  .btn-cancelar {
+    padding: 6px 18px;
+    font-size: 9px;
+  }
 }
 </style>
