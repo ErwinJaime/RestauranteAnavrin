@@ -38,8 +38,8 @@ export default {
   name: 'ModalConfirmacion',
   props: {
     isOpen: { type: Boolean, default: false },
-    titulo: { type: String, default: '¿Estás seguro de que quieres eliminar el producto?' },
-    mensaje: { type: String, default: 'Esta acción es permanente. Una vez eliminado, el producto no estará disponible, ni aparecerá en el menú.' },
+    titulo: { type: String, default: '¿Estás seguro de que quieres eliminar el producto?'},
+    mensaje: { type: String, default: 'Esta acción es permanente. Una vez eliminado, el producto no estará disponible, ni aparecerá en el menú.'},
     textoConfirmar: { type: String, default: 'Confirmar' },
     cargando: { type: Boolean, default: false }
   },
