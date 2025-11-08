@@ -12,9 +12,6 @@
       <button class="btn-cerrar-sesion">Cerrar Sesión</button>
     </nav>
 
-    <!-- Imagen Grapefruit superior izquierda -->
-    <img src="@/assets/grapefruit.png" alt="Grapefruit" class="img-grapefruit">
-
     <!-- Contenido Principal -->
     <div class="main-content">
       <h1 class="title">Inventario</h1>
@@ -51,7 +48,9 @@
     <img src="@/assets/hoja3.png" alt="Hoja" class="hoja-below">
     <img src="@/assets/hoja2.png" alt="Hoja" class="hoja-bottom">
   
-    
+    <!-- Imagen Grapefruit superior izquierda -->
+    <img src="@/assets/grapefruit.png" alt="Grapefruit" class="img-grapefruit">
+
     <!-- Imagen mortero derecha -->
     <img src="@/assets/mortero.png" alt="Mortero" class="img-mortero">
 
@@ -65,8 +64,8 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import { listarProductos, crearProducto, eliminarProducto } from '@/services/productos'
-import AgregarProducto from './AgregarProducto.vue'
+import axios from 'axios'
+import AgregarProducto from './AgregarProducto.vue' 
 
 export default {
   name: 'InventarioPage',
@@ -79,6 +78,9 @@ export default {
     const productos = ref([])
     const cargando = ref(false)
 
+    const API_URL = 'http://localhost:3000/api' // Ejemplo
+
+    // Cargar productos al montar el componente
     onMounted(() => {
       cargarProductos()
     })
@@ -86,18 +88,11 @@ export default {
     const cargarProductos = async () => {
       try {
         cargando.value = true
-        // Usamos el servicio de productos importado
-        const response = await listarProductos()
+        const response = await axios.get(`${API_URL}/productos`)
         productos.value = response.data
       } catch (error) {
-        console.log('No se pudieron cargar los productos')
-        
-        // Manejar error de autenticación
-        if (error.response?.status === 401) {
-          console.log('Error de autenticación al cargar productos')
-        }
-        
-        productos.value = []
+        console.error('Error al cargar productos:', error)
+        alert('Error al cargar los productos')
       } finally {
         cargando.value = false
       }
@@ -111,118 +106,48 @@ export default {
       mostrarModal.value = false
     }
 
-    const guardarProducto = async (productoData) => {
+    const guardarProducto = async (producto) => {
       try {
         cargando.value = true
-        
-        // Verificar autenticación
-        const token = localStorage.getItem('access_token')
-        if (!token) {
-          alert('No estás autenticado. Por favor, inicia sesión.')
-          mostrarModal.value = false
-          return
-        }
-
-        console.log('📥 Datos recibidos del modal:', productoData)
-        
-        // Preparar los datos para el backend
-        const datosParaEnviar = {
-          nombre: productoData.nombreProducto,
-          categoria: productoData.categoria, // Ya viene en minúsculas del modal
-          ingredientes: productoData.ingredientes,
-          precio: parseFloat(productoData.precio),
-          disponible: Boolean(productoData.disponible),
-        }
-
-        // Agregar imagen solo si existe
-        if (productoData.imagen && productoData.imagen instanceof File) {
-          datosParaEnviar.imagen = productoData.imagen
-        }
-
-        console.log('📤 Datos a enviar al backend:', datosParaEnviar)
-
-        // Crear producto usando el servicio
-        const response = await crearProducto(datosParaEnviar)
-
-        console.log('✅ Producto creado exitosamente:', response.data)
+        const response = await axios.post(`${API_URL}/productos`, {
+          nombre: producto.nombreProducto,
+          categoria: producto.categoria,
+          ingredientes: producto.ingredientes,
+          precio: producto.precio,
+          disponible: producto.disponible,
+          imagen: producto.imagen
+        })
 
         // Agregar el nuevo producto a la lista
         productos.value.push(response.data)
         
-        // Cerrar modal y limpiar
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
-        // Recargar la lista completa
+        // Recargar la lista
         await cargarProductos()
-        
       } catch (error) {
-        console.error('❌ Error al guardar producto:', error)
-        
-        // Manejo detallado de errores
-        if (error.response) {
-          const status = error.response.status
-          const errorData = error.response.data
-          
-          console.error('Detalles del error:', errorData)
-          
-          if (status === 400) {
-            // Error de validación
-            let mensajeError = 'Error en los datos del producto:\n'
-            
-            if (typeof errorData === 'object') {
-              Object.keys(errorData).forEach(key => {
-                const errores = Array.isArray(errorData[key]) ? errorData[key] : [errorData[key]]
-                mensajeError += `\n• ${key}: ${errores.join(', ')}`
-              })
-            } else {
-              mensajeError = errorData.toString()
-            }
-            
-            alert(mensajeError)
-          } else if (status === 401) {
-            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.')
-            localStorage.removeItem('access_token')
-            localStorage.removeItem('refresh_token')
-            localStorage.removeItem('user')
-            // router.push('/login') // Descomenta si tienes router
-          } else if (status === 403) {
-            alert('No tienes permisos para agregar productos.')
-          } else {
-            alert(`Error del servidor (${status}). Por favor, intenta nuevamente.`)
-          }
-        } else if (error.request) {
-          alert('No se pudo conectar con el servidor. Verifica tu conexión.')
-        } else {
-          alert('Error inesperado: ' + error.message)
-        }
+        console.error('Error al guardar producto:', error)
+        alert('Error al guardar el producto')
       } finally {
         cargando.value = false
       }
     }
 
     const editarProducto = async (id) => {
+      // Aquí implementarás la lógica de editar
       console.log('Editar producto:', id)
       alert('Función de editar en desarrollo')
     }
 
-    const eliminarProductoHandler = async (id) => {
+    const eliminarProducto = async (id) => {
       if (!confirm('¿Estás seguro de eliminar este producto?')) {
         return
       }
 
       try {
         cargando.value = true
-        
-        // Verificar autenticación antes de eliminar
-        const token = localStorage.getItem('access_token')
-        if (!token) {
-          alert('No estás autenticado. Por favor, inicia sesión.')
-          return
-        }
-        
-        // Usar el servicio importado eliminarProducto
-        await eliminarProducto(id)
+        await axios.delete(`${API_URL}/productos/${id}`)
         
         // Eliminar de la lista local
         productos.value = productos.value.filter(p => p.id !== id)
@@ -230,20 +155,7 @@ export default {
         alert('Producto eliminado exitosamente')
       } catch (error) {
         console.error('Error al eliminar producto:', error)
-        
-        // Manejar diferentes tipos de errores
-        if (error.response?.status === 401) {
-          alert('Error de autenticación. Tu sesión ha expirado.')
-          localStorage.removeItem('access_token')
-          localStorage.removeItem('refresh_token')
-          localStorage.removeItem('user')
-        } else if (error.response?.status === 403) {
-          alert('No tienes permisos para eliminar productos.')
-        } else if (error.response?.status === 404) {
-          alert('El producto no existe o ya fue eliminado.')
-        } else {
-          alert('Error al eliminar el producto.')
-        }
+        alert('Error al eliminar el producto')
       } finally {
         cargando.value = false
       }
@@ -258,7 +170,7 @@ export default {
       cerrarModal,
       guardarProducto,
       editarProducto,
-      eliminarProducto: eliminarProductoHandler
+      eliminarProducto
     }
   }
 }
@@ -276,17 +188,18 @@ export default {
 
 /* Navegación */
 .navbar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 40px;
-  display: grid;
-  grid-template-columns: 200px 1fr auto auto;
-  align-items: center;
-  gap: 30px;
+  padding: 20px 3% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
 }
 
 .logo {
@@ -294,16 +207,17 @@ export default {
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
-  justify-self: start;
-  padding-left: 20px;
+  margin-left: 30px;
+  flex-shrink: 0;
 }
 
 .nav-links {
-  display: flex;
+  display: flex !important;
   gap: 60px;
+  align-items: center;
   flex: 1;
   justify-content: center;
-  align-items: center;
+  margin-left: 100px;
 }
 
 .nav-links a,
@@ -312,6 +226,7 @@ export default {
   color: #666;
   text-decoration: none;
   transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -328,6 +243,9 @@ export default {
   cursor: default;
   font-weight: 580;
   white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto !important;
+  margin-right: 10px !important;
 }
 
 .btn-cerrar-sesion {
@@ -341,6 +259,7 @@ export default {
   transition: all 0.3s ease;
   font-weight: 600;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-cerrar-sesion:hover {
@@ -351,12 +270,12 @@ export default {
 /* Imágenes decorativas */
 .img-grapefruit {
   position: fixed;
-  top: -55px;
-  left: -65px;
+  top: 80px;
+  left: -70px;
   width: 180px;
   height: 180px;
   object-fit: contain;
-  z-index: 60;
+  z-index: 5;
   pointer-events: none;
 }
 
@@ -413,11 +332,13 @@ export default {
 .actions-bar {
   display: flex;
   align-items: center;
+  justify-content: center; 
   gap: 20px;
   margin-bottom: 40px;
   max-width: 900px;
-  margin-left: 0;
-  margin-right: auto;
+  margin-left: auto;
+  margin-right: 35px;
+  margin-top: -20px;
 }
 
 .btn-agregar {
@@ -431,8 +352,6 @@ export default {
   transition: all 0.3s ease;
   font-weight: 600;
   white-space: nowrap;
-  margin-left: 165px;
-  margin-top: -20px;
 }
 
 .btn-agregar:hover {
@@ -445,7 +364,6 @@ export default {
   position: relative;
   flex: 1;
   max-width: 400px;
-  margin-top: -20px;
 }
 
 .search-icon {
@@ -501,14 +419,13 @@ export default {
 /* Pantallas grandes (1600px+) */
 @media (min-width: 1600px) {
   .navbar {
-    padding: 20px 80px;
-    grid-template-columns: 250px 1fr auto auto;
-    gap: 40px;
+    padding: 20px 5% !important;
+    gap: 20px !important;
   }
 
   .logo {
     font-size: 22px;
-    padding-left: 40px;
+    margin-right: 40px;
   }
 
   .nav-links {
@@ -522,6 +439,7 @@ export default {
   .btn-admin {
     padding: 10px 32px;
     font-size: 15px;
+    margin-right: 12px !important;
   }
 
   .btn-cerrar-sesion {
@@ -542,14 +460,13 @@ export default {
 /* Pantallas medianas-grandes (1367px - 1599px) */
 @media (min-width: 1367px) and (max-width: 1599px) {
   .navbar {
-    padding: 20px 60px;
-    grid-template-columns: 220px 1fr auto auto;
-    gap: 35px;
+    padding: 20px 4% !important;
+    gap: 18px !important;
   }
 
   .logo {
     font-size: 20px;
-    padding-left: 30px;
+    margin-right: 35px;
   }
 
   .nav-links {
@@ -558,6 +475,10 @@ export default {
 
   .nav-links a {
     font-size: 14px;
+  }
+
+  .btn-admin {
+    margin-right: 12px !important;
   }
 
   .main-content {
@@ -572,14 +493,13 @@ export default {
 /* Pantallas medianas (1280px - 1366px) - 15.6" HD */
 @media (min-width: 1280px) and (max-width: 1366px) {
   .navbar {
-    padding: 20px 50px;
-    grid-template-columns: 200px 1fr auto auto;
-    gap: 30px;
+    padding: 20px 3% !important;
+    gap: 12px !important;
   }
 
   .logo {
     font-size: 19px;
-    padding-left: 25px;
+    margin-right: 30px;
   }
 
   .nav-links {
@@ -593,6 +513,7 @@ export default {
   .btn-admin {
     padding: 8px 26px;
     font-size: 14px;
+    margin-right: 10px !important;
   }
 
   .btn-cerrar-sesion {
@@ -611,8 +532,8 @@ export default {
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top: -50px;
-    left: -60px;
+    top: 80px;
+    left: -70px;
   }
 
   .hoja-below {
@@ -636,14 +557,13 @@ export default {
 /* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
 @media (min-width: 1024px) and (max-width: 1279px) {
   .navbar {
-    padding: 20px 40px;
-    grid-template-columns: 180px 1fr auto auto;
-    gap: 25px;
+    padding: 20px 2% !important;
+    gap: 10px !important;
   }
 
   .logo {
     font-size: 18px;
-    padding-left: 20px;
+    margin-right: 25px;
   }
 
   .nav-links {
@@ -657,6 +577,7 @@ export default {
   .btn-admin {
     padding: 8px 24px;
     font-size: 13px;
+    margin-right: 8px !important;
   }
 
   .btn-cerrar-sesion {
@@ -671,6 +592,7 @@ export default {
 
   .title {
     font-size: 42px;
+    margin-top: -40px;
   }
 
   .img-grapefruit {
@@ -705,14 +627,13 @@ export default {
 /* Tablets (768px - 1023px) */
 @media (max-width: 1023px) {
   .navbar {
-    padding: 20px 30px;
-    grid-template-columns: 160px 1fr auto auto;
-    gap: 20px;
+    padding: 20px 2% !important;
+    gap: 10px !important;
   }
 
   .logo {
     font-size: 17px;
-    padding-left: 15px;
+    margin-right: 20px;
   }
 
   .nav-links {
@@ -726,6 +647,7 @@ export default {
   .btn-admin {
     padding: 7px 20px;
     font-size: 12px;
+    margin-right: 8px !important;
   }
 
   .btn-cerrar-sesion {
@@ -774,23 +696,24 @@ export default {
 /* Tablets pequeñas (600px - 767px) */
 @media (max-width: 767px) {
   .navbar {
-    padding: 15px 20px;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    gap: 15px;
-    justify-items: center;
+    padding: 15px 20px !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    justify-content: center !important;
   }
 
   .logo {
     font-size: 18px;
-    padding-left: 0;
-    grid-column: 1 / -1;
+    width: 100%;
+    text-align: center;
+    margin-right: 0;
+    margin-bottom: 10px;
   }
 
   .nav-links {
     gap: 30px;
-    grid-column: 1 / -1;
-    order: 1;
+    width: 100%;
+    justify-content: center;
   }
 
   .nav-links a {
@@ -800,13 +723,13 @@ export default {
   .btn-admin {
     padding: 7px 20px;
     font-size: 12px;
-    order: 2;
+    margin-left: 0 !important;
+    margin-right: 5px !important;
   }
 
   .btn-cerrar-sesion {
     padding: 7px 16px;
     font-size: 12px;
-    order: 3;
   }
 
   .img-grapefruit,
@@ -824,6 +747,7 @@ export default {
   .title {
     font-size: 32px;
     margin-bottom: 25px;
+    margin-top: -20px;
   }
 
   .actions-bar {
@@ -859,7 +783,7 @@ export default {
 /* Móviles (hasta 599px) */
 @media (max-width: 599px) {
   .navbar {
-    padding: 12px 15px;
+    padding: 12px 15px !important;
   }
 
   .logo {
@@ -868,7 +792,6 @@ export default {
 
   .nav-links {
     gap: 20px;
-    flex-wrap: wrap;
   }
 
   .nav-links a {
@@ -888,9 +811,10 @@ export default {
   .title {
     font-size: 28px;
     margin-bottom: 20px;
+    margin-top: -10px;
   }
 
-  .table-container {
+    .table-container {
     padding: 25px 15px;
     min-height: 200px;
   }
