@@ -146,8 +146,8 @@
     <!-- Modal de confirmación para eliminar producto -->
     <ModalConfirmacion
       :isOpen="mostrarConfirmacionEliminar"
-      titulo="¿Eliminar producto?"
-      mensaje="Esta acción eliminará el producto permanentemente y no se puede deshacer."
+      titulo="¿Estás seguro de que quieres eliminar el producto?"
+      mensaje="Esta acción es permanente. Una vez eliminado, el producto no estará disponible, ni aparecerá en el menú."
       textoConfirmar="Eliminar"
       :cargando="cargando"
       @cerrar="cerrarConfirmacionEliminar"
