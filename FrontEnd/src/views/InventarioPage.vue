@@ -454,7 +454,7 @@ export default {
 
   .title {
     font-size: 50px;
-    margin-top: 0px;
+    margin-top: 5px;
   }
 
   .actions-bar {
