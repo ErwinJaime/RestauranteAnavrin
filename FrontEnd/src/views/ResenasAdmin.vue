@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/administracion">Home</router-link>
+        <router-link to="/adminitracion">Home</router-link>
         <router-link to="/about">About</router-link>
         <a href="#">Review</a>
       </div>
@@ -242,25 +242,25 @@ const paginaAnterior = () => {
 .img-naranja {
   top: 80px;
   left: 40px;
-  width: 130px;
+  width: 180px;
 }
 
 .img-aceite {
   top: 50px;
   right: 0px;
-  width: 150px;
+  width: 200px;
 }
 
 .img-guacamole {
   bottom: 0px;
   left: 50px;
-  width: 160px;
+  width: 210px;
 }
 
 .img-estrellas {
   bottom: 0;
   right: 5px;
-  width: 155px;
+  width: 205px;
 }
 
 /* ------------------------
@@ -269,8 +269,12 @@ const paginaAnterior = () => {
 .main-content {
   width: min(90%, 1400px);
   margin: 0 auto;
-  padding-top: 180px;
+  padding-top: 140px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 140px);
 }
 
 .title {
@@ -285,11 +289,13 @@ const paginaAnterior = () => {
    TARJETAS
 ------------------------- */
 .resenas-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
   padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .resena-card {
@@ -300,6 +306,8 @@ const paginaAnterior = () => {
   text-align: center;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 320px;
+  flex-shrink: 0;
 }
 
 .resena-card:hover {
@@ -507,6 +515,17 @@ const paginaAnterior = () => {
   .main-content {
     padding-top: 140px;
   }
+
+  .resena-card {
+    width: 280px;
+  }
+
+  .img-naranja,
+  .img-aceite,
+  .img-guacamole,
+  .img-estrellas {
+    width: 120px;
+  }
 }
 
 /* Tablets (768px - 1023px) */
@@ -542,6 +561,17 @@ const paginaAnterior = () => {
 
   .main-content {
     padding-top: 130px;
+  }
+
+  .resena-card {
+    width: 280px;
+  }
+
+  .img-naranja,
+  .img-aceite,
+  .img-guacamole,
+  .img-estrellas {
+    width: 110px;
   }
 }
 
@@ -602,7 +632,13 @@ const paginaAnterior = () => {
   }
 
   .resenas-container {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .resena-card {
+    width: 320px;
+    max-width: 90%;
   }
 }
 

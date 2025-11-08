@@ -29,7 +29,6 @@
         <input 
           type="text" 
           v-model="nombreProducto" 
-          placeholder="Ej: Tacos al pastor"
           required
         />
       </div>
@@ -40,7 +39,6 @@
         <textarea 
           v-model="ingredientes" 
           rows="3"
-          placeholder="Ej: Tortillas, carne, cebolla, cilantro"
           required
         ></textarea>
       </div>
@@ -258,15 +256,13 @@ export default {
   max-width: 450px;
   position: relative;
   box-shadow: 0 10px 40px #00000014;
-  max-height: 90vh;
-  overflow-y: auto;
 }
 
 .modal-title {
-  font-size: 23px;
+  font-size: 20px;
   font-weight: 700;
   color: #28233b;
-  margin-bottom: 10px; 
+  margin-bottom: 12px; 
   text-align: center;
   font-family: 'Open Sans', sans-serif;
 }
@@ -276,7 +272,7 @@ export default {
   padding: 8px 12px;
   border: 2px solid #e5e5e5;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 12px;
   font-family: 'Montserrat', sans-serif;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
@@ -293,9 +289,9 @@ export default {
 .upload-area {
   border: 2px dashed #ddd;
   border-radius: 12px;
-  padding: 7px;
+  padding: 12px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -305,43 +301,43 @@ export default {
 }
 
 .upload-placeholder svg {
-  width: 35px;
-  height: 35px;
+  width: 32px;
+  height: 32px;
   margin-bottom: 5px;
 }
 
 .upload-placeholder p {
   color: #999;
-  font-size: 12px;
+  font-size: 11px;
   margin: 5px 0 0 0;
 }
 
 .preview-image {
   max-width: 100%;
-  max-height: 100px;
+  max-height: 90px;
   border-radius: 8px;
 }
 
 /* Form groups */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .form-group label {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 7px 10px;
   border: 2px solid #e5e5e5;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 12px;
   font-family: 'Montserrat', sans-serif;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
@@ -355,25 +351,25 @@ export default {
 
 .form-group textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 /* Checkbox */
 .checkbox-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .checkbox-group input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   cursor: pointer;
 }
 
 .checkbox-group label {
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
   cursor: pointer;
   user-select: none;
@@ -383,25 +379,25 @@ export default {
 .error-message {
   background-color: #fee;
   color: #c33;
-  padding: 8px 12px;
+  padding: 5px 9px;
   border-radius: 8px;
-  font-size: 12px;
-  margin-bottom: 12px;
+  font-size: 11px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 /* Botones */
 .modal-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .btn-guardar,
 .btn-cancelar {
-  padding: 9px 32px;
-  font-size: 13px;
+  padding: 8px 28px;
+  font-size: 11px;
   font-weight: 600;
   border: none;
   border-radius: 50px;
