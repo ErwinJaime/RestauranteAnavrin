@@ -416,9 +416,9 @@ export default {
 }
 
 .confirmation-title {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
-  color: #28233b;
+  color: #171423;
   margin-bottom: 10px;
   text-align: center;
   font-family: 'Open Sans', sans-serif;
