@@ -247,13 +247,13 @@ export default {
         console.log('✅ Producto guardado:', response.data)
         
         cerrarModalAgregar()
-        alert('¡Producto agregado exitosamente!')
+        /*alert('¡Producto agregado exitosamente!')*/
         
         // Recargar la lista completa
         await cargarProductos()
       } catch (error) {
         console.error('❌ Error al guardar producto:', error)
-        alert('Error al guardar el producto: ' + (error.response?.data?.message || error.message))
+        /*alert('Error al guardar el producto: ' + (error.response?.data?.message || error.message))*/
       } finally {
         cargando.value = false
       }
@@ -273,7 +273,7 @@ export default {
         mostrarModalEditar.value = true
       } catch (error) {
         console.error('❌ Error al obtener producto:', error)
-        alert('Error al cargar el producto para editar')
+        /*alert('Error al cargar el producto para editar')*/
       } finally {
         cargando.value = false
       }
@@ -304,7 +304,7 @@ export default {
         console.log('✅ Producto actualizado:', response.data)
         
         cerrarModalEditar()
-        alert('¡Producto actualizado exitosamente!')
+        /*alert('¡Producto actualizado exitosamente!')*/
         
         // Recargar la lista completa
         await cargarProductos()
@@ -337,7 +337,7 @@ const eliminarProducto = async () => {
       productos.value = productos.value.filter(p => p.id !== productoAEliminar.value)
       
       cerrarConfirmacionEliminar()
-      alert('✅ Producto eliminado exitosamente')
+      /*alert('✅ Producto eliminado exitosamente')*/
     } catch (error) {
       console.error('❌ Error al eliminar producto:', error)
       alert('Error al eliminar el producto')
