@@ -47,35 +47,35 @@
           <table class="productos-table">
             <thead>
               <tr class="table-header">
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Disponibilidad</th>
-                <th>Opciones</th>
+                <th class="text-center">Imagen</th>
+                <th class="text-center">Nombre</th>
+                <th class="text-center">Descripción</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Disponibilidad</th>
+                <th class="text-center">Opciones</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="producto in productosFiltrados" :key="producto.id" class="table-row">
-                <td>
+                <td class="text-center">
                   <div class="img-container">
                     <img 
-                      :src="obtenerUrlImagen(producto.imagen)" 
+                      :src="obtenerUrlImagen(producto)" 
                       :alt="producto.nombre"
                       class="producto-img"
                       @error="onImageError"
                     >
                   </div>
                 </td>
-                <td class="producto-nombre">{{ producto.nombre }}</td>
-                <td class="producto-descripcion">{{ producto.ingredientes }}</td>
-                <td class="producto-precio">${{ formatearPrecio(producto.precio) }}</td>
-                <td>
+                <td class="producto-nombre text-center">{{ producto.nombre || 'Sin nombre' }}</td>
+                <td class="producto-descripcion text-center">{{ producto.ingredientes || 'Sin descripción' }}</td>
+                <td class="producto-precio text-center">${{ formatearPrecio(producto.precio) }}</td>
+                <td class="text-center">
                   <span :class="['badge-disponibilidad', producto.disponible ? 'disponible' : 'no-disponible']">
                     {{ producto.disponible ? 'Sí' : 'No' }}
                   </span>
                 </td>
-                <td class="td-opciones">
+                <td class="td-opciones text-center">
                   <div class="opciones-container">
                     <button class="btn-editar" @click="editarProducto(producto.id)">
                       Editar
@@ -133,8 +133,8 @@ export default {
       }
       const query = searchQuery.value.toLowerCase()
       return productos.value.filter(p => 
-        p.nombre.toLowerCase().includes(query) ||
-        p.ingredientes.toLowerCase().includes(query)
+        (p.nombre || '').toLowerCase().includes(query) ||
+        (p.ingredientes || '').toLowerCase().includes(query)
       )
     })
 
@@ -149,6 +149,14 @@ export default {
         const response = await listarProductos()
         productos.value = response.data
         console.log('✅ Productos cargados:', productos.value)
+        
+        // DEBUG: Verificar la estructura completa de los datos
+        if (productos.value.length > 0) {
+          console.log('🔍 Estructura completa del primer producto:', JSON.stringify(productos.value[0], null, 2))
+          console.log('📷 Campo imagen:', productos.value[0].imagen)
+          console.log('📋 Campo ingredientes:', productos.value[0].ingredientes)
+          console.log('🗂️ Todos los campos disponibles:', Object.keys(productos.value[0]))
+        }
       } catch (error) {
         console.error('❌ Error al cargar productos:', error)
         alert('Error al cargar los productos. Verifica que el backend esté corriendo.')
@@ -174,9 +182,6 @@ export default {
         
         console.log('✅ Producto guardado:', response.data)
         
-        // Agregar el nuevo producto a la lista
-        productos.value.push(response.data)
-        
         cerrarModal()
         alert('¡Producto agregado exitosamente!')
         
@@ -184,16 +189,7 @@ export default {
         await cargarProductos()
       } catch (error) {
         console.error('❌ Error al guardar producto:', error)
-        
-        // Mensaje de error más detallado
-        if (error.response) {
-          console.error('Respuesta del servidor:', error.response.data)
-          alert(`Error: ${JSON.stringify(error.response.data)}`)
-        } else if (error.request) {
-          alert('Error de conexión. Verifica que el backend esté corriendo en http://127.0.0.1:8000')
-        } else {
-          alert('Error al guardar el producto')
-        }
+        alert('Error al guardar el producto: ' + (error.response?.data?.message || error.message))
       } finally {
         cargando.value = false
       }
@@ -227,13 +223,19 @@ export default {
 
     // Formatear precio
     const formatearPrecio = (precio) => {
-      return new Intl.NumberFormat('es-CO').format(precio)
+      return new Intl.NumberFormat('es-CO').format(precio || 0)
     }
 
-    // Obtener URL de imagen
-    const obtenerUrlImagen = (imagenUrl) => {
+    // Obtener URL de imagen - MEJORADA
+    const obtenerUrlImagen = (producto) => {
+      const imagenUrl = producto.imagen
+      
+      console.log('🖼️ Procesando imagen para producto:', producto.nombre)
+      console.log('📁 Campo imagen:', imagenUrl)
+      
       if (!imagenUrl) {
-        return 'https://via.placeholder.com/100x100?text=Sin+Imagen'
+        // Usar data URL como fallback para evitar errores de red
+        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj5TaW4gSW1hZ2VuPC90ZXh0Pgo8L3N2Zz4='
       }
       
       // Si ya es una URL completa, devolverla
@@ -241,13 +243,21 @@ export default {
         return imagenUrl
       }
       
-      // Si es una ruta relativa, agregar la base del backend
-      return `http://127.0.0.1:8000${imagenUrl}`
+      // Si es una ruta relativa, construir la URL completa
+      // Asumiendo que las imágenes se sirven desde /media/
+      if (imagenUrl.startsWith('/media/')) {
+        return `http://127.0.0.1:8000${imagenUrl}`
+      }
+      
+      // Si es solo el nombre del archivo
+      return `http://127.0.0.1:8000/media/${imagenUrl}`
     }
 
     // Manejo de error de imagen
     const onImageError = (event) => {
-      event.target.src = 'https://via.placeholder.com/100x100?text=Error'
+      console.error('❌ Error cargando imagen:', event.target.src)
+      // Usar data URL como fallback
+      event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj5FcnJvciBJbWFnZW48L3RleHQ+Cjwvc3ZnPg=='
     }
 
     return {
@@ -506,6 +516,11 @@ export default {
   overflow-x: auto;
 }
 
+/* ALINEACIÓN CENTRADA PARA TODAS LAS CELDAS */
+.text-center {
+  text-align: center !important;
+}
+
 .productos-table {
   width: 100%;
   border-collapse: collapse;
@@ -525,8 +540,8 @@ export default {
 }
 
 .productos-table th {
-  padding: 16px 12px;
-  text-align: left;
+  padding: 16px 8px;
+  text-align: center !important;
   font-weight: 600;
   font-size: 14px;
   color: #000000;
@@ -549,11 +564,12 @@ export default {
 }
 
 .productos-table td {
-  padding: 16px 12px;
+  padding: 16px 8px;
   font-size: 13px;
   color: #000000;
   vertical-align: middle;
   background-color: transparent;
+  text-align: center !important;
 }
 
 /* Asegurar que la primera fila del cuerpo tenga borde superior sutil */
@@ -571,6 +587,7 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
+  margin: 0 auto;
 }
 
 .producto-img {
@@ -592,6 +609,7 @@ export default {
   font-size: 12px;
   color: #666;
   line-height: 1.4;
+  margin: 0 auto;
 }
 
 /* Columna de precio */
@@ -601,116 +619,94 @@ export default {
   font-size: 14px;
 }
 
-  .btn-admin {
-    padding: 8px 26px;
-    font-size: 12px;
-    margin-right: 4px !important;
-  }
+/* Badge de disponibilidad */
+.badge-disponibilidad {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
 
-  .btn-cerrar-sesion {
-    padding: 8px 20px;
-    font-size: 12px;
-  }
+.badge-disponibilidad.disponible {
+  background-color: #d4edda;
+  color: #155724;
+}
 
-  .main-content {
-    max-width: 1000px;
-  }
+.badge-disponibilidad.no-disponible {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
-  .title {
-    font-size: 44px;
-  }
+/* Botones de opciones - UNO ENCIMA DEL OTRO */
+.td-opciones {
+  min-width: 120px;
+}
 
-  .img-grapefruit {
-    width: 160px;
-    height: 160px;
-    top: 70px;
-    left: -70px;
-  }
+.opciones-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
 
-  .hoja-below {
-    width: 80px;
-    height: 80px;
-    top: 420px;
-  }
+.btn-editar,
+.btn-eliminar {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 85px;
+  text-align: center;
+}
 
-  .hoja-bottom {
-    width: 70px;
-    height: 70px;
-  }
+.btn-editar {
+  background-color: #ff9f43;
+  color: white;
+}
 
-  .img-mortero {
-    width: 200px;
-    height: 200px;
-    right: -60px;
-  }
-/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  .navbar {
-    padding: 20px 2% !important;
-    gap: 10px !important;
-  }
+.btn-editar:hover {
+  background-color: #ff8800;
+  transform: translateY(-1px);
+}
 
-  .logo {
-    font-size: 18px;
-    margin-right: 25px;
-  }
+.btn-eliminar {
+  background-color: #ee5a6f;
+  color: white;
+}
 
-  .nav-links {
-    gap: 50px;
-  }
+.btn-eliminar:hover {
+  background-color: #d63447;
+  transform: translateY(-1px);
+}
 
-  .nav-links a {
-    font-size: 13px;
-  }
+/* Loader */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #7cb342;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 60px auto;
+}
 
-  .btn-admin {
-    padding: 8px 24px;
-    font-size: 13px;
-    margin-right: 8px !important;
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-  .btn-cerrar-sesion {
-    padding: 8px 18px;
-    font-size: 13px;
-  }
-
-  .main-content {
-    max-width: 900px;
-    padding: 140px 30px 60px;
-  }
-
-  .title {
-    font-size: 42px;
-    margin-top: -40px;
-  }
-
-  .img-grapefruit {
-    width: 140px;
-    height: 140px;
-    top: -45px;
-    left: -55px;
-  }
-
-  .hoja-below {
-    width: 70px;
-    height: 70px;
-    top: 400px;
-    right: 30px;
-  }
-
-  .hoja-bottom {
-    width: 60px;
-    height: 60px;
-    bottom: 120px;
-    left: 50px;
-  }
-
-  .img-mortero {
-    width: 180px;
-    height: 180px;
-    right: -55px;
-    top: 160px;
-  }
+.empty-message {
+  color: #8b8585b0;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  padding: 60px 20px;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
