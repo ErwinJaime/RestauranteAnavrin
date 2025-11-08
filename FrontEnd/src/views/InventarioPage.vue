@@ -454,13 +454,13 @@ export default {
 
   .title {
     font-size: 50px;
-    margin-top: -35px;
+    margin-top: -20px;
   }
 
   .img-grapefruit {
     width: 160px;
     height: 160px;
-    top:200px;
+    top:100px;
     left:-70px;
   }
 }
