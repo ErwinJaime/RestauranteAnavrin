@@ -15,8 +15,8 @@
     </nav>
 
     <!-- Imágenes decorativas -->
-    <img src="@/assets/naranja.png" alt="Naranja" class="img-naranja">
-    <img src="@/assets/aceite.png" alt="Aceite" class="img-aceite">
+    <img src="@/assets/naranja.png" alt="Naranja" class="img-naranja" />
+    <img src="@/assets/aceite.png" alt="Aceite" class="img-aceite" />
 
     <!-- Contenido Principal -->
     <div class="main-content">
@@ -31,7 +31,11 @@
         >
           <button class="btn-eliminar" @click="eliminarResena(resena.id)">✕</button>
           <div class="resena-header">
-            <img :src="require(`@/assets/${resena.emoji}.png`)" :alt="resena.emoji" class="emoji">
+            <img
+              :src="require(`@/assets/${resena.emoji}.png`)"
+              :alt="resena.emoji"
+              class="emoji"
+            />
             <h3 class="nombre-usuario">{{ resena.nombre }}</h3>
           </div>
           <p class="resena-texto">{{ resena.texto }}</p>
@@ -40,74 +44,91 @@
 
       <!-- Flechas de navegación -->
       <div class="navegacion-flechas">
-        <button class="flecha flecha-izq" @click="paginaAnterior" :disabled="paginaActual === 0">←</button>
-        <button class="flecha flecha-der" @click="paginaSiguiente" :disabled="paginaActual >= totalPaginas - 1">→</button>
+        <button
+          class="flecha flecha-izq"
+          @click="paginaAnterior"
+          :disabled="paginaActual === 0"
+        >
+          ←
+        </button>
+        <button
+          class="flecha flecha-der"
+          @click="paginaSiguiente"
+          :disabled="paginaActual >= totalPaginas - 1"
+        >
+          →
+        </button>
       </div>
     </div>
 
     <!-- Imágenes inferiores -->
-    <img src="@/assets/guacamole.png" alt="Guacamole" class="img-guacamole">
-    <img src="@/assets/estrellas.png" alt="Estrellas" class="img-estrellas">
+    <img src="@/assets/guacamole.png" alt="Guacamole" class="img-guacamole" />
+    <img src="@/assets/estrellas.png" alt="Estrellas" class="img-estrellas" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
-const paginaActual = ref(0)
-const resenasPorPagina = 3
+const paginaActual = ref(0);
+const resenasPorPagina = 3;
 
 const todasLasResenas = ref([
   {
     id: 1,
-    nombre: 'Tatiana Gualteros',
-    texto: '"Buena presentación, sabores equilibrados y un ambiente agradable. Ideal para venir con amigos o desconectarse un rato."',
-    emoji: 'feliz'
+    nombre: "Tatiana Gualteros",
+    texto:
+      '"Buena presentación, sabores equilibrados y un ambiente agradable. Ideal para venir con amigos o desconectarse un rato."',
+    emoji: "feliz",
   },
   {
     id: 2,
-    nombre: 'Erwin Jaimes',
-    texto: '"Excelente atención y productos de calidad. El menú es variado y todo llega fresco y bien presentado."',
-    emoji: 'feliz'
+    nombre: "Erwin Jaimes",
+    texto:
+      '"Excelente atención y productos de calidad. El menú es variado y todo llega fresco y bien presentado."',
+    emoji: "feliz",
   },
   {
     id: 3,
-    nombre: 'Pedro Suárez',
-    texto: '"El plato estaba crudo, el servicio terrible, no lo recomiendo."',
-    emoji: 'triste'
+    nombre: "Pedro Suárez",
+    texto:
+      '"El plato estaba crudo, el servicio terrible, no lo recomiendo."',
+    emoji: "triste",
   },
   {
     id: 4,
-    nombre: 'Tatiana Nieto',
+    nombre: "Tatiana Nieto",
     texto: '"Excelente servicio, las bebidas son deliciosas."',
-    emoji: 'feliz'
-  }
-])
+    emoji: "feliz",
+  },
+]);
 
 const resenasPaginaActual = computed(() => {
-  const inicio = paginaActual.value * resenasPorPagina
-  const fin = inicio + resenasPorPagina
-  return todasLasResenas.value.slice(inicio, fin)
-})
+  const inicio = paginaActual.value * resenasPorPagina;
+  const fin = inicio + resenasPorPagina;
+  return todasLasResenas.value.slice(inicio, fin);
+});
 
-const totalPaginas = computed(() => Math.ceil(todasLasResenas.value.length / resenasPorPagina))
+const totalPaginas = computed(() =>
+  Math.ceil(todasLasResenas.value.length / resenasPorPagina)
+);
 
 const eliminarResena = (id) => {
-  const index = todasLasResenas.value.findIndex(r => r.id === id)
+  const index = todasLasResenas.value.findIndex((r) => r.id === id);
   if (index !== -1) {
-    todasLasResenas.value.splice(index, 1)
+    todasLasResenas.value.splice(index, 1);
     if (resenasPaginaActual.value.length === 0 && paginaActual.value > 0) {
-      paginaActual.value--
+      paginaActual.value--;
     }
   }
-}
+};
 
 const paginaSiguiente = () => {
-  if (paginaActual.value < totalPaginas.value - 1) paginaActual.value++
-}
+  if (paginaActual.value < totalPaginas.value - 1) paginaActual.value++;
+};
 const paginaAnterior = () => {
-  if (paginaActual.value > 0) paginaActual.value--
-}
+  if (paginaActual.value > 0) paginaActual.value--;
+};
 </script>
 
 <style scoped>
@@ -138,7 +159,7 @@ const paginaAnterior = () => {
   padding: 20px 60px;
   z-index: 50;
   flex-wrap: wrap;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
 }
 
 .logo {
@@ -186,9 +207,6 @@ const paginaAnterior = () => {
   color: white;
 }
 
-.btn-admin:hover {
-  background-color: #3b82f6;
-}
 
 .btn-cerrar-sesion {
   background: transparent;
@@ -210,24 +228,24 @@ const paginaAnterior = () => {
 .img-estrellas {
   position: fixed;
   object-fit: contain;
-  z-index: 5;
+  z-index: 10;
   opacity: 0.9;
 }
 
 .img-naranja {
-  top: 60px;
-  left: 15px;
-  width: 120px;
+  top: 80px;
+  left: 40px;
+  width: 130px;
 }
 
 .img-aceite {
   top: 50px;
-  right: 15px;
-  width: 120px;
+  right: 0px;
+  width: 150px;
 }
 
 .img-guacamole {
-  bottom: -30px;
+  bottom: 0px;
   left: 50px;
   width: 160px;
 }
@@ -235,25 +253,25 @@ const paginaAnterior = () => {
 .img-estrellas {
   bottom: 0;
   right: 5px;
-  width: 120px;
+  width: 155px;
 }
 
 /* ------------------------
    CONTENIDO PRINCIPAL
 ------------------------- */
 .main-content {
-  max-width: 1100px;
+  width: min(90%, 1400px); /* ✅ flexible y centrado */
   margin: 0 auto;
   padding-top: 140px;
   text-align: center;
 }
 
 .title {
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 2.5vw, 2.8rem);
   font-weight: 800;
   color: #28233b;
   margin-bottom: 40px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 /* ------------------------
@@ -261,10 +279,10 @@ const paginaAnterior = () => {
 ------------------------- */
 .resenas-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 1rem;
 }
 
 .resena-card {
@@ -274,6 +292,12 @@ const paginaAnterior = () => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
   position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resena-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-eliminar {
@@ -359,11 +383,10 @@ const paginaAnterior = () => {
     padding: 15px 30px;
   }
 
-  .title {
-    font-size: 2.2rem;
-  }
-
-  .img-naranja, .img-aceite, .img-guacamole, .img-estrellas {
+  .img-naranja,
+  .img-aceite,
+  .img-guacamole,
+  .img-estrellas {
     width: 90px;
   }
 }
@@ -396,8 +419,11 @@ const paginaAnterior = () => {
     padding: 20px 15px;
   }
 
-  .img-naranja, .img-aceite, .img-guacamole, .img-estrellas {
-    display: none; /* Ocultamos decorativos en móviles */
+  .img-naranja,
+  .img-aceite,
+  .img-guacamole,
+  .img-estrellas {
+    display: none;
   }
 }
 
@@ -411,15 +437,12 @@ const paginaAnterior = () => {
     font-size: 1.3rem;
   }
 
-  .title {
-    font-size: 1.6rem;
-  }
-
   .resenas-container {
     grid-template-columns: 1fr;
   }
 
-  .btn-admin, .btn-cerrar-sesion {
+  .btn-admin,
+  .btn-cerrar-sesion {
     font-size: 0.8rem;
     padding: 6px 14px;
   }
