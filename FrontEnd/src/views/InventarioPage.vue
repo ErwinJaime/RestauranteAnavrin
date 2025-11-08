@@ -264,7 +264,7 @@ export default {
 
 .btn-cerrar-sesion:hover {
   background-color: #6d9fef;
-  color: white;
+  color: rgb(21, 3, 3);
 }
 
 /* Imágenes decorativas */
@@ -449,12 +449,12 @@ export default {
 
   .main-content {
     max-width: 1200px;
-    padding: 140px 60px 60px;
+    padding: 180px 60px 60px;
   }
 
   .title {
-    font-size: 44px;
-    margin-top: -10px;
+    font-size: 50px;
+    margin-top: 0px;
   }
 
   .img-grapefruit {
