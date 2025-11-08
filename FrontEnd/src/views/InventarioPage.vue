@@ -565,7 +565,7 @@ export default {
   margin-bottom: 40px;
   max-width: 900px;
   margin-left: auto;
-  margin-right: 35px;
+  margin-right: auto;
   margin-top: -20px;
 }
 
@@ -633,6 +633,7 @@ export default {
   overflow: hidden;
   border: 1px solid #e8d7a8;
   height: auto;
+  overflow-x: auto;
 }
 
 .table-wrapper {
