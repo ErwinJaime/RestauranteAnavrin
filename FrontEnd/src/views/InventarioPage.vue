@@ -78,11 +78,19 @@
                 <td class="td-opciones text-center">
                   <div class="opciones-container">
                     <button class="btn-editar" @click="editarProducto(producto.id)">
-                      Editar
-                    </button>
-                    <button class="btn-eliminar" @click="confirmarEliminarProducto(producto.id)">
-                      Eliminar
-                    </button>
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                     </svg>
+                     Editar
+                   </button>
+                   <button class="btn-eliminar" @click="confirmarEliminarProducto(producto.id)">
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                       <polyline points="3 6 5 6 21 6"></polyline>
+                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                     </svg>
+                     Eliminar
+                   </button>
                   </div>
                 </td>
               </tr>
@@ -649,7 +657,7 @@ export default {
 
 /* Encabezado de la tabla */
 .productos-table thead {
-  background-color: #e8d7a8;
+  background-color: #E5E6AE;
 }
 
 .table-header {
@@ -663,7 +671,7 @@ export default {
   font-weight: 600;
   font-size: 14px;
   color: #000000;
-  border-bottom: 2px solid #d4c18b;
+  border-bottom: 2px solid #d0d18a;
 }
 
 /* Filas del cuerpo */
@@ -699,7 +707,7 @@ export default {
 .img-container {
   width: 80px;
   height: 80px;
-  border-radius: 8px;
+  border-radius: 0px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -747,8 +755,8 @@ export default {
 }
 
 .badge-disponibilidad.disponible {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: transparent;
+  color: #000000;
 }
 
 .badge-disponibilidad.no-disponible {
@@ -779,8 +787,17 @@ export default {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 85px;
+  width: 110px;
   text-align: center;
+  display: flex; 
+  align-items: center;  
+  justify-content: center;  
+  gap: 6px;  
+}
+
+.btn-editar svg,
+.btn-eliminar svg {
+  flex-shrink: 0;  
 }
 
 .btn-editar {
