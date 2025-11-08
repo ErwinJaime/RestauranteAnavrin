@@ -71,12 +71,6 @@
             <span v-else>Entrar</span>
           </button>
           
-          <!-- Divisor -->
-          <div class="divider">
-            <span class="divider-text">-O-</span>
-          </div>
-          
-
           
           <!-- Registro -->
           <div class="register-section">
