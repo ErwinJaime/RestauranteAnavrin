@@ -94,7 +94,7 @@ export default {
 
 /* Título */
 .confirmation-title {
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 12px;
