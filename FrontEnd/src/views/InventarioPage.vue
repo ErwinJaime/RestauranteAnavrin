@@ -20,7 +20,7 @@
       <div class="actions-bar">
         <!-- Botón Agregar Nuevo Plato -->
         <button class="btn-agregar" @click="abrirModalAgregar">
-          + Agregar Nuevo Plato
+          + Agregar Producto
         </button>
 
         <!-- Buscador -->
