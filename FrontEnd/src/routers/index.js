@@ -6,13 +6,17 @@ import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
 import ResenasAdmin from '@/views/ResenasAdmin.vue'
 import About from '@/views/AboutPage.vue'
+import AboutHome from '@/views/AboutPageHome.vue'
+import ResenasHome from '@/views/ResenasHome.vue'
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
+  { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
   { path: '/about', name: 'About', component: About},
+  { path: '/abouthome', name: 'AboutHome', component: AboutHome},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/registro', name: 'Registro', component: Registro },
 ]
