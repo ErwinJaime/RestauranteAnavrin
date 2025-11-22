@@ -37,15 +37,6 @@
               class="preview-image-circular" 
             />
           </div>
-
-          <!-- Botón Eliminar Imagen -->
-          <button 
-            class="btn-eliminar-imagen" 
-            @click.stop="confirmarEliminarImagen"
-            type="button"
-          >
-            Eliminar Imagen
-          </button>
         </div>
       </div>
       
@@ -98,18 +89,6 @@
         </button>
       </div>
     </div>
-
-    <!-- Modal de confirmación para eliminar imagen -->
-    <div v-if="mostrarConfirmacion" class="confirmation-overlay" @click.self="cerrarConfirmacion">
-      <div class="confirmation-modal">
-        <h3 class="confirmation-title">¿Estás seguro?</h3>
-        <p class="confirmation-text">Al eliminar la imagen, esta será removida del producto.</p>
-        <div class="confirmation-buttons">
-          <button class="btn-eliminar-confirm" @click="eliminarImagen">Eliminar</button>
-          <button class="btn-cancelar-confirm" @click="cerrarConfirmacion">Cancelar</button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -134,6 +113,7 @@ export default {
     const errorMsg = ref('')
     const guardando = ref(false)
     const mostrarConfirmacion = ref(false)
+    const eliminarImagenFlag = ref(false)
 
     // Cargar datos del producto cuando se abre el modal
     watch(() => props.isOpen, (newVal) => {
@@ -153,6 +133,7 @@ export default {
         disponible.value = props.producto.disponible !== false
         imagenPreview.value = props.producto.imagen || null
         imagenFile.value = null
+        eliminarImagenFlag.value = false
       }
     }
 
@@ -171,17 +152,15 @@ export default {
         const reader = new FileReader()
         reader.onload = (e) => { imagenPreview.value = e.target.result }
         reader.readAsDataURL(file)
+        eliminarImagenFlag.value = false
         errorMsg.value = ''
       }
-    }
-
-    const confirmarEliminarImagen = () => {
-      mostrarConfirmacion.value = true
     }
 
     const eliminarImagen = () => {
       imagenPreview.value = null
       imagenFile.value = null
+      eliminarImagenFlag.value = true
       mostrarConfirmacion.value = false
     }
 
@@ -221,7 +200,8 @@ export default {
           categoria: categoria.value,
           precio: parseFloat(precio.value),
           disponible: disponible.value,
-          imagen: imagenFile.value  // ✅ Solo File, no la preview
+          imagen: imagenFile.value,  // ✅ Solo File, no la preview
+          eliminarImagen: eliminarImagenFlag.value  // ✅ Nuevo campo para eliminar imagen
         })
       } catch (error) {
         errorMsg.value = 'Error al preparar los datos del producto'
@@ -245,6 +225,7 @@ export default {
       errorMsg.value = ''
       guardando.value = false
       mostrarConfirmacion.value = false
+      eliminarImagenFlag.value = false
     }
 
     return {
@@ -258,7 +239,6 @@ export default {
       guardando,
       mostrarConfirmacion,
       handleImageUpload,
-      confirmarEliminarImagen,
       eliminarImagen,
       cerrarConfirmacion,
       handleGuardar,
@@ -373,20 +353,6 @@ export default {
   height: 40px;
 }
 
-/* Botón Eliminar Imagen */
-.btn-eliminar-imagen {
-  margin-top: 10px;
-  padding: 6px 20px;
-  font-size: 11px;
-  color: #e74c3c;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  font-family: 'Montserrat', sans-serif;
-  text-decoration: underline;
-}
 
 .btn-eliminar-imagen:hover {
   color: #c0392b;
