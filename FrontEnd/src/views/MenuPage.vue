@@ -304,12 +304,12 @@ onMounted(() => {
 .menu-container {
   min-height: 100vh;
   background-color: #ffffff;
-  font-family: 'Poppins', 'Roboto', 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /* ==================== NAVBAR ==================== */
 .navbar {
-  position: fixed !important;
+  position: absolute !important;
   top: 0;
   left: 0;
   right: 0;
@@ -329,7 +329,7 @@ onMounted(() => {
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: 2px;
-  margin-left: 30px;
+  margin-left: 20px;
   flex-shrink: 0;
 }
 
@@ -386,8 +386,8 @@ onMounted(() => {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-left: auto !important;
-  margin-right: 10px !important;
+  margin-left: 10px;
+  margin-right: 5px;
 }
 
 .btn-cerrar-sesion {
@@ -402,6 +402,7 @@ onMounted(() => {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+  margin-right: -15px;
 }
 
 .btn-cerrar-sesion:hover {
@@ -424,7 +425,7 @@ onMounted(() => {
 
 .menu-title {
   font-size: 4rem;
-  font-weight: 700;
+  font-weight: bold;
   color: #000000;
   letter-spacing: -1px;
   
@@ -559,7 +560,7 @@ onMounted(() => {
 }
 
 .producto-info {
-  background: #efe1e1;
+  background: #F5EFEF;
   border-radius: 20px;
   padding: 140px 25px 25px;
   position: relative;
@@ -573,7 +574,7 @@ onMounted(() => {
   color: #000000;
   margin-bottom: 10px;
   text-align: center;
-  font-family: 'Georgia', 'Playfair Display', serif;
+  font-family: 'Source Serif Pro', serif;
 }
 
 .producto-ingredientes {
@@ -583,7 +584,7 @@ onMounted(() => {
   line-height: 1.6;
   text-align: center;
   min-height: 80px;
-  font-family: 'Georgia', 'Playfair Display', serif;
+  font-family: 'Source Serif Pro', serif;
 }
 
 .producto-footer {
@@ -597,7 +598,7 @@ onMounted(() => {
   font-size: 1.5rem;
   font-weight: 700;
   color: #7cb342;
-  font-family: 'Georgia', 'Playfair Display', serif;
+  font-family: 'Source Serif Pro', serif;
 }
 
 .cantidad-controls {
@@ -869,7 +870,6 @@ onMounted(() => {
 
 .footer-slogan {
   color: #7a7a7a;
-  font-style: italic;
   font-size: 0.95rem;
   letter-spacing: 0.3px;
   margin: 0;
@@ -888,12 +888,12 @@ onMounted(() => {
 
   .logo {
     font-size: 24px;
-    margin-left: 50px;
+    margin-left: 40px;
   }
 
   .nav-links {
     gap: 80px;
-    margin-left: 150px;
+    margin-left: 100px;
   }
 
   .nav-links a {
@@ -912,12 +912,12 @@ onMounted(() => {
   }
 
   .hero-section {
-    padding: 80px 20px 60px;
+    padding: 80px 40px 30px;
     gap: 60px;
   }
 
   .menu-title {
-    font-size: 5rem;
+    font-size: 3.4rem;
   }
 
   .img-naranja{
@@ -931,8 +931,8 @@ onMounted(() => {
   }
 
   .filtros-container {
-    gap: 30px;
-    margin-bottom: 80px;
+    gap: 30px 40px;
+    margin-bottom: 60px;
   }
 
   .filtro-btn {
@@ -1029,14 +1029,14 @@ onMounted(() => {
   }
 
   .footer {
-    padding: 100px 0 0;
-    margin-top: 120px;
+    padding: 0 0 0;
+    margin-top:40px;
   }
 
   .footer-content {
     max-width: 1400px;
     gap: 50px;
-    padding: 0 30px 80px;   
+    padding: -20px 10px 80px;   
   }
  
   .footer-icon-heart {
