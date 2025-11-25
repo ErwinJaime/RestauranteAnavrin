@@ -18,6 +18,7 @@ const routes = [
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
+  { path: '/platillos', name: 'Platillos', component: Platillos },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin}, 
   { path: '/aboutadmin', name: 'About', component: About},
