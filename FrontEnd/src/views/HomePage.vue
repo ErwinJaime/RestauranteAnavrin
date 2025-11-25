@@ -79,7 +79,6 @@
         </div>
 
         <!-- Decoraciones -->
-        <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-1">
         <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-2">
         <img src="@/assets/arandanos.png" alt="Arándanos" class="deco-berries">
         <img src="@/assets/harina.png" alt="Harina" class="deco-flour">
@@ -221,7 +220,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .logo {
@@ -257,7 +255,7 @@ export default {
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-right: -160px;
+  margin-right: -170px;
 }
 
 .btn-login:hover {
@@ -392,12 +390,13 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 140px 80px 60px;
+  padding: 100px 80px 60px; 
 }
 
 .section-title-center {
   font-size: 48px;
   font-weight: 700;
+  top: 25%;
   color: #1a181f;
   text-align: center;
   margin-bottom: 15px;
@@ -416,7 +415,7 @@ export default {
   font-size: 15px;
   color: #666;
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
   font-family: 'Montserrat', sans-serif;
   opacity: 0;
   transform: translateY(-40px);
@@ -511,19 +510,10 @@ export default {
   opacity: 1;
 }
 
-.deco-leaf-1 {
-  top: 180px;
-  left: 60px;
-  transform: translate(-60px, -60px);
-}
-
-.section-two.visible .deco-leaf-1 {
-  transform: translate(0, 0);
-}
-
 .deco-leaf-2 {
+  top: 400px;
   bottom: 150px;
-  right: 200px;
+  right: 70px;
   transform: translate(60px, 60px);
 }
 
@@ -866,7 +856,7 @@ export default {
 
   .logo {
     font-size: 21px;
-    margin-left: 90px;
+    margin-left: 50px;
   }
 
   .nav-links {
@@ -880,7 +870,7 @@ export default {
   .btn-login {
     padding: 10px 24px;
     font-size: 14px;
-    margin-right: 80px;
+    margin-right: 40px;
   }
 
   .section-one {
@@ -1207,11 +1197,6 @@ export default {
   .hoja-decoration {
     width: 100px;
     height: 100px;
-  }
-
-  .btn-siguiente {
-    padding: 8px 24px;
-    font-size: 13px;
   }
 
   .img-grapefruit {
