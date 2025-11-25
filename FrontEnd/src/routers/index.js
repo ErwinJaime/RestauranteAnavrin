@@ -12,7 +12,8 @@ import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 
 const routes = [
-  { path: '/', name: 'Login', component: Login },
+  { path: '/', name: 'Menu', component: Menu },
+  { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
