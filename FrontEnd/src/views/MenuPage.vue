@@ -9,9 +9,9 @@
         <router-link to="/review">Review</router-link>
       </div>
       <span v-if="usuarioNombre !== 'Invitado'" class="btn-admin">{{ usuarioNombre }}</span>
-      <span v-else class="btn-invitado">Invitado</span>
+      <span v-else class="btn-invitado">Tatiana</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">
-        {{ usuarioNombre !== 'Invitado' ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
+        {{ 'Cerrar Sesión' }}
       </button>
     </nav>
 
@@ -92,10 +92,7 @@
       </div>
 
       <!-- Decoración hojas -->
-      <img src="@/assets/hoja4.png" alt="leaf" class="leaf-decoration left" />
-      <img src="@/assets/hoja3.png" alt="leaf" class="leaf-decoration right" />
       <img src="@/assets/hoja2.png" alt="leaf" class="leaf-decoration dos" />
-      <img src="@/assets/guacamole.png" alt="guacamole" class="decoration-guacamole" />
       <img src="@/assets/huevosMenu.png" alt="huevo" class="decoration-huevos" />
 
     </div>
@@ -115,22 +112,6 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-hojas-left">
-          <img src="@/assets/hojaCorazon.png" alt="heart" class="footer-icon-heart" />
-        </div>
-        
-        <div class="footer-center">
-          <h2 class="footer-title">Tu opinión nos ayuda a crecer, comparte tu experiencia aquí.</h2>
-          <button class="btn-crear-resena" @click="irACrearResena">
-            Crear Reseña
-          </button>
-        </div>
-
-        <div class="footer-hojas-right">
-          <img src="@/assets/hojasDerecha.png" alt="leaf" class="footer-leaf-bottom" />
-        </div>
-      </div>
       <div class="footer-bottom">
         <p class="footer-slogan">El encuentro perfecto entre lo auténtico y lo inolvidable</p>
       </div>
@@ -263,15 +244,6 @@ const confirmarPedido = async () => {
   }
 };
 
-const irACrearResena = () => {
-  if (!localStorage.getItem('access_token')) {
-    alert('Por favor inicia sesión para crear una reseña');
-    router.push('/');
-    return;
-  }
-  router.push('/crear-resena');
-};
-
 const cargarProductos = async () => {
   try {
     cargando.value = true;
@@ -321,7 +293,7 @@ onMounted(() => {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
 }
 
 .logo {
@@ -329,7 +301,7 @@ onMounted(() => {
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: 2px;
-  margin-left: 20px;
+  margin-left: 10px;
   flex-shrink: 0;
 }
 
@@ -379,7 +351,7 @@ onMounted(() => {
   padding: 8px 28px;
   font-size: 14px;
   color: #000;
-  background-color: #e0e0e0;
+  background-color: #ff6b35;
   border: none;
   border-radius: 50px;
   cursor: default;
@@ -402,7 +374,7 @@ onMounted(() => {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-right: -15px;
+  margin-right: -60px;
 }
 
 .btn-cerrar-sesion:hover {
@@ -888,12 +860,11 @@ onMounted(() => {
 
   .logo {
     font-size: 24px;
-    margin-left: 40px;
+    margin-left: -45px;
   }
 
   .nav-links {
-    gap: 80px;
-    margin-left: 100px;
+    gap: 100px;
   }
 
   .nav-links a {
@@ -932,7 +903,7 @@ onMounted(() => {
 
   .filtros-container {
     gap: 30px 40px;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
   }
 
   .filtro-btn {
@@ -942,14 +913,14 @@ onMounted(() => {
 
   .productos-container {
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 40px 5px;  
+    gap: 90px 5px;  
     max-width: 1300px;
     margin-bottom: 10px;
   }
 
   .producto-card {
     max-width:320px;
-    padding-top: 140px;
+    padding-top: 160px;
   }
 
   .producto-imagen-wrapper {
