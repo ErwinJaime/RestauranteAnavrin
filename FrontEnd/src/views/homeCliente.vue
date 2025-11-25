@@ -22,7 +22,7 @@
           creados para sorprender cada uno de<br>
           tus sentidos.
         </p>
-        <button class="btn-explore">Explora Nuestro Pedido</button>
+        <router-link to="/menu" class="btn-explore">Explorar Menú</router-link>
       </div>
 
       <!-- Contenido Derecho - Imágenes -->

@@ -24,6 +24,11 @@ const routes = [
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin}, 
   { path: '/aboutadmin', name: 'About', component: About},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
+  { path: '/abouthome', name: 'AboutHome', component: AboutHome},
+  { path: '/menu', name: 'Menu', component: Menu }, 
+  { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
+  { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
 ]
 
 const router = createRouter({
