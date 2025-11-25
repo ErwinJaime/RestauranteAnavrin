@@ -4,9 +4,9 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/administracion">Home</router-link>
-        <router-link to="/aboutadmin">About</router-link>
-        <router-link to="/resenasadmin">Review</router-link>
+        <router-link to="/menu">Home</router-link>
+        <router-link to="/aboutcliente">About</router-link>
+        <a href="#">Review</a>
       </div>
       <span class="btn-cliente">Tatiana</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>

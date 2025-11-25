@@ -10,16 +10,16 @@ import ResenasHome from '@/views/ResenasHome.vue'
 import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
-import AboutCliente from '@/views/AboutPageCliente.vue'
-import homeCliente from '@/views/homeCliente.vue'
+import AboutCliente from '@/views/AboutCliente.vue'
+import homeCliente from '@/views/HomePage.vue'
 
 const routes = [
+  { path: '/', name: 'homeCliente', component: homeCliente},
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/abouthome', name: 'AboutHome', component: AboutHome},
   { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
-  { path: '/homecliente', name: 'homeCliente', component: homeCliente},
   { path: '/Menu', name: 'Menu', component: Menu }, 
   { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
   { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 

@@ -4,8 +4,8 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/homecliente">Home</router-link>
-        <router-link to="/aboutcliente">About</router-link>
+        <router-link to="/menu">Home</router-link>
+        <a href="#">About</a>
         <router-link to="/resenascliente">Review</router-link>
       </div>
       <span class="btn-cliente">Tatiana</span>
