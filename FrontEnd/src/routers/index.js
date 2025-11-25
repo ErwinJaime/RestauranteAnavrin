@@ -6,6 +6,7 @@ import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
 import ResenasAdmin from '@/views/ResenasAdmin.vue'
 import About from '@/views/AboutPage.vue'
+import Menu from '@/views/MenuPage.vue'
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/about', name: 'About', component: About},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/registro', name: 'Registro', component: Registro },
+  { path: '/menu', name: 'Menu', component: Menu },
 ]
 
 const router = createRouter({
