@@ -11,7 +11,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Inicia Sesión</button>
+          <button class="btn-login">Iniciar Sesión</button>
         </nav>
         
         <!-- Contenido Sección 1 -->
@@ -44,7 +44,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Inicia Sesión</button>
+          <button class="btn-login">Iniciar Sesión</button>
         </nav>
 
         <div class="section-content">
@@ -95,7 +95,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Inicia Sesión</button>
+          <button class="btn-login">Iniciar Sesión</button>
         </nav>
 
         <div class="section-content-three">
@@ -119,8 +119,10 @@
 
         <!-- Decoraciones Sección 3 -->
         <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf-three deco-leaf-three-1">
+        <img src="@/assets/hoja2.png" alt="Hoja" class="deco1-leaf-three deco1-leaf-three-1">
         <img src="@/assets/huevos.png" alt="Huevos" class="deco-eggs">
         <img src="@/assets/especias.png" alt="Especias" class="deco-spices">
+        <img src="@/assets/cuchara.png" alt="Cuchara" class="deco-spoon"> 
       </div>
     </section>
   </div>
@@ -188,6 +190,7 @@ export default {
   width: 100%;
   height: 100vh;
   overflow-y: scroll;
+  overflow-x: hidden;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
 }
@@ -206,33 +209,41 @@ export default {
   height: 100vh;
   background-color: #ffffff;
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Navegación */
 .navbar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 20px 3% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
-  margin-left: 75px;
+  margin-left: 30px;
+  flex-shrink: 0;
 }
 
 .nav-links {
-  display: flex;
+  display: flex !important;
   gap: 60px;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-start;
+  margin-left: 350px;
 }
 
 .nav-links a {
@@ -240,6 +251,7 @@ export default {
   color: #666;
   text-decoration: none;
   transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -247,15 +259,18 @@ export default {
 }
 
 .btn-login {
-  padding: 10px 24px;
+  padding: 8px 22px;
   font-size: 14px;
   color: #070707;
-  border: 1px solid #ddd2d2bf;
+  border: 2px solid #ddd; 
   background-color: transparent;
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-right: -170px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-login:hover {
@@ -323,7 +338,7 @@ export default {
   width: 150px;
   height: 150px;
   object-fit: contain;
-  margin-bottom: 20px;
+  margin-bottom: 45px;
   margin-left: 100px;
   display: block;
   opacity: 0;
@@ -441,7 +456,7 @@ export default {
   align-items: center;
   text-align: center;
   opacity: 0;
-  transform: scale(0.5) rotate(-60deg);
+  transform: scale(0.5) rotate(60deg);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -527,7 +542,7 @@ export default {
   height: 300px;
   object-fit: contain;
   top: 110px;
-  left: -90px;
+  left: -92px;
   opacity: 0;
   transform: translate(-50px, -50px);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s;
@@ -564,13 +579,14 @@ export default {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 80px 80px;
+  padding: 140px 90px 90px;
   position: relative;
 }
 
 .content-left-three {
   width: 45%;
   padding-left: 100px;
+  margin-top: -40px; 
 }
 
 .section-title-three {
@@ -579,6 +595,7 @@ export default {
   color: #1a181f;
   line-height: 1.1;
   margin-bottom: 20px;
+  margin-top: -20px;
   font-family: 'Open Sans', sans-serif;
   opacity: 0;
   transform: translateX(-100px);
@@ -615,15 +632,16 @@ export default {
 .img-plato-three {
   width: 500px;
   height: 500px;
+  top: 40%;
   object-fit: contain;
   opacity: 0;
-  transform: translateX(100px);
+  transform: translateX(100px) rotate(-70deg);
   transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s;
 }
 
 .section-three.visible .img-plato-three {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translateY(-70px) ; 
 }
 
 .footer-banner {
@@ -631,22 +649,23 @@ export default {
   bottom: 100px;
   left: 0;
   right: 0;
-  background-color: #e8f4f8;
+  background-color: #daeef5;
   padding: 20px;
   text-align: center;
 }
 
 .footer-text {
   font-size: 14px;
-  color: #333;
+   font-weight: 600;
+  color: #696363;
   font-family: 'Montserrat', sans-serif;
 }
 
 /* Decoraciones Sección 3 */
 .deco-leaf-three {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 67px;
+  height: 67px;
   object-fit: contain;
   opacity: 0;
   transform: translate(-40px, -40px);
@@ -659,17 +678,37 @@ export default {
 }
 
 .deco-leaf-three-1 {
-  top: 150px;
-  left: 200px;
+  top: 80px;
+  left: 350px;
+}
+
+.deco1-leaf-three {
+  position: absolute;
+  width: 67px;
+  height: 67px;
+  object-fit: contain;
+  opacity: 0;
+  transform: translate(-40px, -40px);
+  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s;
+}
+
+.section-three.visible .deco1-leaf-three {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.deco1-leaf-three-1 {
+  top: 400px;
+  left: 300px;
 }
 
 .deco-eggs {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: 270px;
+  height: 270px;
   object-fit: contain;
-  bottom: 200px;
-  left: 50px;
+  bottom: 250px;
+  left: -84px;
   opacity: 0;
   transform: translate(-50px, 50px);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
@@ -682,11 +721,11 @@ export default {
 
 .deco-spices {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
-  bottom: 250px;
-  left: 100px;
+  bottom: 60px;
+  left: 2px;
   opacity: 0;
   transform: translate(-40px, 50px);
   transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s;
@@ -695,6 +734,23 @@ export default {
 .section-three.visible .deco-spices {
   opacity: 1;
   transform: translate(0, 0);
+}
+
+.deco-spoon {
+  position: absolute;
+  width: 280px;  
+  height: 280px;
+  object-fit: contain;
+  bottom: 60px;  
+  left: 560px;   
+  opacity: 0;
+  transform: translate(-50px, 50px) rotate(-30deg);  
+  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s;
+}
+
+.section-three.visible .deco-spoon {
+  opacity: 1;
+  transform: translate(0, 0) rotate(0deg);  /* Vuelve a su rotación normal */
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -855,8 +911,8 @@ export default {
   }
 
   .logo {
-    font-size: 21px;
-    margin-left: 50px;
+    font-size: 19px;
+    margin-left: 30px;
   }
 
   .nav-links {
@@ -868,9 +924,9 @@ export default {
   }
 
   .btn-login {
-    padding: 10px 24px;
-    font-size: 14px;
-    margin-right: 40px;
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-right: 15px !important;
   }
 
   .section-one {
@@ -882,7 +938,7 @@ export default {
   }
 
   .content-left {
-    padding-left: 200px;
+    padding-left: 220px;
   }
 
   .title {
@@ -927,12 +983,13 @@ export default {
   }
 
   .section-title-three {
-    font-size: 48px;
+    font-size: 40px;
+    margin-top: -100px;
   }
 
   .img-plato-three {
-    width: 450px;
-    height: 450px;
+    width: 420px;
+    height: 420px;
   }
 }
 
