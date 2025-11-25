@@ -10,7 +10,7 @@ import ResenasHome from '@/views/ResenasHome.vue'
 import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
-import AboutCliente from '@/views/AboutPageCliente.vue'
+import AboutCliente from '@/views/AboutCliente.vue'
 import homeCliente from '@/views/homeCliente.vue'
 
 const routes = [
