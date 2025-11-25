@@ -11,12 +11,12 @@ import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 
 const routes = [
-  { path: '/', name: 'Menu', component: Menu },  // ✅ Ruta principal = Menu
+  { path: '/', name: 'Menu', component: Menu }, 
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
-  { path: '/review', name: 'ResenasHome', component: ResenasHome},  // ✅ Cambié la ruta para que coincida con tu navbar
+  { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},  
   { path: '/about', name: 'About', component: About},
   { path: '/abouthome', name: 'AboutHome', component: AboutHome},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
