@@ -4,9 +4,9 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/home">Home</router-link>
-        <router-link to="/about">About</router-link>
-        <router-link to="/review">Review</router-link>
+        <router-link to="/homecliente">Home</router-link>
+        <router-link to="/aboutcliente">About</router-link>
+        <router-link to="/resenascliente">Review</router-link>
       </div>
       <span v-if="usuarioNombre !== 'Invitado'" class="btn-admin">{{ usuarioNombre }}</span>
       <span v-else class="btn-invitado">Tatiana</span>

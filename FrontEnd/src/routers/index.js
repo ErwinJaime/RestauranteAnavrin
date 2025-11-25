@@ -9,18 +9,24 @@ import About from '@/views/AboutPage.vue'
 import ResenasHome from '@/views/ResenasHome.vue'
 import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
+import ResenasCliente from '@/views/ResenasCliente.vue'
+import AboutCliente from '@/views/AboutPageCliente.vue'
+import homeCliente from '@/views/homeCliente.vue'
 
 const routes = [
-  { path: '/', name: 'Menu', component: Menu },  // ✅ Ruta principal = Menu
+  { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
-  { path: '/administracion', name: 'Administrador', component: Administrador},
-  { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
-  { path: '/review', name: 'ResenasHome', component: ResenasHome},  // ✅ Cambié la ruta para que coincida con tu navbar
-  { path: '/about', name: 'About', component: About},
   { path: '/abouthome', name: 'AboutHome', component: AboutHome},
+  { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
+  { path: '/homecliente', name: 'homeCliente', component: homeCliente},
+  { path: '/Menu', name: 'Menu', component: Menu }, 
+  { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
+  { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
+  { path: '/administracion', name: 'Administrador', component: Administrador},
+  { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin}, 
+  { path: '/aboutadmin', name: 'About', component: About},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/registro', name: 'Registro', component: Registro },
 ]
 
 const router = createRouter({

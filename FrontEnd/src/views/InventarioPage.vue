@@ -5,7 +5,7 @@
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
         <a href="#">Home</a>
-        <router-link to="/about">About</router-link>
+        <router-link to="/aboutadmin">About</router-link>
         <router-link to="/resenasadmin">Review</router-link>
       </div>
       <span class="btn-admin">Admin</span>

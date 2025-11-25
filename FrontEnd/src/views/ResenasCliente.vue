@@ -8,7 +8,7 @@
         <router-link to="/aboutadmin">About</router-link>
         <router-link to="/resenasadmin">Review</router-link>
       </div>
-      <span class="btn-admin">Admin</span>
+      <span class="btn-cliente">Tatiana</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
     </nav>
 
@@ -202,7 +202,7 @@ const paginaAnterior = () => {
   color: #35a4ff;
 }
 
-.btn-admin {
+.btn-cliente {
   padding: 8px 28px;
   font-size: 14px;
   color: #000;
