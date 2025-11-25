@@ -8,7 +8,7 @@
         <router-link to="/abouthome">About</router-link>
         <router-link to="/resenashome">Review</router-link>
       </div>
-      <button class="btn-cerrar-sesion" @click="iniciarSesion">Iniciar Sesión</button>
+      <button class="btn-iniciar-sesion" @click="iniciarSesion">Iniciar Sesión</button>
     </nav>
 
     <!-- Imagen superior -->
@@ -181,7 +181,7 @@ const iniciarSesion = () => {
   margin-right: 10px !important;
 }
 
-.btn-cerrar-sesion {
+.btn-iniciar-sesion {
   padding: 8px 22px;
   font-size: 14px;
   color: #070707;
@@ -195,7 +195,7 @@ const iniciarSesion = () => {
   flex-shrink: 0;
 }
 
-.btn-cerrar-sesion:hover {
+.btn-iniciar-sesion:hover {
   background-color: #6d9fef;
   color: rgb(21, 3, 3);
 }
