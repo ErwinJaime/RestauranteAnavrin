@@ -177,3 +177,5 @@ export function eliminarResena(id) {
 export function cambiarVisibilidadResena(id, visible) {
   return productosAPI.patch(`resenas/${id}/visibilidad/`, { visible })
 }
+
+

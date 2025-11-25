@@ -4,11 +4,12 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/home">Home</router-link>
-        <router-link to="/abouthome">About</router-link>
-        <router-link to="/resenashome">Review</router-link>
+        <router-link to="/homecliente">Home</router-link>
+        <router-link to="/aboutcliente">About</router-link>
+        <router-link to="/resenascliente">Review</router-link>
       </div>
-      <button class="btn-iniciar-sesion" @click="iniciarSesion">Iniciar Sesión</button>
+      <span class="btn-cliente">Tatiana</span>
+      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
     </nav>
 
     <!-- Imagen superior -->
@@ -99,7 +100,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const iniciarSesion = () => {
+const cerrarSesion = () => {
+  localStorage.removeItem('usuario')
+  localStorage.removeItem('correo')
+  sessionStorage.clear()
   router.push('/')
 }
 </script>
@@ -150,7 +154,7 @@ const iniciarSesion = () => {
   align-items: center;
   flex: 1;
   justify-content: center;
-  margin-left: 0px;
+  margin-left: 100px;
 }
 
 .nav-links a,
@@ -166,7 +170,7 @@ const iniciarSesion = () => {
   color: #3597ff;
 }
 
-.btn-admin {
+.btn-cliente {
   padding: 8px 28px;
   font-size: 14px;
   color: #000;
@@ -181,7 +185,7 @@ const iniciarSesion = () => {
   margin-right: 10px !important;
 }
 
-.btn-iniciar-sesion {
+.btn-cerrar-sesion {
   padding: 8px 22px;
   font-size: 14px;
   color: #070707;
@@ -195,7 +199,7 @@ const iniciarSesion = () => {
   flex-shrink: 0;
 }
 
-.btn-iniciar-sesion:hover {
+.btn-cerrar-sesion:hover {
   background-color: #6d9fef;
   color: rgb(21, 3, 3);
 }
