@@ -427,7 +427,6 @@ export default {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {

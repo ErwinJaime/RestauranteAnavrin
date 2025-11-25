@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/LoginForm.vue'
 import Home from '@/views/HomePage.vue'
+import Platillos from '@/views/PlatillosPage.vue'
 import Dashboard from '@/views/UserDashboard.vue'
 import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
@@ -12,6 +13,7 @@ import ResenasHome from '@/views/ResenasHome.vue'
 const routes = [
   { path: '/', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
+  { path: '/platillos', name: 'Platillos', component: Platillos },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin},
   { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
