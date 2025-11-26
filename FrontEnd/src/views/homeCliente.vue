@@ -41,7 +41,7 @@
           a crecer, comparte tu<br>
           experiencia aquí.
         </h2>
-        <button class="btn-review">Crear Reseña</button>
+        <router-link to="/crearresena" class="btn-review">Crear Reseña</router-link>
         <img src="@/assets/hoja-verde.png" alt="Hoja" class="icon-leaf">
       </div>
 

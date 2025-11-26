@@ -13,7 +13,7 @@ import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
 import AboutCliente from '@/views/AboutCliente.vue'
 import homeCliente from '@/views/homeCliente.vue'
-
+import CrearReseña from '@/views/CrearResena.vue'
 const routes = [
   { path: '/', name: 'homeCliente', component: homeCliente},
   { path: '/registro', name: 'Registro', component: Registro },
@@ -29,6 +29,8 @@ const routes = [
   { path: '/menu', name: 'Menu', component: Menu }, 
   { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
   { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
+  { path: '/crearresena', name: 'CrearResena', component: CrearReseña},
+
 ]
 
 const router = createRouter({
