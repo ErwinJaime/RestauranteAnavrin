@@ -305,14 +305,14 @@ export default {
 /* ==================== FOOTER ==================== */
 .footer {
   background: #ffffff;
-  padding: 0px 20px 0;
-  margin-top: 0px;
+  padding: 80px 20px 0;
+  margin-top: 100px;
   position: relative;
 }
 
 .footer-bottom {
   background: #d4e7f7f1;
-  padding: 20px 0px;
+  padding: 25px 0px;
   text-align: center;
 }
 
@@ -347,19 +347,26 @@ export default {
 ------------------------- */
 
 /* Pantallas grandes (1600px+) */
-@media (min-width: 1600px) {
+@media (min-width: 1440px) {
+  .page-container {
+    max-width: none;
+    margin: 0 auto;
+  }
+
+  /* Navegación mejorada para 1440px */
   .navbar {
-    padding: 20px 5% !important;
-    gap: 20px !important;
+    padding: 25px 5% !important;
+    gap: 25px !important;
   }
 
   .logo {
     font-size: 22px;
-    margin-right: 40px;
+    margin-left: 50px;
   }
 
   .nav-links {
-    gap: 80px;
+    gap: 70px;
+    margin-left: 120px;
   }
 
   .nav-links a {
@@ -368,17 +375,102 @@ export default {
 
   .btn-primary {
     padding: 10px 32px;
-    font-size: 12px;
-    margin-right: 4px !important;
+    font-size: 15px;
+    margin-right: 15px !important;
   }
 
   .btn-login {
     padding: 10px 26px;
-    font-size: 12px;
+    font-size: 15px;
   }
 
+  /* Contenido Principal optimizado */
+  .main-content {
+    padding: 40px 100px 80px;
+    gap: 80px;
+  }
+
+  .content-left {
+    width: 48%;
+    padding-left: 50px;
+  }
+
+  .title {
+    font-size: 74px;
+    margin-bottom: 25px;
+  }
+
+  .description {
+    font-size: 16px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .btn-explore {
+    padding: 16px 36px;
+    font-size: 15px;
+  }
+
+  /* Contenido Derecho mejorado */
+  .content-right {
+    width: 52%;
+    height: 650px;
+  }
+
+  .img-plato {
+    width: 550px;
+    height: 550px;
+  }
+
+  .img-grapefruit {
+    width: 170px;
+    height: 150px;
+    left: 10px;
+  }
+
+  .img-bebida {
+    width: 190px;
+    height: 190px;
+    left: 90px;
+    bottom: 30px;
+  }
+
+  /* Sección de Reseñas mejorada */
+  .bottom-section {
+    padding: 0 0px 0;
+  }
+
+  .review-section {
+    padding: 80px 0;
+  }
+
+  .icon-heart {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 25px;
+  }
+
+  .review-title {
+    font-size: 40px;
+    margin-bottom: 35px;
+    line-height: 1.4;
+  }
+
+  .btn-review {
+    padding: 16px 36px;
+    font-size: 15px;
+  }
+
+  .icon-leaf {
+    width: 90px;
+    height: 90px;
+    right: 120px;
+  }
+
+  /* Footer optimizado */
   .footer {
-    padding: 100px 40px 0;
+    padding: 0 0 0;
+    margin-top:40px;
   }
 
   .footer-bottom {
@@ -387,6 +479,21 @@ export default {
 
   .footer-slogan {
     font-size: 1.05rem;
+  }
+
+  /* Decoraciones ajustadas */
+  .deco-leaf-1 {
+    top: 200px;
+    left: 60px;
+    width: 110px;
+    height: 110px;
+  }
+
+  .deco-leaf-2 {
+    bottom: 320px;
+    right: 80px;
+    width: 110px;
+    height: 110px;
   }
 }
 

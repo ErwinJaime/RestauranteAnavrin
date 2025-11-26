@@ -189,7 +189,6 @@ onMounted(() => {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 25px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .logo {
@@ -336,7 +335,7 @@ onMounted(() => {
 /* ==================== CONTENIDO PRINCIPAL ==================== */
 .main-content {
   margin-top: 120px;
-  padding: 60px 20px 100px;
+  padding: 20px 20px 100px;
   text-align: center;
   position: relative;
   z-index: 10;
@@ -520,8 +519,8 @@ onMounted(() => {
 /* Pantallas 1440px */
 @media (min-width: 1440px){
   .navbar {
-    padding: 22px 0% !important;
-    max-width: 1910px;
+    padding: 20px 0% !important;
+    max-width: none;
     margin-left: 0%;
     margin-right: 0%;
   }
@@ -553,28 +552,28 @@ onMounted(() => {
   }
 
   .main-content {
-    padding:45px 20px 120px;
+    padding:0 20px 120px;
   }
 
   .page-title {
-    font-size: 3.4rem;
-    margin-bottom: 20px;
+    font-size: 3.2rem;
+    margin-bottom: 10px;
   }
 
   .page-subtitle {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
   }
 
   .decoration-naranja{
-    width: 220px;
+    width: 180px;
   }
   .decoration-aceite {
-    width: 200px;
+    width: 180px;
   }
 
   .decoration-naranja {
-    top: 90px;
+    top: 80px;
     left: 15px;
   }
 
@@ -584,14 +583,14 @@ onMounted(() => {
   }
 
   .decoration-guacamole {
-    width: 350px;
+    width: 300px;
     bottom: 0;
     left: 140px;
   }
 
   .decoration-estrella1 {
-    width: 180px;
-    bottom: 40px;
+    width: 150px;
+    bottom: 20px;
     right: 20px;
   }
 
@@ -603,18 +602,18 @@ onMounted(() => {
 
   .emojis-container {
     gap: 50px;
-    margin-bottom: 70px;
+    margin-bottom: 20px;
   }
 
   .emoji-btn {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     border: none;
   }
 
   .emoji-img {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
   }
 
   .form-container {
@@ -624,20 +623,20 @@ onMounted(() => {
   }
 
   .textarea-comentario {
-    padding: 25px;
+    padding: 15px;
     font-size: 1.1rem;
     border-radius: 25px;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
   }
 
   .btn-aceptar {
     max-width: 350px;
-    padding: 18px 50px;
-    font-size: 19px;
+    padding: 15px 40px;
+    font-size: 15px;
   }
 
   .modal-content {
-    max-width: 550px;
+    max-width: 530px;
     padding: 55px 70px;
   }
 
