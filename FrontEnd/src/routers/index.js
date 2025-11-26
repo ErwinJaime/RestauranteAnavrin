@@ -8,12 +8,13 @@ import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
 import ResenasAdmin from '@/views/ResenasAdmin.vue'
 import About from '@/views/AboutPage.vue'
-/*import ResenasHome from '@/views/ResenasHome.vue'
+import ResenasHome from '@/views/ResenasHome.vue'
 import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
 import AboutCliente from '@/views/AboutCliente.vue'
 import homeCliente from '@/views/homeCliente.vue'
+import CrearResena from '@/views/CrearResena.vue'
 
 const routes = [
   { path: '/', name: 'homeCliente', component: homeCliente},
@@ -31,7 +32,7 @@ const routes = [
   { path: '/menu', name: 'Menu', component: Menu }, 
   { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
   { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
-  { path: '/crearresena', name: 'CrearResena', component: CrearReseña},
+  { path: '/crearresena', name: 'CrearResena', component: CrearResena},
 
 ]
 
