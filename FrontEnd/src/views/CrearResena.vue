@@ -609,11 +609,12 @@ onMounted(() => {
   .emoji-btn {
     width: 90px;
     height: 90px;
+    border: none;
   }
 
   .emoji-img {
-    width: 55px;
-    height: 55px;
+    width: 80px;
+    height: 80px;
   }
 
   .form-container {
