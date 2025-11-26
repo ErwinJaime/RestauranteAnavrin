@@ -8,7 +8,7 @@
         <a href="/aboutcliente">About</a>
         <a href="/resenascliente">Review</a>
       </div>
-      <button class="btn-primary">Tatiana</button>
+      <span class="btn-primary">Tatiana</span>
       <button class="btn-login">Cerrar Sesión</button>
     </nav>
 
@@ -27,7 +27,6 @@
 
       <!-- Contenido Derecho - Imágenes -->
       <div class="content-right">
-        <img src="@/assets/grapefruit.png" alt="Grapefruit" class="img-grapefruit">
         <img src="@/assets/plato-principal.png" alt="Plato Principal" class="img-plato">
       </div>
     </div>
@@ -45,13 +44,15 @@
         <img src="@/assets/hoja-verde.png" alt="Hoja" class="icon-leaf">
       </div>
 
-      <div class="footer-banner">
-        <p class="footer-text">El encuentro perfecto entre lo auténtico y lo inolvidable</p>
-      </div>
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-bottom">
+          <p class="footer-slogan">El encuentro perfecto entre lo auténtico y lo inolvidable</p>
+        </div>
+      </footer>
     </div>
 
     <!-- Decoraciones -->
-    <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-1">
     <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-2">
   </div>
 </template>
@@ -80,17 +81,19 @@ export default {
 
 /* Navegación */
 .navbar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
   background-color: #ffffff;
-  padding: 20px 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 20px 3% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
 }
 
 .logo {
@@ -98,55 +101,64 @@ export default {
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: 1px;
+  margin-left: 30px;
+  flex-shrink: 0;
 }
 
 .nav-links {
-  display: flex;
-  gap: 50px;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex !important;
+  gap: 60px;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin-left: 100px;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links router-link {
   font-size: 14px;
   color: #666;
   text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
+  transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
-  color: #000;
+  color: #35a4ff;
 }
 
 .btn-primary {
-  padding: 10px 28px;
-  font-size: 14px;
-  color: #ffffff;
-  background-color: #ff7b54;
+  padding: 8px 28px;
+  font-size: 18px;
+  color: #000;
+  background-color: #ff6b35;
   border: none;
   border-radius: 50px;
-  cursor: pointer;
-  font-family: 'Montserrat', sans-serif;
-  margin-right: 12px;
-}
-
-.btn-primary:hover {
-  background-color: #ff6b44;
+  cursor: default;
+  font-weight: 580;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto !important;
+  margin-right: 10px !important;
 }
 
 .btn-login {
-  padding: 10px 24px;
+   padding: 8px 22px;
   font-size: 14px;
   color: #070707;
-  border: 1px solid #ddd;
+  border: 2px solid #ddd;
   background-color: transparent;
   border-radius: 50px;
   cursor: pointer;
-  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-login:hover {
-  background-color: #f5f5f5;
+  background-color: #6d9fef;
+  color: rgb(21, 3, 3);
 }
 
 /* Contenido Principal */
@@ -154,7 +166,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 140px 80px 60px;
+  padding: 0px 80px 60px;
   min-height: calc(100vh - 200px);
   gap: 60px;
 }
@@ -210,8 +222,8 @@ export default {
 .img-grapefruit {
   position: absolute;
   top: 0;
-  left: -20px;
-  width: 140px;
+  left: 2px;
+  width: 160px;
   height: 140px;
   object-fit: contain;
   z-index: 10;
@@ -238,7 +250,7 @@ export default {
 /* Sección Inferior */
 .bottom-section {
   position: relative;
-  padding: 0 80px 0;
+  padding: 0 0px 0;
 }
 
 .review-section {
@@ -290,16 +302,25 @@ export default {
   opacity: 0.6;
 }
 
-.footer-banner {
-  background-color: #e8f4f8;
-  padding: 20px;
+/* ==================== FOOTER ==================== */
+.footer {
+  background: #ffffff;
+  padding: 0px 20px 0;
+  margin-top: 0px;
+  position: relative;
+}
+
+.footer-bottom {
+  background: #d4e7f7f1;
+  padding: 20px 0px;
   text-align: center;
 }
 
-.footer-text {
-  font-size: 14px;
-  color: #333;
-  font-family: 'Montserrat', sans-serif;
+.footer-slogan {
+  color: #7a7a7a;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  margin: 0;
 }
 
 /* Decoraciones */
@@ -321,8 +342,174 @@ export default {
   right: 60px;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+/* ------------------------
+   MEDIA QUERIES
+------------------------- */
+
+/* Pantallas grandes (1600px+) */
+@media (min-width: 1600px) {
+  .navbar {
+    padding: 20px 5% !important;
+    gap: 20px !important;
+  }
+
+  .logo {
+    font-size: 22px;
+    margin-right: 40px;
+  }
+
+  .nav-links {
+    gap: 80px;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+  }
+
+  .btn-primary {
+    padding: 10px 32px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-login {
+    padding: 10px 26px;
+    font-size: 12px;
+  }
+
+  .footer {
+    padding: 100px 40px 0;
+  }
+
+  .footer-bottom {
+    padding: 30px 20px;
+  }
+
+  .footer-slogan {
+    font-size: 1.05rem;
+  }
+}
+
+/* Pantallas medianas-grandes (1367px - 1599px) */
+@media (min-width: 1367px) and (max-width: 1599px) {
+  .navbar {
+    padding: 20px 4% !important;
+    gap: 18px !important;
+  }
+
+  .logo {
+    font-size: 20px;
+    margin-right: 35px;
+  }
+
+  .nav-links {
+    gap: 70px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-primary {
+    margin-right: 12px !important;
+  }
+}
+
+/* Pantallas medianas (1280px - 1366px) - 15.6" HD */
+@media (min-width: 1280px) and (max-width: 1366px) {
+  .navbar {
+    padding: 20px 3% !important;
+    gap: 12px !important;
+  }
+
+  .logo {
+    font-size: 19px;
+    margin-right: 30px;
+  }
+
+  .nav-links {
+    gap: 60px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .btn-primary {
+    padding: 8px 26px;
+    font-size: 12px;
+    margin-right: 4px !important;
+  }
+
+  .btn-login {
+    padding: 8px 20px;
+    font-size: 12px;
+  }
+}
+
+/* Pantallas pequeñas de laptop (1024px - 1279px) - 14" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navbar {
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 18px;
+    margin-right: 25px;
+  }
+
+  .nav-links {
+    gap: 50px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 8px 24px;
+    font-size: 13px;
+    margin-right: 8px !important;
+  }
+
+  .btn-login {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 20px 2% !important;
+    gap: 10px !important;
+  }
+
+  .logo {
+    font-size: 17px;
+    margin-right: 20px;
+  }
+
+  .nav-links {
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-right: 8px !important;
+  }
+
+  .btn-login {
+    padding: 7px 16px;
+    font-size: 12px;
+  }
+
   .main-content {
     flex-direction: column;
     padding: 120px 40px 40px;
@@ -363,6 +550,77 @@ export default {
 
   .review-title {
     font-size: 28px;
+  }
+
+  .footer {
+    padding: 60px 20px 0;
+  }
+}
+
+/* Tablets pequeñas (600px - 767px) */
+@media (max-width: 767px) {
+  .navbar {
+    padding: 15px 20px !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    justify-content: center !important;
+  }
+
+  .logo {
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    margin-right: 0;
+    margin-bottom: 10px;
+    margin-left: 0;
+  }
+
+  .nav-links {
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 7px 20px;
+    font-size: 12px;
+    margin-left: 0 !important;
+    margin-right: 5px !important;
+  }
+
+  .btn-login {
+    padding: 7px 16px;
+    font-size: 12px;
+  }
+}
+
+/* Móviles (hasta 599px) */
+@media (max-width: 599px) {
+  .navbar {
+    padding: 12px 15px !important;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .btn-primary,
+  .btn-login {
+    padding: 6px 16px;
+    font-size: 11px;
   }
 }
 </style>
