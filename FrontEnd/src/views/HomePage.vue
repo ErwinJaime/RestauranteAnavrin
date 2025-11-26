@@ -11,7 +11,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Iniciar Sesión</button>
+          <router-link to="/login" class="btn-login">Inicia Sesión</router-link>
         </nav>
         
         <!-- Contenido Sección 1 -->
@@ -44,7 +44,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Iniciar Sesión</button>
+          <router-link to="/login" class="btn-login">Inicia Sesión</router-link>
         </nav>
 
         <div class="section-content">
@@ -95,7 +95,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <button class="btn-login">Iniciar Sesión</button>
+          <router-link to="/login" class="btn-login">Inicia Sesión</router-link>
         </nav>
 
         <div class="section-content-three">

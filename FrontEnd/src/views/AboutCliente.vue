@@ -4,8 +4,8 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/homecliente">Home</router-link>
-        <router-link to="/aboutcliente">About</router-link>
+        <router-link to="/">Home</router-link>
+        <a href="#">About</a>
         <router-link to="/resenascliente">Review</router-link>
       </div>
       <span class="btn-cliente">Tatiana</span>
@@ -172,7 +172,7 @@ const cerrarSesion = () => {
 
 .btn-cliente {
   padding: 8px 28px;
-  font-size: 14px;
+  font-size: 13px;
   color: #000;
   background-color: #ff6b35;
   border: none;
@@ -187,7 +187,7 @@ const cerrarSesion = () => {
 
 .btn-cerrar-sesion {
   padding: 8px 22px;
-  font-size: 14px;
+  font-size: 18px;
   color: #070707;
   border: 2px solid #ddd;
   background-color: transparent;

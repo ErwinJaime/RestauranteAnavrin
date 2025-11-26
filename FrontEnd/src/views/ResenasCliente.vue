@@ -4,9 +4,9 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/administracion">Home</router-link>
-        <router-link to="/aboutadmin">About</router-link>
-        <router-link to="/resenasadmin">Review</router-link>
+        <router-link to="/">Home</router-link>
+        <router-link to="/aboutcliente">About</router-link>
+        <a href="3">Review</a>
       </div>
       <span class="btn-cliente">Tatiana</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
@@ -204,7 +204,7 @@ const paginaAnterior = () => {
 
 .btn-cliente {
   padding: 8px 28px;
-  font-size: 14px;
+  font-size: 13px;
   color: #000;
   background-color: #ff6b35;
   border: none;

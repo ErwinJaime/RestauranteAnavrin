@@ -13,9 +13,10 @@ import AboutHome from '@/views/AboutPageHome.vue'
 import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
 import AboutCliente from '@/views/AboutCliente.vue'
-import homeCliente from '@/views/homeCliente.vue'*/
+import homeCliente from '@/views/homeCliente.vue'
 
 const routes = [
+  { path: '/', name: 'homeCliente', component: homeCliente},
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
@@ -25,6 +26,13 @@ const routes = [
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin}, 
   { path: '/aboutadmin', name: 'About', component: About},
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/resenashome', name: 'ResenasHome', component: ResenasHome},
+  { path: '/abouthome', name: 'AboutHome', component: AboutHome},
+  { path: '/menu', name: 'Menu', component: Menu }, 
+  { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
+  { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
+  { path: '/crearresena', name: 'CrearResena', component: CrearReseña},
+
 ]
 
 const router = createRouter({
