@@ -204,7 +204,7 @@ const paginaAnterior = () => {
 
 .btn-cliente {
   padding: 8px 28px;
-  font-size: 14px;
+  font-size: 13px;
   color: #000;
   background-color: #ff6b35;
   border: none;
