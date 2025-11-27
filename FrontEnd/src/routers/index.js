@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/LoginForm.vue'
 import Home from '@/views/HomePage.vue'
 import Platillos from '@/views/PlatillosPage.vue'
+import Postres from '@/views/PostresPage.vue'
 import Dashboard from '@/views/UserDashboard.vue'
 import Registro from '@/views/RegisterForm.vue'
 import Administrador from '@/views/InventarioPage.vue'
@@ -13,13 +14,15 @@ import Menu from '@/views/MenuPage.vue'
 import ResenasCliente from '@/views/ResenasCliente.vue'
 import AboutCliente from '@/views/AboutCliente.vue'
 import homeCliente from '@/views/homeCliente.vue'
-import CrearReseña from '@/views/CrearResena.vue'
+import CrearResena from '@/views/CrearResena.vue'
+
 const routes = [
   { path: '/', name: 'homeCliente', component: homeCliente},
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/platillos', name: 'Platillos', component: Platillos },
+  { path: '/postres', name: 'Postres', component: Postres },
   { path: '/administracion', name: 'Administrador', component: Administrador},
   { path: '/resenasadmin', name: 'ResenasAdmin', component: ResenasAdmin}, 
   { path: '/aboutadmin', name: 'About', component: About},
@@ -29,7 +32,7 @@ const routes = [
   { path: '/menu', name: 'Menu', component: Menu }, 
   { path: '/aboutcliente', name: 'AboutCliente', component: AboutCliente},
   { path: '/resenascliente', name: 'ResenasCliente', component: ResenasCliente}, 
-  { path: '/crearresena', name: 'CrearResena', component: CrearReseña},
+  { path: '/crearresena', name: 'CrearResena', component: CrearResena},
 
 ]
 

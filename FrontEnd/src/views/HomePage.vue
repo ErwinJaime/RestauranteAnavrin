@@ -95,7 +95,7 @@
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
-          <router-link to="/login" class="btn-login">Inicia Sesión</router-link>
+          <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>
 
         <div class="section-content-three">
@@ -271,11 +271,13 @@ export default {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+  text-decoration: none !important;
 }
 
 .btn-login:hover {
   background-color: #6d9fef;
   color: rgb(7, 7, 7);
+  text-decoration: none !important;
 }
 
 /* Sección 1 HOME  */

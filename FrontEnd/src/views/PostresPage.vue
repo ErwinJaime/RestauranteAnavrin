@@ -3,7 +3,7 @@
     <!-- Navegación -->
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
-      <div class="nav-links">
+      <div class="nav-links"> 
         <a href="/home">Home</a>
         <a href="/abouthome">About</a>
         <a href="/resenashome">Review</a>
@@ -13,19 +13,8 @@
 
     <!-- Contenido Principal -->
     <div class="main-content">
-      <!-- Lado Izquierdo - Info del Platillo -->
+       <!-- Lado Derecho - Imagen Principal -->
       <div class="content-left">
-        <transition name="fade-slide" mode="out-in">
-          <div :key="currentDish.id" class="dish-info">
-            <h1 class="dish-title">{{ currentDish.title }}</h1>
-            <p class="dish-description">{{ currentDish.description }}</p>
-            <div class="price-tag">{{ currentDish.price }}</div>
-          </div>
-        </transition>
-      </div>
-
-      <!-- Lado Derecho - Imagen Principal -->
-      <div class="content-right">
         <transition name="dish-rotate" mode="out-in">
           <div :key="currentDish.id" class="dish-image-container">
             <img 
@@ -33,10 +22,17 @@
               :alt="currentDish.title" 
               class="dish-main-image"
             >
-            <div 
-              class="background-shape" 
-              :style="{ backgroundColor: currentDish.bgColor }"
-            ></div>
+          </div>
+        </transition>
+      </div>
+
+     <!-- Lado Derecho - Info del Platillo -->
+      <div class="content-right">
+        <transition name="fade-slide" mode="out-in">
+          <div :key="currentDish.id" class="dish-info">
+            <h1 class="dish-title">{{ currentDish.title }}</h1>
+            <p class="dish-description">{{ currentDish.description }}</p>
+            <div class="price-tag">{{ currentDish.price }}</div>
           </div>
         </transition>
       </div>
@@ -49,22 +45,11 @@
         :key="dish.id"
         @click="changeDish(dish.id)"
         class="dish-card"
+        :class="{ 'swapping': isSwapping && clickedId === dish.id }"
       >
         <!-- Imagen redonda flotando arriba -->
         <div class="dish-thumb-container">
           <img :src="dish.thumbnailImage" :alt="dish.title" class="dish-thumb-img">
-        </div>
-
-        <!-- Tarjeta de color debajo -->
-        <div 
-          class="dish-card-bg"
-          :style="{ backgroundColor: dish.cardBgColor }"
-        ></div>
-
-        <!-- Info del platillo -->
-        <div class="dish-card-info">
-          <h3 class="dish-card-title">{{ dish.title }}</h3>
-          <p class="dish-card-price">{{ dish.price }}</p>
         </div>
       </div>
     </div>
@@ -81,48 +66,62 @@ export default {
     const dishes = ref([
       {
         id: 1,
-        title: 'Veggie Bow-Tie Pasta',
-        description: 'Pasta tipo moñita farfalle, calabacín en julianas, pimientos rojos y amarillos, champiñones salteados, espinaca fresca, tomates cherry, aceite de oliva extra virgen y un toque de albahaca.',
-        price: '23.500 COP',
-        mainImage: require('@/assets/pasta-bowtie.png'),
-        thumbnailImage: require('@/assets/pasta-bowtie1.png'),
+        title: 'Pastel de Fresas con Crema',
+        description: 'Bizcocho de vainilla esponjoso, relleno de crema batida fresca, fresas en láminas, cobertura ligera de azúcar glas y decoración con cerezas.',
+        price: '14.500 COP',
+        mainImage: require('@/assets/Pastel-de-Fresas.png'),
+        thumbnailImage: require('@/assets/Pastel-de-Fresas1.png'),
         bgColor: '#FFE7BC',
         cardBgColor: '#FFE7BC'
       },
       {
         id: 2,
-        title: 'Veggie Delight Noodles',
-        description: 'Fideos salteados estilo asiático, brócoli, zanahoria en tiras, col morado, pimentón verde, cebolla blanca, salsa de soya ligera, jengibre fresco y semillas de sésamo.',
-        price: '24.800 COP',
-        mainImage: require('@/assets/noodles.png'),
-        thumbnailImage: require('@/assets/noodles1.png'),
+        title: 'Cheesecake de Arándanos',
+        description: 'Base de galleta triturada, relleno cremoso de queso crema, coulis de arándanos naturales y uvas negras como decoración.',
+        price: '16.000 COP',
+        mainImage: require('@/assets/Cheesecake.png'),
+        thumbnailImage: require('@/assets/Cheesecake1.png'),
         bgColor: '#FFCCA6',
         cardBgColor: '#FFCCA6'
       },
       {
         id: 3,
-        title: 'Garden Glow Bow-Tie Pasta',
-        description: 'Pasta farfalle con pesto de albahaca y nueces, tomates secos, arvejas tiernas, calabacín, hojas de rúgula y un toque de queso parmesano rallado.',
-        price: '25.900 COP',
-        mainImage: require('@/assets/pasta-glow.png'),
-        thumbnailImage: require('@/assets/pasta-glow1.png'),
+        title: 'Torta de Naranja con Chocolate',
+        description: 'Bizcocho de naranja húmedo, capas de chocolate semiamargo, cobertura de virutas de chocolate y decoración con ralladura de cítricos.',
+        price: '13.800 COP',
+        mainImage: require('@/assets/Torta-de-Naranja.png'),
+        thumbnailImage: require('@/assets/Torta-de-Naranja1.png'),
         bgColor: '#B4FF9B',
         cardBgColor: '#B4FF9B'
       }
     ])
 
     const currentDish = ref(dishes.value[0])
+    const isSwapping = ref(false)
+    const clickedId = ref(null)
 
     const changeDish = (dishId) => {
+      if (isSwapping.value || currentDish.value.id === dishId) return
+      
+      isSwapping.value = true
+      clickedId.value = dishId
+      
       const selected = dishes.value.find(d => d.id === dishId)
-      if (selected) {
+      
+      setTimeout(() => {
         currentDish.value = selected
-      }
+        setTimeout(() => {
+          isSwapping.value = false
+          clickedId.value = null
+        }, 2000)
+      }, 100)
     }
 
     return {
       dishes,
       currentDish,
+      isSwapping,
+      clickedId,
       changeDish
     }
   }
@@ -215,16 +214,19 @@ export default {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px 100px 10px; 
   min-height: 0;
-  gap: 60px;
+  gap: 80px;
 }
 
 /* Lado Izquierdo */
 .content-left {
-  width: 45%;
+  width: 55%;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dish-info {
@@ -234,187 +236,131 @@ export default {
 .dish-title {
   font-size: 28px;
   font-weight: 700;
-  margin-left: 34%;
   color: #1a1a1a;
-  line-height: 1.1;
-  margin-bottom: 10px;
+  line-height: 1.2;
+  margin-bottom: -200px;
   font-family: 'Open Sans', sans-serif;
 }
 
 .dish-description {
-  font-size: 11px;
-  margin-left: 34%;
+  font-size: 13px;
   color: #666;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   font-family: 'Montserrat', sans-serif;
+  max-width: 400px;
 }
 
 .price-tag { /* etiqueta precio */
   display: inline-block;
-  padding: 9px 28px;
-  font-size: 14px;
+  padding: 12px 40px;
+  font-size: 16px;
   margin-top: -30px; 
-  margin-left: 50%;
+  margin-left: 100%;
   font-weight: 600;
   color: #ffffff;
-  background-color: #5B9918;
+  background-color: #491899;
   border-bottom-right-radius: 20px;
   border-top-left-radius: 20px;
   font-family: 'Source Serif Pro', sans-serif;
+  align-self: flex-start;
 }
 
 /* Lado Derecho - Imagen */
 .content-right {
-  width: 55%;
+  width: 45%;
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 50px;
 }
 
 .dish-image-container {
   position: relative;
-  width: 650px;
-  height: 650px;
+  width: 500px;
+  height: 500px;
 }
 
 .dish-main-image {
-  position: absolute;
-  width: 280px;
-  height: 280px;
-  object-fit: cover;
-  border-radius: 50%;
-  top: 240px;
-  right: 60px;
-  z-index: 2;
-}
-
-.background-shape {
-  position: absolute;
-  width: 210px;
-  height: 245px;
-  bottom: 0;
-  right: 96px;
-  top: 400px;
-  z-index: 1;
-  transition: background-color 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Tarjetas de Platillos */
 .dishes-grid {
-  display: flex;
-  justify-content: flex-start; 
-  left: 8px;
-  gap: 40px;
-  padding-bottom: 0px;  
-  padding-left: 55px; 
-  margin-top: 0; 
+   display: flex;
+  justify-content: center;
+  gap: 40px;  
+  padding-bottom: 30px;
+  padding-left: 0;
+  margin-top: 0;
+  background: transparent;
 }
 
 .dish-card {
   position: relative;
-  width: 170px; 
-  height: 200px;
+  width: 10px; 
+  height: 10px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: none ;
 }
 
 .dish-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: none;
 }
 
 /* Imagen redonda flotante arriba */
 .dish-thumb-container {
-  position: absolute;
-  top: -30px;
-  left: 55%;
-  transform: translateX(-50%);
-  z-index: 3;
+  position: relative;
+  width: 100px;
+  height: 100px;
 }
 
 .dish-thumb-img {
-  width: 120px; 
-  height: 120px; 
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Fondo de color de la tarjeta */
-.dish-card-bg {
-  position: absolute;
-  top: 40px; 
-  bottom: 0px;
-  width: 110%;
-  height: 180px; 
-  border-radius: 25px;
+.dish-thumb-img:hover {
+  transform: translateY(-15px) scale(1.1);
+}
+
+.dish-card.swapping .dish-thumb-img {
+  animation: cardToMain 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+}
+
+@keyframes cardToMain {
+  0% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(3) translate(-200px, -100px);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
 }
 
 .dish-card.active {
   transform: translateY(-12px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-}
-
-.card-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  transition: background-color 0.4s ease;
-}
-
-.dish-card-image {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 140px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
-}
-
-.dish-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-/* Texto dentro de la tarjeta */
-.dish-card-info {
-  position: absolute;
-  bottom: 15px;
-  width: 100%;
-  text-align: left;
-  z-index: 4;
-}
-
-.dish-card-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  margin-left: 17%;
-  color: #000000;
-  font-family: 'Source Serif Pro', sans-serif;
-}
-
-.dish-card-price { /* precio plato*/ 
-  font-size: 14px;
-  font-weight: 700;
-  color: #317A00;
-  margin-left: 58%;
-  font-family: 'Source Serif Pro', sans-serif;
+  box-shadow: none;
 }
 
 /* Transiciones Vue */
 .fade-slide-enter-active,
 .fade-slide-leave-active {
-  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .fade-slide-enter-from {
@@ -429,17 +375,18 @@ export default {
 
 .dish-rotate-enter-active,
 .dish-rotate-leave-active {
-  transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dish-rotate-enter-from {
   opacity: 0;
-  transform: translate(-200px, 200px) scale(0.2);
+  transform: translate(200px, 100px) scale(0.2);
 }
 
 .dish-rotate-leave-to {
   opacity: 0;
-  transform: translate(-200px, 200px) scale(0.2);
+  transform: translate(-200px, -100px00px) scale(0.2);
 }
 
 @keyframes fadeInLeft {
@@ -503,11 +450,6 @@ export default {
     height: 350px;
   }
 
-  .background-shape {
-    width: 320px;
-    height: 320px;
-  }
-
   .dishes-grid {
     padding-left: 140px;
   }
@@ -522,9 +464,6 @@ export default {
     height: 130px;
   }
 
-  .dish-card-bg {
-    height: 150px;
-  }
 }
 
 /* Pantallas medianas-grandes (1367px - 1599px) */
@@ -575,10 +514,6 @@ export default {
     height: 340px;
   }
 
-  .background-shape {
-    width: 310px;
-    height: 310px;
-  }
 
   .dishes-grid {
     padding-left: 130px;
@@ -630,22 +565,13 @@ export default {
   }
 
   .dish-main-image {
-    width: 300px;
-    height: 300px;  
-    right: -45px;  
-    top: 100px;
-  }
-
-  .background-shape {
-    width: 220px; 
-    height: 300px; 
-    right: -5px;  
-    top: 310px;
+    width: 500px;
+    height: 500px;  
   }
 
   .dishes-grid {
-    gap: 30px;
-    padding-left: 185px;
+    gap: 0px;
+    padding-left: 320px;
   }
 
   .dish-card {
@@ -658,14 +584,6 @@ export default {
     height: 129px;
   }
 
-  .dish-card-bg {
-    height: 150px;
-    top: 35px;
-  }
-
-  .dish-card-title {
-    font-size: 14px;
-  }
 
   .dish-card-price {
     font-size: 13px;
@@ -720,11 +638,6 @@ export default {
     height: 280px;
   }
 
-  .background-shape {
-    width: 250px;
-    height: 250px;
-  }
-
   .dishes-grid {
     gap: 25px;
     padding-left: 80px;
@@ -738,15 +651,6 @@ export default {
   .dish-thumb-img {
     width: 100px;
     height: 100px;
-  }
-
-  .dish-card-bg {
-    height: 130px;
-    top: 30px;
-  }
-
-  .dish-card-title {
-    font-size: 13px;
   }
 
   .dish-card-price {
@@ -809,6 +713,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: fadeInLeft 0.8s ease-out;
   }
 
   .dish-image-container {
@@ -819,11 +724,6 @@ export default {
   .dish-main-image {
     width: 260px;
     height: 260px;
-  }
-
-  .background-shape {
-    width: 230px;
-    height: 230px;
   }
 
   .dishes-grid {
@@ -843,9 +743,6 @@ export default {
     height: 120px;
   }
 
-  .dish-card-bg {
-    height: 140px;
-  }
 }
 
 /* Tablets pequeñas (600px - 767px) */
@@ -903,11 +800,6 @@ export default {
     height: 230px;
   }
 
-  .background-shape {
-    width: 200px;
-    height: 200px;
-  }
-
   .dish-card {
     width: 170px;
     height: 190px;
@@ -916,14 +808,6 @@ export default {
   .dish-thumb-img {
     width: 110px;
     height: 110px;
-  }
-
-  .dish-card-bg {
-    height: 135px;
-  }
-
-  .dish-card-title {
-    font-size: 13px;
   }
 
   .dish-card-price {
