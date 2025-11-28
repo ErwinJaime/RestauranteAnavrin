@@ -31,26 +31,33 @@
       </div>
     </div>
 
-    <!-- Sección Inferior -->
-    <div class="bottom-section">
-      <div class="review-section">
+   <!-- Sección Inferior -->
+<div class="bottom-section">
+  <div class="review-section">
+    <img src="@/assets/hoja-verde.png" alt="Hoja" class="icon-leaf">
+    
+    <div class="review-content">
+      <div class="review-text">
         <img src="@/assets/corazon.png" alt="Corazón" class="icon-heart">
         <h2 class="review-title">
           Tu opinión nos ayuda<br>
           a crecer, comparte tu<br>
           experiencia aquí.
         </h2>
-        <router-link to="/crearresena" class="btn-review">Crear Reseña</router-link>
-        <img src="@/assets/hoja-verde.png" alt="Hoja" class="icon-leaf">
       </div>
-
-      <!-- Footer -->
-      <footer class="footer">
-        <div class="footer-bottom">
-          <p class="footer-slogan">El encuentro perfecto entre lo auténtico y lo inolvidable</p>
-        </div>
-      </footer>
+      <router-link to="/crearresena" class="btn-review">Crear Reseña</router-link>
     </div>
+    
+    <img src="@/assets/hoja-verde.png" alt="Hoja" class="icon-leaf">
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p class="footer-slogan">El encuentro perfecto entre lo auténtico y lo inolvidable</p>
+    </div>
+  </footer>
+</div>
 
     <!-- Decoraciones -->
     <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-2">
@@ -203,6 +210,9 @@ export default {
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
+  text-decoration: none;
+  display: inline-block; 
+
 }
 
 .btn-explore:hover {
@@ -255,15 +265,30 @@ export default {
 
 .review-section {
   position: relative;
-  text-align: center;
-  padding: 60px 0;
+  padding: 20px 80px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+}
+
+.review-content {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.review-text {
+  display: flex;
+  align-items: center;
+  gap: 130px;
 }
 
 .icon-heart {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 20px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .review-title {
@@ -271,8 +296,9 @@ export default {
   font-weight: 600;
   color: #2d2a3e;
   line-height: 1.3;
-  margin-bottom: 30px;
+  text-align: left;
   font-family: 'Open Sans', sans-serif;
+  margin: 0;
 }
 
 .btn-review {
@@ -285,6 +311,10 @@ export default {
   cursor: pointer;
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .btn-review:hover {
@@ -293,20 +323,118 @@ export default {
 
 .icon-leaf {
   position: absolute;
-  right: 100px;
-  top: 50%;
-  transform: translateY(-50%);
   width: 80px;
-  height: 80px;
+  height: 100px;
   object-fit: contain;
   opacity: 0.6;
+}
+
+.icon-leaf:first-of-type {
+  left: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.icon-leaf:last-of-type {
+  right: 10px;
+  top: 50%;
+  transform: translateY(10%);
+}
+
+/* Media Queries para la sección de reseñas */
+@media (min-width: 1440px) {
+  .review-section {
+    padding: 80px 120px;
+  }
+
+  .review-content {
+    gap: 80px;
+  }
+
+  .review-text {
+    gap: 25px;
+  }
+
+  .icon-heart {
+    width: 70px;
+    height: 70px;
+  }
+
+  .review-title {
+    font-size: 40px;
+    line-height: 1.4;
+  }
+
+  .btn-review {
+    padding: 16px 36px;
+    font-size: 15px;
+  }
+
+  .icon-leaf {
+    width: 90px;
+    height: 90px;
+  }
+
+  .icon-leaf:first-of-type {
+    left: 120px;
+  }
+
+  .icon-leaf:last-of-type {
+    right: 120px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .review-section {
+    padding: 60px 40px;
+  }
+
+  .review-content {
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .review-text {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .review-title {
+    text-align: center;
+    font-size: 28px;
+  }
+
+  .icon-leaf {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .review-section {
+    padding: 40px 20px;
+  }
+
+  .review-title {
+    font-size: 24px;
+  }
+
+  .icon-heart {
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-review {
+    padding: 12px 28px;
+    font-size: 13px;
+  }
 }
 
 /* ==================== FOOTER ==================== */
 .footer {
   background: #ffffff;
   padding: 80px 20px 0;
-  margin-top: 100px;
+  margin-top: 20px;
   position: relative;
 }
 
