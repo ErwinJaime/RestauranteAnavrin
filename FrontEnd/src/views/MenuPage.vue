@@ -9,7 +9,7 @@
         <router-link to="/resenascliente">Review</router-link>
       </div>
       <span v-if="usuarioNombre !== 'Invitado'" class="btn-admin">{{ usuarioNombre }}</span>
-      <span v-else class="btn-invitado">Tatiana</span>
+      <span v-else class="btn-invitado">Invitado</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">
         {{ 'Cerrar Sesión' }}
       </button>

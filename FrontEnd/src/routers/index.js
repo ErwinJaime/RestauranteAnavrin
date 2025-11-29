@@ -15,9 +15,11 @@ import ResenasCliente from '@/views/ResenasCliente.vue'
 import AboutCliente from '@/views/AboutCliente.vue'
 import homeCliente from '@/views/homeCliente.vue'
 import CrearResena from '@/views/CrearResena.vue'
+import HomePage from '@/views/HomePage.vue'
 
 const routes = [
-  { path: '/', name: 'homeCliente', component: homeCliente},
+  { path: '/homeCliente', name: 'homeCliente', component: homeCliente},
+  { path: '/', name: 'HomePage', component: HomePage },
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
