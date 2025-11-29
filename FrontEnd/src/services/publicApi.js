@@ -32,6 +32,10 @@ export function listarResenasProductoPublico(productoId) {
   return publicAPI.get(`productos/${productoId}/resenas/`)
 }
 
+export function listarTodasResenas() {
+  return publicAPI.get('resenas/publicas/')  // ✅ Cambiar de 'resenas/todas/' a 'resenas/publicas/'
+}
+
 // AUTENTICACIÓN (públicas)
 export function registroUsuario(data) {
   return publicAPI.post('registro/', data)

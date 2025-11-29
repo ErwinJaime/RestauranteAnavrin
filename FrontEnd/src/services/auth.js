@@ -10,7 +10,21 @@ export function registro(nombre, correo, password, password2) {
     nombre, 
     correo, 
     password,
-    password2  // ⚠️ AGREGAR esto - el backend ahora lo requiere
+    password2
+  })
+}
+
+// ✅ NUEVAS funciones para 2FA
+export function verificarCodigo(usuario_id, codigo) {
+  return api.post('verificar-codigo/', { 
+    usuario_id, 
+    codigo 
+  })
+}
+
+export function reenviarCodigo(usuario_id) {
+  return api.post('reenviar-codigo/', { 
+    usuario_id 
   })
 }
 
@@ -18,7 +32,6 @@ export function googleLogin(googleToken) {
   return api.post('google-login/', { token: googleToken })
 }
 
-// ✅ NUEVAS funciones útiles
 export function obtenerPerfil() {
   return api.get('perfil/')
 }

@@ -56,9 +56,9 @@
           placeholder="Tu comentario nos ayuda a mejorar, cuéntanos tu opinión."
           rows="4"
         ></textarea>
-        <button class="btn-aceptar" @click="enviarResena">
-          Aceptar
-        </button>
+          <button class="btn-aceptar" @click="enviarResena" :disabled="enviando">
+            {{ enviando ? 'Enviando...' : 'Aceptar' }}
+          </button>
       </div>
     </div>
 
@@ -78,6 +78,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { crearResena, listarProductos } from '@/services/productos';
 
 const router = useRouter();
 
@@ -86,11 +87,26 @@ const usuarioNombre = ref('');
 const reaccionSeleccionada = ref(null);
 const comentario = ref('');
 const mostrarModal = ref(false);
+const enviando = ref(false);
+const productoIdPorDefecto = ref(null);
 
 // Obtener nombre del usuario
 const obtenerUsuario = () => {
   const usuario = JSON.parse(localStorage.getItem('user') || '{}');
   usuarioNombre.value = usuario.nombre || 'Invitado';
+};
+
+// Obtener producto por defecto
+const obtenerProductoPorDefecto = async () => {
+  try {
+    const response = await listarProductos();
+    if (response.data && response.data.length > 0) {
+      productoIdPorDefecto.value = response.data[0].id;
+      console.log('✅ Producto por defecto:', productoIdPorDefecto.value);
+    }
+  } catch (error) {
+    console.error('❌ Error al obtener productos:', error);
+  }
 };
 
 // Cerrar sesión
@@ -108,6 +124,16 @@ const cerrarSesion = () => {
 // Seleccionar reacción
 const seleccionarReaccion = (valor) => {
   reaccionSeleccionada.value = valor;
+};
+
+// Mapear emoji a calificación
+const obtenerCalificacion = (emoji) => {
+  const mapeo = {
+    'triste': 2,
+    'neutral': 3,
+    'feliz': 5
+  };
+  return mapeo[emoji] || 3;
 };
 
 // Enviar reseña
@@ -129,12 +155,26 @@ const enviarResena = async () => {
     return;
   }
 
+  if (!productoIdPorDefecto.value) {
+    alert('Error: No se pudo obtener el producto. Intenta recargar la página.');
+    return;
+  }
+
   try {
-    // Aquí iría tu llamada a la API para guardar la reseña
-    // const response = await crearResena({
-    //   reaccion: reaccionSeleccionada.value,
-    //   comentario: comentario.value
-    // });
+    enviando.value = true;
+
+    const datosResena = {
+      producto: productoIdPorDefecto.value,
+      emoji: reaccionSeleccionada.value,
+      calificacion: obtenerCalificacion(reaccionSeleccionada.value),
+      comentario: comentario.value.trim()
+    };
+
+    console.log('📤 Enviando reseña:', datosResena);
+
+    await crearResena(datosResena);
+    
+    console.log('✅ Reseña creada exitosamente');
 
     // Mostrar modal de confirmación
     mostrarModal.value = true;
@@ -144,8 +184,16 @@ const enviarResena = async () => {
     comentario.value = '';
 
   } catch (error) {
-    console.error('Error al enviar reseña:', error);
-    alert('Error al enviar la reseña. Por favor intenta nuevamente.');
+    console.error('❌ Error al enviar reseña:', error);
+    
+    if (error.response?.data?.error?.includes('Ya has dejado una reseña')) {
+      alert('Ya has dejado una reseña anteriormente. Solo puedes dejar una reseña por cuenta.');
+    } else {
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Error al enviar la reseña';
+      alert(errorMsg);
+    }
+  } finally {
+    enviando.value = false;
   }
 };
 
@@ -155,11 +203,11 @@ const cerrarModal = () => {
   router.push('/');
 };
 
-onMounted(() => {
+onMounted(async () => {
   obtenerUsuario();
+  await obtenerProductoPorDefecto();
 });
 </script>
-
 <style scoped>
 * {
   margin: 0;

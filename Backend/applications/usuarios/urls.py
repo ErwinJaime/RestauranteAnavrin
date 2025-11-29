@@ -8,6 +8,8 @@ urlpatterns = [
     
     # ========== AUTENTICACIÓN ==========
     path('registro/', views.registro_usuario, name='registro_usuario'),
+    path('verificar-codigo/', views.verificar_codigo, name='verificar_codigo'),
+    path('reenviar-codigo/', views.reenviar_codigo, name='reenviar_codigo'),
     path('login/', views.login_usuario, name='login_usuario'),
     path('google-login/', views.google_login, name='google_login'),
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
@@ -33,8 +35,14 @@ urlpatterns = [
     path('productos/<int:producto_id>/resenas/', views.listar_resenas_producto, name='listar_resenas_producto'),
     path('resenas/', views.listar_resenas_usuario, name='listar_resenas_usuario'),
     path('resenas/todas/', views.listar_todas_resenas, name='listar_todas_resenas'),
+    path('resenas/publicas/', views.listar_resenas_publicas, name='listar_resenas_publicas'),
     path('resenas/crear/', views.crear_resena, name='crear_resena'),
     path('resenas/<int:pk>/actualizar/', views.actualizar_resena, name='actualizar_resena'),
     path('resenas/<int:pk>/eliminar/', views.eliminar_resena, name='eliminar_resena'),
     path('resenas/<int:pk>/visibilidad/', views.cambiar_visibilidad_resena, name='cambiar_visibilidad_resena'),
+
+
+    # 🔍 ENDPOINTS DE PRUEBA (TEMPORAL)
+    path('test-email-config/', views.test_email_config, name='test-email-config'),
+    path('test-enviar-email/', views.test_enviar_email, name='test-enviar-email'),
 ]

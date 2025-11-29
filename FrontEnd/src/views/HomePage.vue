@@ -848,7 +848,7 @@ export default {
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 105px;
   }
 
   .nav-links a {

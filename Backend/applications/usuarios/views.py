@@ -10,6 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from google.oauth2 import id_token
 from google.auth.transport import requests
 import os
+from .models import Usuario, Producto, Pedido, Resena, CodigoVerificacion  # ✅ Agregar CodigoVerificacion
+from .utils import enviar_codigo_verificacion  # ✅ Agregar import
 
 from .models import Usuario, Producto, Pedido, Resena
 from .serializers import (
@@ -28,17 +30,141 @@ def saludo(request):
 
 # ========== AUTENTICACIÓN ==========
 
+from .models import Usuario, CodigoVerificacion
+from .utils import enviar_codigo_verificacion
+
 @api_view(['POST'])
 def registro_usuario(request):
-    """Registro de usuario normal"""
+    """Paso 1: Registro de usuario (sin activar cuenta)"""
+    
+    # 🔍 DEBUG
+    print("=" * 50)
+    print("📝 REGISTRO DE USUARIO")
+    print(f"Datos recibidos: {request.data}")
+    print(f"EMAIL_HOST_USER: {os.environ.get('EMAIL_HOST_USER')}")
+    print(f"EMAIL_HOST_PASSWORD configurado: {bool(os.environ.get('EMAIL_HOST_PASSWORD'))}")
+    print("=" * 50)
+    
     serializer = UsuarioRegistroSerializer(data=request.data)
     
     if serializer.is_valid():
+        # Crear usuario (debe ser inactivo por el serializer)
         usuario = serializer.save()
+        
+        # 🔍 VERIFICAR que el usuario se creó inactivo
+        print(f"✅ Usuario creado: {usuario.correo}")
+        print(f"⚠️ Usuario is_active: {usuario.is_active}")
+        
+        if usuario.is_active:
+            print("❌ ERROR: El usuario se creó ACTIVO cuando debería ser INACTIVO")
+            usuario.delete()
+            return Response({
+                "error": "Error en la configuración del sistema"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Generar código de verificación
+        codigo = CodigoVerificacion.generar_codigo()
+        codigo_obj = CodigoVerificacion.objects.create(
+            usuario=usuario,
+            codigo=codigo
+        )
+        
+        print(f"🔢 Código generado: {codigo}")
+        print(f"⏰ Código expira en: {codigo_obj.expira}")
+        
+        # Enviar email
+        print(f"📧 Enviando email a: {usuario.correo}")
+        email_enviado = enviar_codigo_verificacion(usuario.correo, codigo)
+        
+        if email_enviado:
+            print("✅ Email enviado exitosamente")
+            return Response({
+                "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
+                "usuario_id": usuario.id,
+                "correo": usuario.correo
+            }, status=status.HTTP_201_CREATED)
+        else:
+            print("❌ Error al enviar email - Eliminando usuario")
+            usuario.delete()
+            return Response({
+                "error": "Error al enviar el código de verificación. Por favor, intenta nuevamente."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    print(f"❌ Errores de validación: {serializer.errors}")
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def verificar_codigo(request):
+    """Paso 2: Verificar código de 2FA"""
+    usuario_id = request.data.get('usuario_id')
+    codigo_ingresado = request.data.get('codigo')
+    
+    print("\n" + "="*60)
+    print("🔍 VERIFICANDO CÓDIGO")
+    print(f"Usuario ID: {usuario_id}")
+    print(f"Código ingresado: {codigo_ingresado}")
+    print("="*60)
+    
+    if not usuario_id or not codigo_ingresado:
+        print("❌ Faltan datos")
+        return Response({
+            "error": "Usuario ID y código son requeridos"
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        print(f"✅ Usuario encontrado: {usuario.correo}")
+        print(f"   is_active actual: {usuario.is_active}")
+        
+        # Buscar código válido
+        codigo_obj = CodigoVerificacion.objects.filter(
+            usuario=usuario,
+            codigo=codigo_ingresado,
+            verificado=False
+        ).first()
+        
+        if not codigo_obj:
+            print("❌ Código no encontrado o ya fue verificado")
+            
+            # Mostrar todos los códigos del usuario para debugging
+            todos_codigos = CodigoVerificacion.objects.filter(usuario=usuario)
+            print(f"   Total códigos del usuario: {todos_codigos.count()}")
+            for c in todos_codigos:
+                print(f"   - Código: {c.codigo}, Verificado: {c.verificado}, Válido: {c.es_valido()}")
+            
+            return Response({
+                "error": "Código inválido o ya fue usado"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        print(f"✅ Código encontrado")
+        print(f"   Creado: {codigo_obj.creado_en}")
+        print(f"   Expira: {codigo_obj.expira}")
+        print(f"   Es válido: {codigo_obj.es_valido()}")
+        
+        # Verificar si está expirado
+        if not codigo_obj.es_valido():
+            print("❌ Código expirado")
+            return Response({
+                "error": "Código expirado. Solicita uno nuevo."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # ✅ TODO CORRECTO - Activar usuario
+        codigo_obj.verificado = True
+        codigo_obj.save()
+        print("✅ Código marcado como verificado")
+        
+        usuario.is_active = True
+        usuario.save()
+        print(f"✅ Usuario activado. is_active ahora: {usuario.is_active}")
+        
+        # Generar tokens
         refresh = RefreshToken.for_user(usuario)
         
+        print("✅ VERIFICACIÓN EXITOSA")
+        print("="*60 + "\n")
+        
         return Response({
-            "mensaje": "Usuario creado correctamente",
+            "mensaje": "Cuenta verificada correctamente",
             "refresh": str(refresh),
             "access": str(refresh.access_token),
             "usuario": {
@@ -46,13 +172,105 @@ def registro_usuario(request):
                 "nombre": usuario.nombre,
                 "correo": usuario.correo
             }
-        }, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        }, status=status.HTTP_200_OK)
+        
+    except Usuario.DoesNotExist:
+        print("❌ Usuario no encontrado")
+        print("="*60 + "\n")
+        return Response({
+            "error": "Usuario no encontrado"
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"❌ Error inesperado: {str(e)}")
+        print("="*60 + "\n")
+        return Response({
+            "error": f"Error al verificar código: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+def reenviar_codigo(request):
+    """Reenviar código de verificación"""
+    usuario_id = request.data.get('usuario_id')
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        
+        if usuario.is_active:
+            return Response({
+                "error": "Esta cuenta ya está verificada"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Generar nuevo código
+        codigo = CodigoVerificacion.generar_codigo()
+        CodigoVerificacion.objects.create(
+            usuario=usuario,
+            codigo=codigo
+        )
+        
+        # Enviar email
+        if enviar_codigo_verificacion(usuario.correo, codigo):
+            return Response({
+                "mensaje": "Código reenviado correctamente"
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "error": "Error al enviar el código"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    except Usuario.DoesNotExist:
+        return Response({
+            "error": "Usuario no encontrado"
+        }, status=status.HTTP_404_NOT_FOUND)
+    
 
 @api_view(['POST'])
 def login_usuario(request):
+    """Login de usuario normal"""
+    correo = request.data.get("correo")
+    password = request.data.get("password")
+
+    print(f"\n🔐 Intento de login: {correo}")
+
+    if not correo or not password:
+        return Response({
+            "error": "Correo y contraseña son requeridos"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        usuario = Usuario.objects.get(correo=correo)
+        print(f"Usuario encontrado: {usuario.correo}, is_active={usuario.is_active}")
+    except Usuario.DoesNotExist:
+        print("❌ Usuario no encontrado")
+        return Response({
+            "error": "Credenciales incorrectas"
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    # ✅ BLOQUEAR LOGIN SI NO ESTÁ VERIFICADO
+    if not usuario.is_active:
+        print(f"❌ Usuario {correo} no está activo (no verificado)")
+        return Response({
+            "error": "Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada."
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    # Verificar contraseña
+    if check_password(password, usuario.password):
+        print(f"✅ Login exitoso para {correo}")
+        refresh = RefreshToken.for_user(usuario)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "usuario": {
+                "id": usuario.id,
+                "nombre": usuario.nombre,
+                "correo": usuario.correo,
+                "es_admin": usuario.es_admin
+            }
+        }, status=status.HTTP_200_OK)
+    else:
+        print("❌ Contraseña incorrecta")
+        return Response({
+            "error": "Credenciales incorrectas"
+        }, status=status.HTTP_401_UNAUTHORIZED)
     """Login de usuario normal"""
     correo = request.data.get("correo")
     password = request.data.get("password")
@@ -68,6 +286,12 @@ def login_usuario(request):
         return Response({
             "error": "Credenciales incorrectas"
         }, status=status.HTTP_401_UNAUTHORIZED)
+
+    # ✅ VERIFICAR SI EL USUARIO ESTÁ ACTIVO
+    if not usuario.is_active:
+        return Response({
+            "error": "Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada."
+        }, status=status.HTTP_403_FORBIDDEN)
 
     if check_password(password, usuario.password):
         refresh = RefreshToken.for_user(usuario)
@@ -85,7 +309,6 @@ def login_usuario(request):
         return Response({
             "error": "Credenciales incorrectas"
         }, status=status.HTTP_401_UNAUTHORIZED)
-
 
 @api_view(['POST'])
 def google_login(request):
@@ -484,6 +707,13 @@ def listar_todas_resenas(request):
     serializer = ResenaSerializer(resenas, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def listar_resenas_publicas(request):
+    """Listar todas las reseñas visibles (público - sin autenticación)"""
+    resenas = Resena.objects.filter(visible=True)
+    serializer = ResenaListSerializer(resenas, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -576,3 +806,41 @@ def cambiar_visibilidad_resena(request, pk):
         }, status=status.HTTP_200_OK)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ========== ENDPOINTS DE PRUEBA (TEMPORAL) ==========
+
+@api_view(['GET'])
+def test_email_config(request):
+    """Endpoint de prueba para verificar configuración de email"""
+    from django.conf import settings
+    
+    config_info = {
+        "EMAIL_BACKEND": settings.EMAIL_BACKEND,
+        "EMAIL_HOST": settings.EMAIL_HOST,
+        "EMAIL_PORT": settings.EMAIL_PORT,
+        "EMAIL_USE_TLS": settings.EMAIL_USE_TLS,
+        "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
+        "DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL,
+        "EMAIL_HOST_PASSWORD_SET": bool(settings.EMAIL_HOST_PASSWORD),
+        "PASSWORD_LENGTH": len(settings.EMAIL_HOST_PASSWORD) if settings.EMAIL_HOST_PASSWORD else 0
+    }
+    
+    return Response({
+        "mensaje": "Configuración de email",
+        "config": config_info
+    })
+
+@api_view(['POST'])
+def test_enviar_email(request):
+    """Endpoint de prueba para enviar un email de verdad"""
+    email = request.data.get('email', 'erwinnosqui@gmail.com')
+    
+    from .utils import enviar_codigo_verificacion
+    
+    resultado = enviar_codigo_verificacion(email, '123456')
+    
+    return Response({
+        "email_enviado": resultado,
+        "destinatario": email
+    })

@@ -1,19 +1,30 @@
 # usuarios/models.py
+import random
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
+from datetime import timedelta
 
 # ========== USUARIO ==========
 class UsuarioManager(BaseUserManager):
     def create_user(self, correo, password=None, **extra_fields):
+        """Crear y guardar un usuario"""
         if not correo:
             raise ValueError('El correo es obligatorio')
+        
         correo = self.normalize_email(correo)
 
         # Autodetección de admin
         if correo == 'admin@anavrin.com':
-            extra_fields['es_admin'] = True
-            extra_fields['is_staff'] = True
+            extra_fields.setdefault('es_admin', True)
+            extra_fields.setdefault('is_staff', True)
+            extra_fields.setdefault('is_active', True)  # Admin siempre activo
+        else:
+            # Para usuarios normales, valores por defecto
+            extra_fields.setdefault('es_admin', False)
+            extra_fields.setdefault('is_staff', False)
+            # NO establecer is_active aquí - respetar lo que venga
 
         user = self.model(correo=correo, **extra_fields)
         user.set_password(password)
@@ -21,8 +32,16 @@ class UsuarioManager(BaseUserManager):
         return user
 
     def create_superuser(self, correo, password=None, **extra_fields):
+        """Crear y guardar un superusuario"""
         extra_fields.setdefault('es_admin', True)
         extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_active', True)
+        
+        if extra_fields.get('es_admin') is not True:
+            raise ValueError('Superuser debe tener es_admin=True.')
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser debe tener is_staff=True.')
+        
         return self.create_user(correo, password, **extra_fields)
 
 
@@ -32,7 +51,7 @@ class Usuario(AbstractBaseUser):
     correo = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     es_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)  # ✅ CAMBIO: Inactivo por defecto
     is_staff = models.BooleanField(default=False)
     creadoen = models.DateTimeField(auto_now_add=True)
 
@@ -53,6 +72,7 @@ class Usuario(AbstractBaseUser):
         if self.correo == 'admin@anavrin.com':
             self.es_admin = True
             self.is_staff = True
+            self.is_active = True
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -83,7 +103,7 @@ class Producto(models.Model):
     def __str__(self):
         return f"{self.nombre} - ${self.precio}"
 
-# ========== PEDIDO (Simplificado - sin tabla intermedia) ==========
+# ========== PEDIDO ==========
 
 class Pedido(models.Model):
     ESTADOS = (
@@ -116,6 +136,7 @@ class Pedido(models.Model):
         return self.cantidad * self.precio_unitario
 
 # ========== RESEÑA ==========
+
 class Resena(models.Model):
     EMOJIS = (
         ('feliz', '😊 Feliz'),
@@ -146,3 +167,34 @@ class Resena(models.Model):
     def __str__(self):
         emoji_display = dict(self.EMOJIS).get(self.emoji, self.emoji)
         return f"{self.nombre_usuario} - {self.producto.nombre} ({self.calificacion}★) {emoji_display}"
+
+# ========== CÓDIGO DE VERIFICACIÓN ==========
+
+class CodigoVerificacion(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='codigos_verificacion')
+    codigo = models.CharField(max_length=6)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    verificado = models.BooleanField(default=False)
+    expira = models.DateTimeField(editable=False)
+    
+    class Meta:
+        db_table = "codigos_verificacion"
+        ordering = ['-creado_en']
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.expira = timezone.now() + timedelta(minutes=10)
+        super().save(*args, **kwargs)
+    
+    def es_valido(self):
+        """Verificar si el código no ha expirado y no ha sido usado"""
+        return not self.verificado and timezone.now() < self.expira
+    
+    @staticmethod
+    def generar_codigo():
+        """Generar código de 6 dígitos"""
+        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    def __str__(self):
+        estado = "✅ Verificado" if self.verificado else ("❌ Expirado" if not self.es_valido() else "⏳ Pendiente")
+        return f"Código {self.codigo} - {self.usuario.correo} - {estado}"
