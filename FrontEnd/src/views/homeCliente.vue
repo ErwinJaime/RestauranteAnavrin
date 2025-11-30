@@ -5,8 +5,8 @@
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
         <a href="">Home</a>
-        <a href="/aboutcliente">About</a>
-        <a href="/resenascliente">Review</a>
+        <router-link to="/aboutcliente">About</router-link>
+        <router-link to="/resenascliente">Review</router-link>
       </div>
       <span class="btn-primary">Tatiana</span>
       <button class="btn-login">Cerrar Sesión</button>
