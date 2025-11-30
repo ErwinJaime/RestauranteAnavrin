@@ -166,6 +166,7 @@
 
 <script>
 import { registro, verificarCodigo, reenviarCodigo } from '@/services/auth'
+import api from '@/services/api'
 
 export default {
   name: 'RegisterForm',
@@ -197,11 +198,9 @@ export default {
   },
   methods: {
     async handleRegister() {
-      // Limpiar mensajes
       this.error = ''
       this.success = ''
       
-      // Validaciones básicas
       if (!this.nombre || !this.email || !this.password || !this.confirmPassword) {
         this.error = 'Por favor, completa todos los campos'
         return
@@ -220,7 +219,7 @@ export default {
       this.loading = true
 
       try {
-        console.log('📝 Registrando usuario...', { nombre: this.nombre, email: this.email })
+        console.log('📝 Registrando usuario...')
         
         const response = await registro(
           this.nombre, 
@@ -229,40 +228,58 @@ export default {
           this.confirmPassword 
         )
         
-        console.log('✅ Respuesta del servidor:', response.data)
-        
-        // Guardar ID del usuario
+        console.log('✅ Registro exitoso:', response.data)
+
         this.usuarioId = response.data.usuario_id
-        
-        // Cambiar a pantalla de verificación
         this.mostrarVerificacion = true
-        
-        // Iniciar temporizador
         this.iniciarTemporizador()
-        
-        console.log('✅ Pantalla de verificación mostrada')
         
       } catch (error) {
         console.error('❌ Error al registrar:', error)
-        console.error('❌ Respuesta completa:', error.response)
         
-        // Manejar errores específicos
-        if (error.response?.data?.password) {
+        // Si el usuario ya existe
+        if (error.response?.data?.correo || 
+            error.response?.data?.error?.includes('ya está registrado')) {
+          
+          // Verificar si puede reenviar código
+          await this.verificarUsuarioExistente()
+          
+        } else if (error.response?.data?.password) {
           this.error = error.response.data.password[0]
-        } else if (error.response?.data?.correo) {
-          this.error = 'Este correo ya está registrado'
-        } else if (error.response?.data?.error) {
-          this.error = error.response.data.error
         } else {
-          this.error = 'Error al registrar usuario. Intenta nuevamente.'
+          this.error = error.response?.data?.error || 'Error al registrar usuario'
         }
       } finally {
         this.loading = false
       }
     },
 
+    async verificarUsuarioExistente() {
+      try {
+        console.log('🔍 Verificando si usuario existe...')
+        
+        const response = await api.post('verificar-existente/', {
+          correo: this.email
+        })
+        
+        // Usuario existe pero no está verificado
+        if (response.data.puede_reenviar) {
+          this.usuarioId = response.data.usuario_id
+          this.mostrarVerificacion = true
+          this.success = 'Ya tienes una cuenta sin verificar. Puedes solicitar un nuevo código.'
+          this.iniciarTemporizador()
+        }
+        
+      } catch (error) {
+        if (error.response?.data?.puede_login) {
+          this.error = 'Este correo ya está registrado y verificado. Inicia sesión.'
+        } else {
+          this.error = 'Error al verificar usuario'
+        }
+      }
+    },
+
     async handleVerificarCodigo() {
-      // Validar código
       if (!this.codigoVerificacion || this.codigoVerificacion.length !== 6) {
         this.error = 'El código debe tener 6 dígitos'
         return
@@ -273,44 +290,32 @@ export default {
       this.success = ''
 
       try {
-        console.log('🔍 Verificando código:', this.codigoVerificacion)
+        console.log('🔍 Verificando código...')
         
         const response = await verificarCodigo(this.usuarioId, this.codigoVerificacion)
         
-        console.log('✅ Código verificado:', response.data)
+        console.log('✅ Verificación exitosa')
         
-        // Guardar tokens
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         localStorage.setItem('user', JSON.stringify(response.data.usuario))
         
-        // Mostrar mensaje de éxito
         this.success = '¡Cuenta verificada! Redirigiendo...'
         
-        // Redirigir después de 1.5 segundos
         setTimeout(() => {
           this.$router.push('/dashboard')
         }, 1500)
         
       } catch (error) {
-        console.error('❌ Error al verificar código:', error)
-        console.error('❌ Respuesta completa:', error.response)
-        
-        // Mostrar error pero permitir reintentar
-        this.error = error.response?.data?.error || 'Código incorrecto o expirado. Intenta de nuevo.'
-        
-        // ✅ IMPORTANTE: Limpiar el código para permitir reintentar
+        console.error('❌ Error al verificar:', error)
+        this.error = error.response?.data?.error || 'Código incorrecto o expirado'
         this.codigoVerificacion = ''
-        
-        // ✅ NO redirigir, mantener en la misma pantalla
-        
       } finally {
         this.loading = false
       }
     },
 
     async handleReenviarCodigo() {
-      // Verificar si puede reenviar
       if (this.tiempoEspera > 0) {
         this.error = `Espera ${this.tiempoEspera} segundos antes de reenviar`
         return
@@ -321,29 +326,21 @@ export default {
       this.success = ''
 
       try {
-        console.log('📧 Reenviando código al usuario:', this.usuarioId)
+        console.log('📧 Reenviando código...')
         
         await reenviarCodigo(this.usuarioId)
         
-        console.log('✅ Código reenviado')
-        
-        this.success = 'Código reenviado. Revisa tu correo.'
+        this.success = 'Código reenviado. Revisa tu correo (puede tomar 1-2 minutos).'
         this.codigoVerificacion = ''
-        
-        // Reiniciar temporizador
         this.iniciarTemporizador()
         
-        // Limpiar mensaje de éxito después de 3 segundos
         setTimeout(() => {
           this.success = ''
-        }, 3000)
+        }, 5000)
         
       } catch (error) {
-        console.error('❌ Error al reenviar código:', error)
-        console.error('❌ Respuesta completa:', error.response)
-        
-        this.error = error.response?.data?.error || 'Error al reenviar el código'
-        
+        console.error('❌ Error al reenviar:', error)
+        this.error = 'Error al reenviar el código'
       } finally {
         this.loading = false
       }
@@ -352,12 +349,10 @@ export default {
     iniciarTemporizador() {
       this.tiempoEspera = 60
       
-      // Limpiar temporizador anterior si existe
       if (this.intervalId) {
         clearInterval(this.intervalId)
       }
       
-      // Iniciar nuevo temporizador
       this.intervalId = setInterval(() => {
         this.tiempoEspera--
         if (this.tiempoEspera <= 0) {
@@ -367,7 +362,6 @@ export default {
     },
 
     validarSoloNumeros(event) {
-      // Filtrar solo números
       this.codigoVerificacion = event.target.value.replace(/[^0-9]/g, '')
     }
   }
