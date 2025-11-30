@@ -45,4 +45,6 @@ urlpatterns = [
     # 🔍 ENDPOINTS DE PRUEBA (TEMPORAL)
     path('test-email-config/', views.test_email_config, name='test-email-config'),
     path('test-enviar-email/', views.test_enviar_email, name='test-enviar-email'),
+
+    path('verificar-existente/', views.verificar_usuario_existente, name='verificar_existente'),
 ]

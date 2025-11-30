@@ -13,7 +13,6 @@ import os
 from .models import Usuario, Producto, Pedido, Resena, CodigoVerificacion  # ✅ Agregar CodigoVerificacion
 from .utils import enviar_codigo_verificacion  # ✅ Agregar import
 
-from .models import Usuario, Producto, Pedido, Resena
 from .serializers import (
     # Usuario
     UsuarioSerializer, UsuarioRegistroSerializer, UsuarioPerfilSerializer,
@@ -30,39 +29,32 @@ def saludo(request):
 
 # ========== AUTENTICACIÓN ==========
 
-from .models import Usuario, CodigoVerificacion
-from .utils import enviar_codigo_verificacion
-
 @api_view(['POST'])
 def registro_usuario(request):
     """Paso 1: Registro de usuario (sin activar cuenta)"""
     
-    # 🔍 DEBUG
     print("=" * 50)
     print("📝 REGISTRO DE USUARIO")
     print(f"Datos recibidos: {request.data}")
-    print(f"EMAIL_HOST_USER: {os.environ.get('EMAIL_HOST_USER')}")
-    print(f"EMAIL_HOST_PASSWORD configurado: {bool(os.environ.get('EMAIL_HOST_PASSWORD'))}")
     print("=" * 50)
     
     serializer = UsuarioRegistroSerializer(data=request.data)
     
     if serializer.is_valid():
-        # Crear usuario (debe ser inactivo por el serializer)
+        # Crear usuario (debe ser inactivo)
         usuario = serializer.save()
         
-        # 🔍 VERIFICAR que el usuario se creó inactivo
         print(f"✅ Usuario creado: {usuario.correo}")
         print(f"⚠️ Usuario is_active: {usuario.is_active}")
         
         if usuario.is_active:
-            print("❌ ERROR: El usuario se creó ACTIVO cuando debería ser INACTIVO")
+            print("❌ ERROR: Usuario creado ACTIVO")
             usuario.delete()
             return Response({
                 "error": "Error en la configuración del sistema"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        # Generar código de verificación
+        # Generar código
         codigo = CodigoVerificacion.generar_codigo()
         codigo_obj = CodigoVerificacion.objects.create(
             usuario=usuario,
@@ -70,28 +62,73 @@ def registro_usuario(request):
         )
         
         print(f"🔢 Código generado: {codigo}")
-        print(f"⏰ Código expira en: {codigo_obj.expira}")
         
-        # Enviar email
-        print(f"📧 Enviando email a: {usuario.correo}")
-        email_enviado = enviar_codigo_verificacion(usuario.correo, codigo)
+        # ✅ RESPONDER INMEDIATAMENTE (NO ESPERAR AL EMAIL)
+        response_data = {
+            "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
+            "usuario_id": usuario.id,
+            "correo": usuario.correo
+        }
         
-        if email_enviado:
-            print("✅ Email enviado exitosamente")
-            return Response({
-                "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
-                "usuario_id": usuario.id,
-                "correo": usuario.correo
-            }, status=status.HTTP_201_CREATED)
-        else:
-            print("❌ Error al enviar email - Eliminando usuario")
-            usuario.delete()
-            return Response({
-                "error": "Error al enviar el código de verificación. Por favor, intenta nuevamente."
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # ✅ INTENTAR ENVIAR EMAIL EN SEGUNDO PLANO (sin bloquear)
+        try:
+            print(f"📧 Intentando enviar email a: {usuario.correo}")
+            from threading import Thread
+            
+            def enviar_email_async():
+                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+                if resultado:
+                    print("✅ Email enviado exitosamente (async)")
+                else:
+                    print("❌ Error al enviar email (async)")
+            
+            # Enviar en segundo plano
+            thread = Thread(target=enviar_email_async)
+            thread.start()
+            
+        except Exception as e:
+            print(f"⚠️ Error al iniciar thread de email: {e}")
+            # Continuar de todos modos - el usuario puede pedir reenvío
+        
+        # ✅ RESPUESTA RÁPIDA AL FRONTEND
+        return Response(response_data, status=status.HTTP_201_CREATED)
     
     print(f"❌ Errores de validación: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def verificar_usuario_existente(request):
+    """Verificar si un usuario existe y puede reenviar código"""
+    correo = request.data.get('correo')
+    
+    if not correo:
+        return Response({
+            "error": "Correo es requerido"
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        usuario = Usuario.objects.get(correo=correo)
+        
+        # Si el usuario ya está activo
+        if usuario.is_active:
+            return Response({
+                "error": "Este correo ya está verificado. Intenta iniciar sesión.",
+                "puede_login": True
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Si el usuario existe pero no está verificado
+        return Response({
+            "mensaje": "Usuario encontrado sin verificar",
+            "usuario_id": usuario.id,
+            "correo": usuario.correo,
+            "puede_reenviar": True
+        }, status=status.HTTP_200_OK)
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            "mensaje": "Usuario no existe",
+            "puede_registrar": True
+        }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def verificar_codigo(request):
@@ -835,8 +872,6 @@ def test_email_config(request):
 def test_enviar_email(request):
     """Endpoint de prueba para enviar un email de verdad"""
     email = request.data.get('email', 'erwinnosqui@gmail.com')
-    
-    from .utils import enviar_codigo_verificacion
     
     resultado = enviar_codigo_verificacion(email, '123456')
     
