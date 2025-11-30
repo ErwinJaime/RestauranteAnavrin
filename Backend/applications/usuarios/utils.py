@@ -1,55 +1,39 @@
 # usuarios/utils.py
-from django.core.mail import send_mail
-from django.conf import settings
-import traceback
+
+import os
+import logging
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+logger = logging.getLogger(__name__)
 
 def enviar_codigo_verificacion(email, codigo):
-    """Enviar código de verificación por email"""
+    """Enviar código de verificación usando SendGrid API"""
     
-    print("\n" + "=" * 60)
-    print("📧 ENVIANDO EMAIL DE VERIFICACIÓN")
-    print("=" * 60)
-    print(f"Destinatario: {email}")
-    print(f"Código: {codigo}")
-    print(f"Remitente: {settings.DEFAULT_FROM_EMAIL}")
-    print(f"Host SMTP: {settings.EMAIL_HOST}")
-    print(f"Puerto: {settings.EMAIL_PORT}")
-    print(f"TLS: {settings.EMAIL_USE_TLS}")
-    print("=" * 60)
+    logger.info(f"📧 Enviando código {codigo} a {email}")
     
-    asunto = '🔐 Código de verificación - ANAVRIN'
-    mensaje = f'''
-¡Hola!
-
-Tu código de verificación es: {codigo}
-
-Este código expira en 10 minutos.
-
-Si no solicitaste este código, puedes ignorar este mensaje.
-
-Saludos,
-Equipo ANAVRIN 🍽️
-    '''
+    mensaje = Mail(
+        from_email=os.environ.get('EMAIL_FROM', 'erwinnosqui@gmail.com'),
+        to_emails=email,
+        subject='🔐 Código de verificación - ANAVRIN',
+        html_content=f'''
+        <div style="font-family: Arial; padding: 20px;">
+            <h2>¡Hola!</h2>
+            <p>Tu código de verificación es:</p>
+            <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; margin: 20px 0;">
+                {codigo}
+            </div>
+            <p style="color: #888;">Este código expira en 10 minutos.</p>
+            <p>Saludos,<br>Equipo ANAVRIN 🍽️</p>
+        </div>
+        '''
+    )
     
     try:
-        resultado = send_mail(
-            subject=asunto,
-            message=mensaje,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-        
-        print(f"✅ Email enviado exitosamente")
-        print(f"📊 Resultado de send_mail: {resultado}")
-        print("=" * 60 + "\n")
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(mensaje)
+        logger.info(f"✅ Email enviado. Status: {response.status_code}")
         return True
-        
     except Exception as e:
-        print(f"❌ ERROR AL ENVIAR EMAIL")
-        print(f"Tipo de error: {type(e).__name__}")
-        print(f"Mensaje: {str(e)}")
-        print(f"\n📋 Traceback completo:")
-        print(traceback.format_exc())
-        print("=" * 60 + "\n")
+        logger.error(f"❌ Error: {e}")
         return False

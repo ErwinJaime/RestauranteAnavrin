@@ -69,28 +69,24 @@ def registro_usuario(request):
             "correo": usuario.correo
         }
         
-        # ✅ ENVIAR EMAIL EN SEGUNDO PLANO
-        from threading import Thread
+        # ✅ ENVIAR EMAIL SÍNCRONAMENTE
+        print(f"📧 Enviando email a: {usuario.correo}")
         
-        def enviar_email_async():
-            try:
-                print(f"📧 Enviando email a: {usuario.correo}")
-                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
-                if resultado:
-                    print("✅ Email enviado exitosamente (async)")
-                else:
-                    print("❌ Error al enviar email (async)")
-            except Exception as e:
-                print(f"❌ Error en thread: {e}")
-        
-        thread = Thread(target=enviar_email_async, daemon=True)
-        thread.start()
+        try:
+            resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+            if resultado:
+                print("✅ Email enviado exitosamente")
+            else:
+                print("❌ Error al enviar email (pero continuamos)")
+        except Exception as e:
+            print(f"❌ Excepción al enviar: {e}")
+            import traceback
+            print(traceback.format_exc())
         
         return Response(response_data, status=status.HTTP_201_CREATED)
     
     print(f"❌ Errores: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 # ========== AUTENTICACIÓN (continuación) ==========
 
 @api_view(['POST'])
@@ -247,36 +243,29 @@ def reenviar_codigo(request):
         )
         
         print(f"🔢 Nuevo código: {codigo}")
+        print(f"📧 Enviando email a: {usuario.correo}")
         
-        # ✅ RESPONDER INMEDIATAMENTE
-        response_data = {
+        # ✅ ENVIAR SÍNCRONAMENTE (más confiable en producción)
+        try:
+            resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+            if resultado:
+                print("✅ Email enviado exitosamente")
+            else:
+                print("❌ Error al enviar email (pero continuamos)")
+        except Exception as e:
+            print(f"❌ Excepción al enviar: {e}")
+            import traceback
+            print(traceback.format_exc())
+            # Continuar de todos modos
+        
+        return Response({
             "mensaje": "Código reenviado correctamente"
-        }
-        
-        # ✅ ENVIAR EMAIL EN SEGUNDO PLANO
-        from threading import Thread
-        
-        def enviar_email_async():
-            try:
-                print(f"📧 Reenviando email a: {usuario.correo}")
-                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
-                if resultado:
-                    print("✅ Email reenviado (async)")
-                else:
-                    print("❌ Error al reenviar (async)")
-            except Exception as e:
-                print(f"❌ Error en thread: {e}")
-        
-        thread = Thread(target=enviar_email_async, daemon=True)
-        thread.start()
-        
-        return Response(response_data, status=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
             
     except Usuario.DoesNotExist:
         return Response({
             "error": "Usuario no encontrado"
         }, status=status.HTTP_404_NOT_FOUND)
-    
 
 @api_view(['POST'])
 def login_usuario(request):

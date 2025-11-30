@@ -22,18 +22,19 @@ STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ✅ EMAIL REAL EN LOCAL
+# ✅ EMAIL - SendGrid (para testing)
+import os
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'  # O tu proveedor
+EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_FROM', 'erwinnosqui@gmail.com')
 
-# Debug info
 if DEBUG:
-    print("📧 Configuración de Email (LOCAL - SMTP REAL):")
-    print(f"EMAIL_BACKEND: {EMAIL_BACKEND}")
-    print(f"EMAIL_HOST: {EMAIL_HOST}:{EMAIL_PORT}")
-    print(f"EMAIL_HOST_USER: {EMAIL_HOST_USER}")
+    print("\n📧 Email: SendGrid configurado")
+    print(f"   Backend: {EMAIL_BACKEND}")
+    print(f"   From: {DEFAULT_FROM_EMAIL}")
+    print(f"   API Key configurada: {bool(EMAIL_HOST_PASSWORD)}\n")
