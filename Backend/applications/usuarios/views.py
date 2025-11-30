@@ -41,7 +41,6 @@ def registro_usuario(request):
     serializer = UsuarioRegistroSerializer(data=request.data)
     
     if serializer.is_valid():
-        # Crear usuario (debe ser inactivo)
         usuario = serializer.save()
         
         print(f"✅ Usuario creado: {usuario.correo}")
@@ -56,45 +55,43 @@ def registro_usuario(request):
         
         # Generar código
         codigo = CodigoVerificacion.generar_codigo()
-        codigo_obj = CodigoVerificacion.objects.create(
+        CodigoVerificacion.objects.create(
             usuario=usuario,
             codigo=codigo
         )
         
         print(f"🔢 Código generado: {codigo}")
         
-        # ✅ RESPONDER INMEDIATAMENTE (NO ESPERAR AL EMAIL)
+        # ✅ RESPONDER INMEDIATAMENTE
         response_data = {
             "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
             "usuario_id": usuario.id,
             "correo": usuario.correo
         }
         
-        # ✅ INTENTAR ENVIAR EMAIL EN SEGUNDO PLANO (sin bloquear)
-        try:
-            print(f"📧 Intentando enviar email a: {usuario.correo}")
-            from threading import Thread
-            
-            def enviar_email_async():
+        # ✅ ENVIAR EMAIL EN SEGUNDO PLANO
+        from threading import Thread
+        
+        def enviar_email_async():
+            try:
+                print(f"📧 Enviando email a: {usuario.correo}")
                 resultado = enviar_codigo_verificacion(usuario.correo, codigo)
                 if resultado:
                     print("✅ Email enviado exitosamente (async)")
                 else:
                     print("❌ Error al enviar email (async)")
-            
-            # Enviar en segundo plano
-            thread = Thread(target=enviar_email_async)
-            thread.start()
-            
-        except Exception as e:
-            print(f"⚠️ Error al iniciar thread de email: {e}")
-            # Continuar de todos modos - el usuario puede pedir reenvío
+            except Exception as e:
+                print(f"❌ Error en thread: {e}")
         
-        # ✅ RESPUESTA RÁPIDA AL FRONTEND
+        thread = Thread(target=enviar_email_async, daemon=True)
+        thread.start()
+        
         return Response(response_data, status=status.HTTP_201_CREATED)
     
-    print(f"❌ Errores de validación: {serializer.errors}")
+    print(f"❌ Errores: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# ========== AUTENTICACIÓN (continuación) ==========
 
 @api_view(['POST'])
 def verificar_usuario_existente(request):
@@ -129,6 +126,9 @@ def verificar_usuario_existente(request):
             "mensaje": "Usuario no existe",
             "puede_registrar": True
         }, status=status.HTTP_404_NOT_FOUND)
+
+
+# ========== PRODUCTOS ==========
 
 @api_view(['POST'])
 def verificar_codigo(request):
@@ -229,6 +229,8 @@ def reenviar_codigo(request):
     """Reenviar código de verificación"""
     usuario_id = request.data.get('usuario_id')
     
+    print(f"\n🔄 Reenviando código para usuario: {usuario_id}")
+    
     try:
         usuario = Usuario.objects.get(id=usuario_id)
         
@@ -244,15 +246,31 @@ def reenviar_codigo(request):
             codigo=codigo
         )
         
-        # Enviar email
-        if enviar_codigo_verificacion(usuario.correo, codigo):
-            return Response({
-                "mensaje": "Código reenviado correctamente"
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({
-                "error": "Error al enviar el código"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print(f"🔢 Nuevo código: {codigo}")
+        
+        # ✅ RESPONDER INMEDIATAMENTE
+        response_data = {
+            "mensaje": "Código reenviado correctamente"
+        }
+        
+        # ✅ ENVIAR EMAIL EN SEGUNDO PLANO
+        from threading import Thread
+        
+        def enviar_email_async():
+            try:
+                print(f"📧 Reenviando email a: {usuario.correo}")
+                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+                if resultado:
+                    print("✅ Email reenviado (async)")
+                else:
+                    print("❌ Error al reenviar (async)")
+            except Exception as e:
+                print(f"❌ Error en thread: {e}")
+        
+        thread = Thread(target=enviar_email_async, daemon=True)
+        thread.start()
+        
+        return Response(response_data, status=status.HTTP_200_OK)
             
     except Usuario.DoesNotExist:
         return Response({

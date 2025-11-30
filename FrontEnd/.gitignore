@@ -9,7 +9,7 @@ node_modules
 # Evitar subir archivos de entorno
 .env
 *.env
-**/*.env
+**/.env
 
 # Log files
 npm-debug.log*
