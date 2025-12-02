@@ -578,7 +578,7 @@ export default {
     width: 495px;
     height: 495px;
     margin-left: -110px;
-    margin-top: -49px;
+    margin-top: -47px;
   }
 
   .dishes-grid {
