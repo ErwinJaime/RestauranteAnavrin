@@ -475,12 +475,13 @@ export default {
   }
 
   .logo {
-    font-size: 23px;
-    margin-left: 78px;
+    font-size: 20px;
+    margin-left: 46px;
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 64px;
+    margin-left: 439px;
   }
 
   .nav-links a {
@@ -488,9 +489,9 @@ export default {
   }
 
   .btn-login {
-    padding: 11px 26px;
+    padding: 7px 22px;
     font-size: 14px;
-    margin-right: -170px;
+    margin-right: 30px;
   }
 
   .main-content {
@@ -498,27 +499,62 @@ export default {
     gap: 70px;
   }
 
+   .content-right {
+    padding-top: 145px;  
+  }
+
+  .dish-info {
+    margin-top: 0;
+  }
+
   .dish-title {
-    font-size: 42px;
+    font-size: 43px;
   }
 
   .dish-description {
-    font-size: 14px;
+    font-size: 16px;
+    max-width: 400px;
   }
 
   .dish-image-container {
-    width: 400px;
+    width: 500px;
     height: 400px;
   }
 
   .dish-main-image {
-    width: 340px;
-    height: 340px;
+    width: 650px;
+    height: 650px;
+    margin-left: -125px;
+    margin-top: -87px;
   }
 
-
   .dishes-grid {
-    padding-left: 130px;
+    gap: 18px;
+    padding-left: 0;
+    position: absolute;
+    top: -40px; 
+    left: 0;
+    margin-bottom: 0; 
+  }
+
+  .dish-card {
+    width: 145px;
+    height: 145px;
+  }
+
+  .price-tag {
+    padding: 13px 60px;
+    font-size: 18px;
+    margin-left: 0;
+  }
+
+  .dish-thumb-img {
+    width: 150%;
+    height: 150%;
+  }
+  
+  .dish-card-price {
+    font-size: 13px;
   }
 }
 

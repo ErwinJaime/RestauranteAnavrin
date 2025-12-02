@@ -166,7 +166,6 @@ export default {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 15px !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .logo {
@@ -485,16 +484,17 @@ export default {
 /* Pantallas medianas-grandes (1367px - 1599px) */
 @media (min-width: 1367px) and (max-width: 1599px) {
   .navbar {
-    padding: 20px 90px !important;
+    padding: 20px 90px;
   }
 
   .logo {
-    font-size: 23px;
-    margin-left: 78px;
+    font-size: 20px;
+    margin-left: 46px;
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 64px;
+    margin-left: 439px;
   }
 
   .nav-links a {
@@ -502,9 +502,9 @@ export default {
   }
 
   .btn-login {
-    padding: 11px 26px;
+    padding: 7px 22px;
     font-size: 14px;
-    margin-right: -170px;
+    margin-right: 30px;
   }
 
   .main-content {
@@ -517,17 +517,36 @@ export default {
   }
 
   .drink-description {
-    font-size: 15px;
+    font-size: 16px;
+  }
+
+  .price-tag {
+    padding: 15px 65px;
+    font-size: 18px;
   }
 
   .drink-image-container {
-    width: 480px;
-    height: 480px;
+    width: 550px;
+    height: 550px;
+    top: -50px;
+    left: -37px;
+  }
+
+  .small-fruits {
+    top: -100px;
+    right: 33%;
   }
 
   .small-fruit {
-    width: 75px;
-    height: 75px;
+    width: 120px;
+    height: 120px;
+  }
+
+  .fruit{
+    width: 600px;
+    height: 600px;
+    left: -76px;
+    top: -50px
   }
 }
 

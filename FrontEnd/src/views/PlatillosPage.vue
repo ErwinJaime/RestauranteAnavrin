@@ -559,7 +559,8 @@ export default {
   }
 
   .nav-links {
-    gap: 105px;
+    gap: 64px;
+    margin-left: 439px;
   }
 
   .nav-links a {
@@ -593,16 +594,16 @@ export default {
   }
 
   .dish-main-image {
-    width: 410px;
-    height: 410px;
-    top: 120px;
+    width: 420px;
+    height: 420px;
+    top: 110px;
     right: -45px;
   }
 
   .background-shape {
-    width: 320px;
-    height: 320px;
-    right: 140px;
+    width: 288px;
+    height: 288px;
+    right: 165px;
     top: 400px;
   }
 
