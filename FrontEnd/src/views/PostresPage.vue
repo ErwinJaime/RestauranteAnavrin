@@ -26,8 +26,24 @@
         </transition>
       </div>
 
-     <!-- Lado Derecho - Info del Platillo -->
+      <!-- Lado Derecho - Info del Platillo -->
       <div class="content-right">
+        <!-- Tarjetas de Platillos -->
+        <div class="dishes-grid">
+          <div 
+            v-for="dish in dishes" 
+            :key="dish.id"
+            @click="changeDish(dish.id)"
+            class="dish-card"
+            :class="{ 'swapping': isSwapping && clickedId === dish.id }"
+          >
+            <!-- Imagen redonda flotando arriba -->
+            <div class="dish-thumb-container">
+              <img :src="dish.thumbnailImage" :alt="dish.title" class="dish-thumb-img">
+            </div>
+          </div>
+        </div>
+
         <transition name="fade-slide" mode="out-in">
           <div :key="currentDish.id" class="dish-info">
             <h1 class="dish-title">{{ currentDish.title }}</h1>
@@ -35,22 +51,6 @@
             <div class="price-tag">{{ currentDish.price }}</div>
           </div>
         </transition>
-      </div>
-    </div>
-
-    <!-- Tarjetas de Platillos -->
-    <div class="dishes-grid">
-      <div 
-        v-for="dish in dishes" 
-        :key="dish.id"
-        @click="changeDish(dish.id)"
-        class="dish-card"
-        :class="{ 'swapping': isSwapping && clickedId === dish.id }"
-      >
-        <!-- Imagen redonda flotando arriba -->
-        <div class="dish-thumb-container">
-          <img :src="dish.thumbnailImage" :alt="dish.title" class="dish-thumb-img">
-        </div>
       </div>
     </div>
   </div>
@@ -230,36 +230,35 @@ export default {
 }
 
 .dish-info {
+  width: 100%;
   animation: fadeInLeft 0.8s ease-out;
 }
 
 .dish-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: #1a1a1a;
   line-height: 1.2;
-  margin-bottom: -200px;
+  margin-bottom: 15px;
   font-family: 'Open Sans', sans-serif;
 }
 
 .dish-description {
-  font-size: 13px;
+  font-size: 14px;
   color: #666;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   font-family: 'Montserrat', sans-serif;
-  max-width: 400px;
+  max-width: 450px;
 }
 
 .price-tag { /* etiqueta precio */
   display: inline-block;
-  padding: 12px 40px;
+  padding: 12px 50px;
   font-size: 16px;
-  margin-top: -30px; 
-  margin-left: 100%;
   font-weight: 600;
   color: #ffffff;
-  background-color: #491899;
+  background-color: #7C0000;
   border-bottom-right-radius: 20px;
   border-top-left-radius: 20px;
   font-family: 'Source Serif Pro', sans-serif;
@@ -273,7 +272,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-top: 50px;
+  align-items: flex-start;
+  padding-top: 80px;
 }
 
 .dish-image-container {
@@ -290,19 +290,21 @@ export default {
 
 /* Tarjetas de Platillos */
 .dishes-grid {
-   display: flex;
-  justify-content: center;
-  gap: 40px;  
-  padding-bottom: 30px;
+  position: absolute; 
+  top: -30px;  
+  left: 0;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;  
+  margin-bottom: 50px;
+  padding-bottom: 0;
   padding-left: 0;
-  margin-top: 0;
-  background: transparent;
 }
 
 .dish-card {
   position: relative;
-  width: 10px; 
-  height: 10px;
+  width: 130px; 
+  height: 130px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-shadow: none ;
@@ -320,8 +322,8 @@ export default {
 }
 
 .dish-thumb-img {
-  width: 100%;
-  height: 100%;
+  width: 130%;
+  height: 130%;
   object-fit: cover;
   border-radius: 50%;
   cursor: pointer;
@@ -540,7 +542,7 @@ export default {
   }
 
   .btn-login {
-    padding: 7px 20px;
+    padding: 8px 20px;
     font-size: 12px;
     margin-right: 15px !important;
   }
@@ -550,13 +552,21 @@ export default {
     gap: 50px;
   }
 
+  .content-right {
+    padding-top: 140px;  
+  }
+
+  .dish-info {
+    margin-top: 0;  
+  }
+
   .dish-title {
-    font-size: 29px;
-    
+    font-size: 30px;
   }
 
   .dish-description {
     font-size: 13px;
+    max-width: 400px;
   }
 
   .dish-image-container {
@@ -565,26 +575,36 @@ export default {
   }
 
   .dish-main-image {
-    width: 500px;
-    height: 500px;  
+    width: 495px;
+    height: 495px;
+    margin-left: -110px;
+    margin-top: -49px;
   }
 
   .dishes-grid {
-    gap: 0px;
-    padding-left: 320px;
+    gap: 10px;
+    padding-left: 0;
+    position: absolute;
+    top: -30px;  
+    left: 0;
+    margin-bottom: 0; 
   }
 
   .dish-card {
-    width: 160px;
-    height: 190px;
+    width: 130px;
+    height: 130px;
+  }
+
+  .price-tag {
+    padding: 10px 40px;
+    font-size: 15px;
+    margin-left: 0;
   }
 
   .dish-thumb-img {
-    width: 129px;
-    height: 129px;
+    width: 130%;
+    height: 130%;
   }
-
-
   .dish-card-price {
     font-size: 13px;
   }

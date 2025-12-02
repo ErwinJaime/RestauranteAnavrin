@@ -605,7 +605,7 @@ export default {
   }
 
   .btn-login {
-    padding: 7px 20px;
+    padding: 8px 20px;
     font-size: 12px;
     margin-right: 15px !important;
   }
