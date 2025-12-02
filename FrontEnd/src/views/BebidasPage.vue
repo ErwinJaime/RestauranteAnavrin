@@ -13,7 +13,7 @@
 
     <!-- Contenido Principal -->
     <div class="main-content">
-       <!-- Lado Izquierdo - Imagen Principal -->
+      <!-- Lado Izquierdo - Imagen Principal -->
       <div class="content-left">
         <!-- Frutas Decorativas Dinámicas -->
         <transition name="fade" mode="out-in">
