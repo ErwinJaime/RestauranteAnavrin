@@ -52,31 +52,40 @@
           <p class="section-subtitle">Cada plato cuenta una historia: recetas únicas que combinan tradición e innovación.</p>
           
           <div class="cards-container">
-            <div class="card">
-              <div class="card-image">
-                <img src="@/assets/bebida.png" alt="Bebidas" class="card-img">
+            <!-- Card 1: Bebidas -->
+            <router-link to="/bebidas" class="card-link">
+              <div class="card">
+                <div class="card-image">
+                  <img src="@/assets/bebida.png" alt="Bebidas" class="card-img">
+                </div>
+                <h3 class="card-title">Bebidas</h3>
+                <p class="card-description">La frescura de la fruta natural en cada sorbo.</p>
               </div>
-              <h3 class="card-title">Bebidas</h3>
-              <p class="card-description">La frescura de la fruta natural en cada sorbo.</p>
-            </div>
+            </router-link>
 
-            <div class="card">
-              <div class="card-image">
-                <img src="@/assets/postre.png" alt="Postres" class="card-img">
+            <!-- Card 2: Postres -->
+            <router-link to="/postres" class="card-link">
+              <div class="card">
+                <div class="card-image">
+                  <img src="@/assets/postre.png" alt="Postres" class="card-img">
+                </div>
+                <h3 class="card-title">Postres</h3>
+                <p class="card-description">Un clásico reinventado, con sabores que despiertan emociones.</p>
               </div>
-              <h3 class="card-title">Postres</h3>
-              <p class="card-description">Un clásico reinventado, con sabores que despiertan emociones.</p>
-            </div>
+            </router-link>
 
-            <div class="card">
-              <div class="card-image">
-                <img src="@/assets/platillo.png" alt="Platillos" class="card-img">
+            <!-- Card 3: Platillos -->
+            <router-link to="/platillos" class="card-link">
+              <div class="card">
+                <div class="card-image">
+                  <img src="@/assets/platillo.png" alt="Platillos" class="card-img">
+                </div>
+                <h3 class="card-title">Platillos</h3>
+                <p class="card-description">Ingredientes frescos y un toque gourmet para tu paladar.</p>
               </div>
-              <h3 class="card-title">Platillos</h3>
-              <p class="card-description">Ingredientes frescos y un toque gourmet para tu paladar.</p>
-            </div>
+            </router-link>
           </div>
-        </div>
+        </div>    
 
         <!-- Decoraciones -->
         <img src="@/assets/hoja-verde.png" alt="Hoja" class="deco-leaf deco-leaf-2">
@@ -450,6 +459,19 @@ export default {
   gap: 50px;
   margin-bottom: 50px;
   max-width: 1200px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit; 
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: block; 
+}
+
+.card-link:hover {
+  text-decoration: none;
+  transform: translateY(-6px);
 }
 
 .card {

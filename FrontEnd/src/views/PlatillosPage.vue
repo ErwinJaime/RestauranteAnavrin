@@ -694,9 +694,9 @@ export default {
   }
 
   .background-shape {
-    width: 220px; 
-    height: 300px; 
-    right: -5px;  
+    width: 210px; 
+    height: 290px; 
+    right: 115px;  
     top: 310px;
   }
 
