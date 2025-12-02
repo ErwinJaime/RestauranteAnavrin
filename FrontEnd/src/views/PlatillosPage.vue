@@ -35,7 +35,7 @@
           ></div>
         </transition>
 
-        <!-- Animación del PLATO (independiente) -->*
+        <!-- Animación del PLATO (independiente) -->
         <transition name="dish-rotate" mode="out-in">
           <div :key="currentDish.id" class="dish-image-container">
             <img 
