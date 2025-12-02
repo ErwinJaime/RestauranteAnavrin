@@ -346,12 +346,17 @@ export default {
   right: 0;
   display: flex;
   gap: 20px;
+  transform: translateY(0) scale(1);
   z-index: 10;
 }
 
 .small-fruit-container {
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.small-fruit-container .small-fruit {
+  transform: translateY(0) scale(1); 
 }
 
 .small-fruit {
@@ -363,11 +368,7 @@ export default {
 }
 
 .small-fruit-container:hover .small-fruit {
-  transform: translateY(-5px) scale(1.1);
-}
-
-.small-fruit-container.active .small-fruit {
-  transform: translateY(-8px) scale(1.15);
+  transform: translateY(-5px) scale(1.08); 
 }
 
 /* Transiciones Vue */
@@ -568,6 +569,11 @@ export default {
     font-size: 13px;
   }
 
+  .price-tag {
+    padding: 10px 40px;
+    font-size: 15px;
+  }
+
   .drink-image-container {
     width: 400px;
     height: -290%;
@@ -577,7 +583,7 @@ export default {
 
   .small-fruits {
     top: -100px;
-    right: 30%;
+    right: 36%;
   }
 
   .small-fruit {
