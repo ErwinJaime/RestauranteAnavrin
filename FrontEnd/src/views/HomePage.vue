@@ -842,12 +842,13 @@ export default {
   }
 
   .logo {
-    font-size: 23px;
-    margin-left: 78px;
+    font-size: 20px;
+    margin-left: 46px;
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 64px;
+    margin-left: 439px;
   }
 
   .nav-links a {
@@ -855,54 +856,146 @@ export default {
   }
 
   .btn-login {
-    padding: 11px 26px;
+    padding: 7px 22px;
     font-size: 14px;
-    margin-right: -170px;
+    margin-right: 30px;
   }
 
   .section-one {
-    padding-top: 210px;
+    padding-top: 250px;
     padding-left: 15px;
     padding-right: 90px;
     gap: 90px;
   }
 
   .content-left {
-    padding-left: 170px;
+    padding-left: 260px;
   }
 
   .title {
     font-size: 70px;
+    color: #2e293c;
   }
 
   .description {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .hoja-decoration {
-    width: 160px;
-    height: 160px;
-    margin-left: 110px;
+    width: 130px;
+    height: 130px;
+    margin-left: 200px;
+    position: relative;
+    top: 67px;
   }
 
   .img-grapefruit {
-    width: 170px;
-    height: 170px;
-    top: 85px;
-    left: 35px;
+    width: 180px;
+    height: 180px;
+    top: -140px;
+    left: -715px;
   }
 
   .img-plato {
-    width: 520px;
-    height: 470px;
+    top: 28%;
+    width: 600px;
+    height: 560px;
   }
 
   .section-title-center {
     font-size: 52px;
   }
 
+  .cards-container {
+    gap: 50px;
+  }
+
+  .card-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .deco-flour {
+  width: 160px;
+  height: 160px;
+  }
+
+  .deco-berries {
+    width: 340px;
+    height: 340px;
+    left: -105px;
+  }
+
+  .deco-leaf {
+    width: 90px;
+    height: 90px;
+  }
+
+  .deco-leaf-2 {
+    top: 500px;
+    right: 100px;
+  }
+
   .section-title-three {
-    font-size: 56px;
+    font-size: 48px;
+    padding-left: 30px;
+  }
+
+  .section-description-three {
+    font-size: 15px;
+    padding-left: 30px;
+  }
+
+  .img-plato-three {
+    width: 520px;
+    height: 520px;
+    position: relative;
+    top: 50px;
+  }
+
+  .footer-banner {
+    position: absolute;
+    bottom: 13px;
+  }
+
+  .footer-text {
+  font-size: 15px;
+  }
+
+  .deco-leaf-three {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 100px;
+  }
+
+  .deco1-leaf-three {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 530px;
+  }
+
+  .deco-eggs {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    left: -97px;
+    bottom: 400px;
+  }
+
+  .deco-spices {
+    position: absolute;
+    width: 165px;
+    height: 165px;
+  }
+
+  .deco-spoon {
+    position: absolute;
+    width: 400px;  
+    height: 400px;
+    bottom: 60px;  
+    left: 610px;   
   }
 }
 
