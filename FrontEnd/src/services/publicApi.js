@@ -31,6 +31,9 @@ export function obtenerProductoPublico(id) {
 export function listarResenasProductoPublico(productoId) {
   return publicAPI.get(`productos/${productoId}/resenas/`)
 }
+export function listarResenasPublicas() {
+  return publicAPI.get('resenas/publicas/')
+}
 
 // AUTENTICACIÓN (públicas)
 export function registroUsuario(data) {

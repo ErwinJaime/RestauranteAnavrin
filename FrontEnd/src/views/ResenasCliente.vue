@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
+        <router-link to="/homeCliente">Home</router-link>
         <router-link to="/aboutcliente">About</router-link>
         <a href="3">Review</a>
       </div>
@@ -27,16 +27,15 @@
           :key="resena.id"
           class="resena-card"
         >
-          <button class="btn-eliminar" @click="eliminarResena(resena.id)">✕</button>
           <div class="resena-header">
             <img
               :src="require(`@/assets/${resena.emoji}.png`)"
               :alt="resena.emoji"
               class="emoji"
             />
-            <h3 class="nombre-usuario">{{ resena.nombre }}</h3>
+            <h3 class="nombre-usuario">{{ resena.nombre_usuario }}</h3>
           </div>
-          <p class="resena-texto">{{ resena.texto }}</p>
+          <p class="resena-texto">"{{ resena.comentario }}"</p>
         </div>
       </div>
 
@@ -66,50 +65,39 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from 'vue-router';
+import { listarResenasPublicas } from '@/services/publicApi';
 
 const router = useRouter();
 
-const cerrarSesion = () => {
-  localStorage.removeItem('usuario')
-  localStorage.removeItem('correo')
-  sessionStorage.clear()
-  router.push('/')
-}
-
+const cargando = ref(false);
 const paginaActual = ref(0);
 const resenasPorPagina = 3;
 
-const todasLasResenas = ref([
-  {
-    id: 1,
-    nombre: "Tatiana Gualteros",
-    texto:
-      '"Buena presentación, sabores equilibrados y un ambiente agradable. Ideal para venir con amigos o desconectarse un rato."',
-    emoji: "feliz",
-  },
-  {
-    id: 2,
-    nombre: "Erwin Jaimes",
-    texto:
-      '"Excelente atención y productos de calidad. El menú es variado y todo llega fresco y bien presentado."',
-    emoji: "feliz",
-  },
-  {
-    id: 3,
-    nombre: "Pedro Suárez",
-    texto:
-      '"El plato estaba crudo, el servicio terrible, no lo recomiendo."',
-    emoji: "triste",
-  },
-  {
-    id: 4,
-    nombre: "Tatiana Nieto",
-    texto: '"Excelente servicio, las bebidas son deliciosas."',
-    emoji: "feliz",
-  },
-]);
+const todasLasResenas = ref([]);
+
+// Cargar solo reseñas visibles (públicas)
+const cargarResenas = async () => {
+  try {
+    cargando.value = true;
+    const response = await listarResenasPublicas();
+    todasLasResenas.value = response.data;
+    console.log('✅ Reseñas cargadas:', todasLasResenas.value);
+  } catch (error) {
+    console.error('❌ Error al cargar reseñas:', error);
+  } finally {
+    cargando.value = false;
+  }
+};
+
+const cerrarSesion = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  sessionStorage.clear();
+  router.push('/');
+};
 
 const resenasPaginaActual = computed(() => {
   const inicio = paginaActual.value * resenasPorPagina;
@@ -121,15 +109,6 @@ const totalPaginas = computed(() =>
   Math.ceil(todasLasResenas.value.length / resenasPorPagina)
 );
 
-const eliminarResena = (id) => {
-  const index = todasLasResenas.value.findIndex((r) => r.id === id);
-  if (index !== -1) {
-    todasLasResenas.value.splice(index, 1);
-    if (resenasPaginaActual.value.length === 0 && paginaActual.value > 0) {
-      paginaActual.value--;
-    }
-  }
-};
 
 const paginaSiguiente = () => {
   if (paginaActual.value < totalPaginas.value - 1) paginaActual.value++;
@@ -137,6 +116,11 @@ const paginaSiguiente = () => {
 const paginaAnterior = () => {
   if (paginaActual.value > 0) paginaActual.value--;
 };
+
+onMounted(async () => {
+  await cargarResenas();
+});
+
 </script>
 
 <style scoped>

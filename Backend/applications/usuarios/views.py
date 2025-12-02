@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -484,6 +484,17 @@ def listar_todas_resenas(request):
     serializer = ResenaSerializer(resenas, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])  # Acceso público
+def listar_resenas_publicas(request):
+    """Listar todas las reseñas visibles (públicas)"""
+    # Filtrar solo reseñas visibles
+    resenas = Resena.objects.filter(visible=True)
+    # Ordenar por fecha, por ejemplo, las más recientes primero
+    resenas = resenas.order_by('fecha')
+    
+    serializer = ResenaListSerializer(resenas, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

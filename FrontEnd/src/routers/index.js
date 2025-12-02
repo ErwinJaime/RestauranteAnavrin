@@ -1,3 +1,4 @@
+/*FrontEnd\src\routers\index.js*/
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/LoginForm.vue'
 import Home from '@/views/HomePage.vue'
@@ -18,10 +19,10 @@ import homeCliente from '@/views/homeCliente.vue'
 import CrearResena from '@/views/CrearResena.vue'
 
 const routes = [
-  { path: '/', name: 'homeCliente', component: homeCliente},
+  { path: '/', name: 'Home', component: Home },
+  { path: '/homeCliente', name: 'homeCliente', component: homeCliente},
   { path: '/registro', name: 'Registro', component: Registro },
   { path: '/login', name: 'Login', component: Login },
-  { path: '/home', name: 'Home', component: Home },
   { path: '/bebidas', name: 'Bebidas', component: Bebidas },
   { path: '/postres', name: 'Postres', component: Postres },
   { path: '/platillos', name: 'Platillos', component: Platillos },

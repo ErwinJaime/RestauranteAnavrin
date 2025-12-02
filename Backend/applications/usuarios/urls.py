@@ -37,4 +37,6 @@ urlpatterns = [
     path('resenas/<int:pk>/actualizar/', views.actualizar_resena, name='actualizar_resena'),
     path('resenas/<int:pk>/eliminar/', views.eliminar_resena, name='eliminar_resena'),
     path('resenas/<int:pk>/visibilidad/', views.cambiar_visibilidad_resena, name='cambiar_visibilidad_resena'),
+    #listar reseñas publico
+    path('resenas/publicas/', views.listar_resenas_publicas, name='listar_resenas_publicas'),
 ]
