@@ -847,7 +847,8 @@ export default {
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 64px;
+    margin-left: 439px;
   }
 
   .nav-links a {
@@ -954,7 +955,7 @@ export default {
 
   .footer-banner {
     position: absolute;
-    bottom: 2px;
+    bottom: 13px;
   }
 
   .footer-text {
@@ -985,8 +986,8 @@ export default {
 
   .deco-spices {
     position: absolute;
-    width: 140px;
-    height: 140px;
+    width: 165px;
+    height: 165px;
   }
 
   .deco-spoon {
