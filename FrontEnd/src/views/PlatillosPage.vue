@@ -26,6 +26,16 @@
 
       <!-- Lado Derecho - Imagen Principal -->
       <div class="content-right">
+        <!-- Animación del CUADRO (independiente) -->
+        <transition name="background-fade" mode="out-in">
+          <div 
+            :key="currentDish.id"
+            class="background-shape" 
+            :style="{ backgroundColor: currentDish.bgColor }"
+          ></div>
+        </transition>
+
+        <!-- Animación del PLATO (independiente) -->
         <transition name="dish-rotate" mode="out-in">
           <div :key="currentDish.id" class="dish-image-container">
             <img 
@@ -33,14 +43,11 @@
               :alt="currentDish.title" 
               class="dish-main-image"
             >
-            <div 
-              class="background-shape" 
-              :style="{ backgroundColor: currentDish.bgColor }"
-            ></div>
           </div>
         </transition>
       </div>
     </div>
+
 
     <!-- Tarjetas de Platillos -->
     <div class="dishes-grid">
@@ -297,7 +304,7 @@ export default {
   bottom: 0;
   right: 96px;
   top: 400px;
-  z-index: 1;
+  z-index: 0;
   transition: background-color 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -318,12 +325,10 @@ export default {
   height: 200px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .dish-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* Imagen redonda flotante arriba */
@@ -442,6 +447,22 @@ export default {
   transform: translate(-200px, 200px) scale(0.2);
 }
 
+/* Animación del cuadro de fondo */
+.background-fade-enter-active,
+.background-fade-leave-active {
+  transition: all 1s ease-in-out;
+}
+
+.background-fade-enter-from {
+  opacity: 0;
+  transform: translateY(100px);
+}
+
+.background-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-100px);
+}
+
 @keyframes fadeInLeft {
   from {
     opacity: 0;
@@ -534,12 +555,12 @@ export default {
   }
 
   .logo {
-    font-size: 23px;
-    margin-left: 78px;
+    font-size: 20px;
+    margin-left: 46px;
   }
 
   .nav-links {
-    gap: 70px;
+    gap: 105px;
   }
 
   .nav-links a {
@@ -547,22 +568,24 @@ export default {
   }
 
   .btn-login {
-    padding: 11px 26px;
+    padding: 7px 22px;
     font-size: 14px;
-    margin-right: -170px;
+    margin-right: 30px;
   }
 
   .main-content {
-    padding: 20px 110px 10px;
-    gap: 70px;
+    padding: 40px 110px 10px;
+    gap: 40px;
   }
 
   .dish-title {
-    font-size: 42px;
+    font-size: 44px;
+    margin-left: 20%;
   }
 
   .dish-description {
-    font-size: 14px;
+    font-size: 16px;
+    margin-left: 20%;
   }
 
   .dish-image-container {
@@ -571,17 +594,51 @@ export default {
   }
 
   .dish-main-image {
-    width: 340px;
-    height: 340px;
+    width: 410px;
+    height: 410px;
+    top: 120px;
+    right: -45px;
   }
 
   .background-shape {
-    width: 310px;
-    height: 310px;
+    width: 320px;
+    height: 320px;
+    right: 140px;
+    top: 400px;
   }
 
   .dishes-grid {
     padding-left: 130px;
+  }
+
+  .dish-card {
+    width: 179px; 
+    height: 200px;
+  }
+
+   .dish-thumb-img {
+    width: 145px;
+    height: 145px;
+  }
+
+  .dish-card-title {
+    font-size: 17px;
+    font-weight: 550;
+    margin-bottom: -14px;
+    margin-left: 10%;
+  }
+  .dish-card-price { 
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 59%;
+  }
+
+  .price-tag { 
+    padding: 9px 30px;
+    font-size: 20px;
+    margin-top: -30px; 
+    margin-left: 40%;
+    font-weight: 560;
   }
 }
 
