@@ -6,7 +6,7 @@
       <div class="nav-links">
         <router-link to="/homeCliente">Home</router-link>
         <router-link to="/aboutcliente">About</router-link>
-        <a href="#">Review</a>
+        <router-link to="/resenascliente">Review</router-link>
       </div>
       <span v-if="usuarioNombre !== 'Invitado'" class="btn-cliente ">{{ usuarioNombre }}</span>
       <span v-else class="btn-cliente">Invitado</span>

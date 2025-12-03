@@ -4,9 +4,9 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links"> 
-        <a href="/home">Home</a>
-        <a href="/abouthome">About</a>
-        <a href="/resenashome">Review</a>
+        <router-link to="/">Home</router-link>
+        <router-link to="/abouthome">About</router-link>
+        <router-link to="/resenashome">Review</router-link>
       </div>
       <button class="btn-login">Iniciar Sesión</button>
     </nav>

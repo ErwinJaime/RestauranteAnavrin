@@ -7,9 +7,9 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/abouthome">About</a>
-            <a href="/resenascliente">Review</a>
+            <router-link to="/">Home</router-link>
+            <router-link to="/abouthome">About</router-link>
+            <router-link to="/resenashome">Review</router-link>
           </div>
           <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>
@@ -40,9 +40,9 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/abouthome">About</a>
-            <a href="/resenascliente">Review</a>
+            <router-link to="/">Home</router-link>
+            <router-link to="/abouthome">About</router-link>
+            <router-link to="/resenashome">Review</router-link>
           </div>
           <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>
@@ -100,9 +100,9 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/abouthome">About</a>
-            <a href="/resenashome">Review</a>
+            <router-link to="/">Home</router-link>
+            <router-link to="/abouthome">About</router-link>
+            <router-link to="/resenashome">Review</router-link>
           </div>
           <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>
