@@ -2,6 +2,7 @@ services:
   - type: web
     name: frontend-vue
     env: static
+    rootDirectory: ./FrontEnd
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     routes:
