@@ -36,25 +36,50 @@ def registro_usuario(request):
     
     if serializer.is_valid():
         usuario = serializer.save()
+        print(f"✅ Usuario creado: {usuario.correo}")
+        print(f"⚠️ Usuario is_active: {usuario.is_active}")
         
-        # Generar código
+        # Verificar que el usuario se creó INACTIVO
+        if usuario.is_active:
+            print("❌ ERROR: Usuario creado ACTIVO cuando debería ser INACTIVO")
+            usuario.delete()
+            return Response({
+                "error": "Error en la configuración del sistema"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Generar código de verificación
         codigo = CodigoVerificacion.generar_codigo()
         CodigoVerificacion.objects.create(usuario=usuario, codigo=codigo)
-        
-        # Enviar email
-        try:
-            enviar_codigo_verificacion(usuario.correo, codigo)
-        except:
-            pass  # Continuar aunque falle el email
-        
-        return Response({
-            "mensaje": "Usuario registrado. Revisa tu correo.",
+        print(f"🔑 Código generado: {codigo}")
+
+        # Responder inmediatamente al cliente
+        response_data = {
+            "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
             "usuario_id": usuario.id,
             "correo": usuario.correo
-        }, status=status.HTTP_201_CREATED)
+        }
+        
+        # Enviar email en segundo plano
+        from threading import Thread
+        
+        def enviar_email_async():
+            try:
+                print(f"📧 Enviando email a: {usuario.correo}")
+                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+                if resultado:
+                    print("✅ Email enviado exitosamente (async)")
+                else:
+                    print("❌ Error al enviar email (async)")
+            except Exception as e:
+                print(f"❌ Error en thread: {e}")
+        
+        thread = Thread(target=enviar_email_async, daemon=True)
+        thread.start()
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
     
+    print(f"❌ Errores de validación: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['POST'])
 def verificar_codigo(request):
