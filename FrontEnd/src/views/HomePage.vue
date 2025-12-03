@@ -9,7 +9,7 @@
           <div class="nav-links">
             <a href="/">Home</a>
             <a href="/abouthome">About</a>
-            <a href="/resenashome">Review</a>
+            <a href="/resenascliente">Review</a>
           </div>
           <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>
@@ -42,7 +42,7 @@
           <div class="nav-links">
             <a href="/">Home</a>
             <a href="/abouthome">About</a>
-            <a href="/resenashome">Review</a>
+            <a href="/resenascliente">Review</a>
           </div>
           <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
         </nav>

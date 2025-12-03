@@ -193,11 +193,12 @@ export default {
     const router = useRouter()
 
     const cerrarSesion = () => {
-      localStorage.removeItem('usuario')
-      localStorage.removeItem('correo')
-      sessionStorage.clear()
-      router.push('/')
-    }
+      localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      sessionStorage.clear();
+      router.push('/');
+    };
 
     // Productos filtrados según búsqueda
     const productosFiltrados = computed(() => {

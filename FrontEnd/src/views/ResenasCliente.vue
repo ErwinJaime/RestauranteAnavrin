@@ -6,10 +6,13 @@
       <div class="nav-links">
         <router-link to="/homeCliente">Home</router-link>
         <router-link to="/aboutcliente">About</router-link>
-        <a href="3">Review</a>
+        <a href="#">Review</a>
       </div>
-      <span class="btn-cliente">Tatiana</span>
-      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
+      <span v-if="usuarioNombre !== 'Invitado'" class="btn-cliente ">{{ usuarioNombre }}</span>
+      <span v-else class="btn-cliente">Invitado</span>
+          <button class="btn-cerrar-sesion" @click="cerrarSesion">
+        {{ usuarioNombre !== 'Invitado' ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
+      </button>
     </nav>
 
     <!-- Imágenes decorativas -->
@@ -70,6 +73,12 @@ import { useRouter } from 'vue-router';
 import { listarResenasPublicas } from '@/services/publicApi';
 
 const router = useRouter();
+const usuarioNombre = ref('');
+
+const obtenerUsuario = () => {
+  const usuario = JSON.parse(localStorage.getItem('user') || '{}');
+  usuarioNombre.value = usuario.nombre || 'Invitado';
+};
 
 const cargando = ref(false);
 const paginaActual = ref(0);
@@ -119,6 +128,7 @@ const paginaAnterior = () => {
 
 onMounted(async () => {
   await cargarResenas();
+  obtenerUsuario();
 });
 
 </script>
@@ -485,6 +495,7 @@ onMounted(async () => {
 
   .btn-admin {
     margin-right: 12px !important;
+    font-size: 15px;
   }
 }
 

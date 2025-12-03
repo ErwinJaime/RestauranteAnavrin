@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <a href="/">Home</a>
+        <a href="/homecliente">Home</a>
         <a href="/aboutcliente">About</a>
         <a href="/resenascliente">Review</a>
       </div>
@@ -440,6 +440,7 @@ onMounted(() => {
 
   .btn-primary {
     margin-right: 12px !important;
+    font-size: 15px;
   }
 }
 

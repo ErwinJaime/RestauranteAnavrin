@@ -4,12 +4,15 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
+        <router-link to="/homecliente">Home</router-link>
         <a href="#">About</a>
         <router-link to="/resenascliente">Review</router-link>
       </div>
-      <span class="btn-cliente">Tatiana</span>
-      <button class="btn-cerrar-sesion" @click="cerrarSesion">Cerrar Sesión</button>
+      <span v-if="usuarioNombre !== 'Invitado'" class="btn-cliente ">{{ usuarioNombre }}</span>
+      <span v-else class="btn-cliente">Invitado</span>
+          <button class="btn-cerrar-sesion" @click="cerrarSesion">
+        {{ usuarioNombre !== 'Invitado' ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
+      </button>
     </nav>
 
     <!-- Imagen superior -->
@@ -96,9 +99,16 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const usuarioNombre = ref('');
+
+const obtenerUsuario = () => {
+  const usuario = JSON.parse(localStorage.getItem('user') || '{}');
+  usuarioNombre.value = usuario.nombre || 'Invitado';
+};
 
 const cerrarSesion = () => {
   localStorage.removeItem('usuario')
@@ -106,6 +116,10 @@ const cerrarSesion = () => {
   sessionStorage.clear()
   router.push('/')
 }
+onMounted(async () => {
+  obtenerUsuario();
+});
+
 </script>
 
 <style scoped>
@@ -432,6 +446,11 @@ const cerrarSesion = () => {
 
   .btn-admin {
     margin-right: 12px !important;
+    
+  }
+  .btn-cerrar-sesion {
+    padding: 8px 20px;
+    font-size: 12px;
   }
 }
 

@@ -8,7 +8,7 @@
         <router-link to="/abouthome">About</router-link>
         <router-link to="/resenashome">Review</router-link>
       </div>
-      <button class="btn-iniciar-sesion" @click="iniciarSesion">Iniciar Sesión</button>
+      <router-link to="/login" class="btn-iniciar-sesion">Iniciar Sesión</router-link>
     </nav>
 
     <!-- Imagen superior -->
@@ -95,13 +95,7 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
-
-const iniciarSesion = () => {
-  router.push('/')
-}
 </script>
 
 <style scoped>
@@ -193,6 +187,7 @@ const iniciarSesion = () => {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+  text-decoration: none !important;
 }
 
 .btn-iniciar-sesion:hover {
