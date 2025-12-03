@@ -126,22 +126,20 @@ const routes = [
     component: About,
     meta: { requiresAuth: true, role: 'admin' }
   },
-
-
-  // ========== RUTA 404 - NO ENCONTRADO ==========
-  { 
-    path: '/:pathMatch(.*)*', 
-    name: 'NotFound',
-    component: () => import('@/views/NotFound.vue'),
-    meta: { requiresAuth: false }
-  },
   // ========== Contenido no disponible
   { 
   path: '/contenido-no-disponible', 
   name: 'ContenidoNoDisponible',
   component: () => import('@/views/ContenidoNoDisponible.vue'),
   meta: { requiresAuth: false }
-}
+},
+  // ========== RUTA 404 - NO ENCONTRADO ==========
+  { 
+    path: '/:pathMatch(.*)*', 
+    name: 'NotFound',
+    component: () => import('@/views/NotFound.vue'),
+    meta: { requiresAuth: false }
+  }
 ]
 
 const router = createRouter({
