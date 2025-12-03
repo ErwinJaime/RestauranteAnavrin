@@ -9,6 +9,10 @@ node_modules
 # Evitar subir archivos de entorno
 **/*.env
 
+
+Backend/.env
+FrontEnd/.env
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
