@@ -7,7 +7,7 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/home">Home</a>
+            <a href="/">Home</a>
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
@@ -40,7 +40,7 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/home">Home</a>
+            <a href="/">Home</a>
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>
@@ -100,7 +100,7 @@
         <nav class="navbar">
           <h1 class="logo">ANAVRIN</h1>
           <div class="nav-links">
-            <a href="/home">Home</a>
+            <a href="/">Home</a>
             <a href="/abouthome">About</a>
             <a href="/resenashome">Review</a>
           </div>

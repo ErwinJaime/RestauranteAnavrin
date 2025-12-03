@@ -4,12 +4,15 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <a href="">Home</a>
+        <a href="/">Home</a>
         <a href="/aboutcliente">About</a>
         <a href="/resenascliente">Review</a>
       </div>
-      <span class="btn-primary">Tatiana</span>
-      <button class="btn-login">Cerrar Sesión</button>
+      <span v-if="usuarioNombre !== 'Invitado'" class="btn-primary">{{ usuarioNombre }}</span>
+      <span v-else class="btn-primary">Invitado</span>
+      <button class="btn-login" @click="cerrarSesion">
+        {{ usuarioNombre !== 'Invitado' ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
+      </button>
     </nav>
 
     <!-- Contenido Principal -->
@@ -57,10 +60,35 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HomePage'
-}
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const usuarioNombre = ref('');
+
+const obtenerUsuario = () => {
+  const usuario = JSON.parse(localStorage.getItem('user') || '{}');
+  usuarioNombre.value = usuario.nombre || 'Invitado';
+};
+
+const cerrarSesion = () => {
+  if (localStorage.getItem('access_token')) {
+    // Si hay sesión activa, cerrarla
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    sessionStorage.clear();
+    router.push('/');
+  } else {
+    // Si NO hay sesión, ir a login
+    router.push('/login');
+  }
+};
+
+onMounted(() => {
+  obtenerUsuario();
+});
 </script>
 
 <style scoped>

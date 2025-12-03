@@ -122,7 +122,7 @@ export default {
         if (esAdmin) {
           this.$router.push('/administracion')
         } else {
-          this.$router.push('/menu')
+          this.$router.push('/homeCliente')
         }
       } catch (error) {
         console.error('Error en login:', error)

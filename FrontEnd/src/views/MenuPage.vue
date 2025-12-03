@@ -9,9 +9,9 @@
         <router-link to="/resenascliente">Review</router-link>
       </div>
       <span v-if="usuarioNombre !== 'Invitado'" class="btn-admin">{{ usuarioNombre }}</span>
-      <span v-else class="btn-invitado">Tatiana</span>
+      <span v-else class="btn-invitado">Invitado</span>
       <button class="btn-cerrar-sesion" @click="cerrarSesion">
-        {{ 'Cerrar Sesión' }}
+        {{ usuarioNombre !== 'Invitado' ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
       </button>
     </nav>
 
@@ -148,13 +148,16 @@ const obtenerUsuario = () => {
 
 const cerrarSesion = () => {
   if (localStorage.getItem('access_token')) {
+    // Si hay sesión activa, cerrarla
     localStorage.removeItem('user');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     sessionStorage.clear();
-    alert('Sesión cerrada correctamente');
+    router.push('/');
+  } else {
+    // Si NO hay sesión, ir a login
+    router.push('/login');
   }
-  router.push('/');
 };
 
 const filtrarPorCategoria = (categoria) => {
@@ -210,7 +213,7 @@ const totalCarrito = computed(() => {
 const confirmarPedido = async () => {
   if (!localStorage.getItem('access_token')) {
     alert('Por favor inicia sesión para realizar un pedido');
-    router.push('/');
+    router.push('/login');
     return;
   }
 

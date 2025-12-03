@@ -4,7 +4,7 @@
     <nav class="navbar">
       <h1 class="logo">ANAVRIN</h1>
       <div class="nav-links">
-        <router-link to="/menu">Home</router-link>
+        <router-link to="/">Home</router-link>
         <router-link to="/abouthome">About</router-link>
         <router-link to="/resenashome">Review</router-link>
       </div>
