@@ -11,7 +11,8 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 import os
 
-from .models import Usuario, Producto, Pedido, Resena
+from .utils import enviar_codigo_verificacion 
+from .models import Usuario, Producto, Pedido, Resena, CodigoVerificacion 
 from .serializers import (
     # Usuario
     UsuarioSerializer, UsuarioRegistroSerializer, UsuarioPerfilSerializer,
@@ -30,44 +31,108 @@ def saludo(request):
 
 @api_view(['POST'])
 def registro_usuario(request):
-    """Registro de usuario normal"""
+    """Registro con verificación 2FA"""
     serializer = UsuarioRegistroSerializer(data=request.data)
     
     if serializer.is_valid():
         usuario = serializer.save()
-        refresh = RefreshToken.for_user(usuario)
+        
+        # Generar código
+        codigo = CodigoVerificacion.generar_codigo()
+        CodigoVerificacion.objects.create(usuario=usuario, codigo=codigo)
+        
+        # Enviar email
+        try:
+            enviar_codigo_verificacion(usuario.correo, codigo)
+        except:
+            pass  # Continuar aunque falle el email
         
         return Response({
-            "mensaje": "Usuario creado correctamente",
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "usuario": {
-                "id": usuario.id,
-                "nombre": usuario.nombre,
-                "correo": usuario.correo
-            }
+            "mensaje": "Usuario registrado. Revisa tu correo.",
+            "usuario_id": usuario.id,
+            "correo": usuario.correo
         }, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
+def verificar_codigo(request):
+    """Verificar código 2FA"""
+    usuario_id = request.data.get('usuario_id')
+    codigo_ingresado = request.data.get('codigo')
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        codigo_obj = CodigoVerificacion.objects.filter(
+            usuario=usuario,
+            codigo=codigo_ingresado,
+            verificado=False
+        ).first()
+        
+        if not codigo_obj or not codigo_obj.es_valido():
+            return Response({"error": "Código inválido o expirado"}, status=400)
+        
+        codigo_obj.verificado = True
+        codigo_obj.save()
+        
+        usuario.is_active = True
+        usuario.save()
+        
+        refresh = RefreshToken.for_user(usuario)
+        
+        return Response({
+            "mensaje": "Cuenta verificada",
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "usuario": {"id": usuario.id, "nombre": usuario.nombre, "correo": usuario.correo}
+        }, status=200)
+        
+    except Usuario.DoesNotExist:
+        return Response({"error": "Usuario no encontrado"}, status=404)
+
+
+@api_view(['POST'])
+def reenviar_codigo(request):
+    """Reenviar código"""
+    usuario_id = request.data.get('usuario_id')
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        
+        if usuario.is_active:
+            return Response({"error": "Cuenta ya verificada"}, status=400)
+        
+        codigo = CodigoVerificacion.generar_codigo()
+        CodigoVerificacion.objects.create(usuario=usuario, codigo=codigo)
+        
+        try:
+            enviar_codigo_verificacion(usuario.correo, codigo)
+        except:
+            pass
+        
+        return Response({"mensaje": "Código reenviado"}, status=200)
+            
+    except Usuario.DoesNotExist:
+        return Response({"error": "Usuario no encontrado"}, status=404)
+
+
+@api_view(['POST'])
 def login_usuario(request):
-    """Login de usuario normal"""
+    """Login con verificación"""
     correo = request.data.get("correo")
     password = request.data.get("password")
 
     if not correo or not password:
-        return Response({
-            "error": "Correo y contraseña son requeridos"
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Correo y contraseña requeridos"}, status=400)
 
     try:
         usuario = Usuario.objects.get(correo=correo)
     except Usuario.DoesNotExist:
-        return Response({
-            "error": "Credenciales incorrectas"
-        }, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"error": "Credenciales incorrectas"}, status=401)
+
+    if not usuario.is_active:
+        return Response({"error": "Debes verificar tu correo primero"}, status=403)
 
     if check_password(password, usuario.password):
         refresh = RefreshToken.for_user(usuario)
@@ -80,12 +145,9 @@ def login_usuario(request):
                 "correo": usuario.correo,
                 "es_admin": usuario.es_admin
             }
-        }, status=status.HTTP_200_OK)
+        }, status=200)
     else:
-        return Response({
-            "error": "Credenciales incorrectas"
-        }, status=status.HTTP_401_UNAUTHORIZED)
-
+        return Response({"error": "Credenciales incorrectas"}, status=401)
 
 @api_view(['POST'])
 def google_login(request):

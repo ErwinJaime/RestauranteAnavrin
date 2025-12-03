@@ -12,6 +12,8 @@ urlpatterns = [
     path('google-login/', views.google_login, name='google_login'),
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
     path('perfil/actualizar/', views.actualizar_perfil, name='actualizar_perfil'),
+    path('verificar-codigo/', views.verificar_codigo, name='verificar_codigo'),  # ← NUEVA
+    path('reenviar-codigo/', views.reenviar_codigo, name='reenviar_codigo'),    # ← NUEVA
     
     # ========== PRODUCTOS ==========
     path('productos/', views.listar_productos, name='listar_productos'),

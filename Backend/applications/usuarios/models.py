@@ -32,7 +32,7 @@ class Usuario(AbstractBaseUser):
     correo = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     es_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     creadoen = models.DateTimeField(auto_now_add=True)
 
@@ -146,3 +146,42 @@ class Resena(models.Model):
     def __str__(self):
         emoji_display = dict(self.EMOJIS).get(self.emoji, self.emoji)
         return f"{self.nombre_usuario} - {self.producto.nombre} ({self.calificacion}★) {emoji_display}"
+    
+# ========== CÓDIGO DE VERIFICACIÓN ==========
+import random
+from django.utils import timezone
+from datetime import timedelta
+
+class CodigoVerificacion(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='codigos_verificacion')
+    codigo = models.CharField(max_length=6)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    verificado = models.BooleanField(default=False)
+    expira = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = "codigos_verificacion"
+        ordering = ['-creado_en']
+    
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.expira:
+            self.expira = timezone.now() + timedelta(minutes=10)
+        super().save(*args, **kwargs)
+    
+    def es_valido(self):
+        """Verificar si el código no ha expirado y no ha sido usado"""
+        if not self.expira:
+            return False
+        return not self.verificado and timezone.now() < self.expira
+    
+    @staticmethod
+    def generar_codigo():
+        """Generar código de 6 dígitos"""
+        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    def __str__(self):
+        if not self.expira:
+            estado = "⚠️ Sin expiración"
+        else:
+            estado = "✅ Verificado" if self.verificado else ("❌ Expirado" if not self.es_valido() else "⏳ Pendiente")
+        return f"Código {self.codigo} - {self.usuario.correo} - {estado}"

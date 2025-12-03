@@ -171,7 +171,7 @@ export default {
         
         // Redirigir directo al dashboard (ya está logueado)
         setTimeout(() => {
-          this.$router.push('/dashboard')
+          this.$router.push('/homecliente')
         }, 1500)
         
       } catch (error) {
