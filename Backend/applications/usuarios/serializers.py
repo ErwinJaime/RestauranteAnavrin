@@ -48,7 +48,8 @@ class UsuarioRegistroSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(
         write_only=True, 
         required=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
+        label='Confirmar contraseña'
     )
 
     class Meta:
@@ -64,8 +65,15 @@ class UsuarioRegistroSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
-        return Usuario.objects.create_user(**validated_data)
-
+        
+        # ✅ CREAR USUARIO INACTIVO
+        usuario = Usuario.objects.create_user(
+            nombre=validated_data['nombre'],
+            correo=validated_data['correo'],
+            password=validated_data['password'],
+            is_active=False  # ⭐ Usuario inactivo hasta verificar
+        )
+        return usuario
 
 class UsuarioPerfilSerializer(serializers.ModelSerializer):
     """Serializer simplificado para perfil público"""

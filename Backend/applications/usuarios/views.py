@@ -31,115 +31,208 @@ def saludo(request):
 
 @api_view(['POST'])
 def registro_usuario(request):
-    """Registro con verificación 2FA"""
+    """Paso 1: Registro de usuario (sin activar cuenta)"""
+    
+    print("=" * 50)
+    print("📝 REGISTRO DE USUARIO")
+    print(f"Datos recibidos: {request.data}")
+    print("=" * 50)
+    
     serializer = UsuarioRegistroSerializer(data=request.data)
     
     if serializer.is_valid():
         usuario = serializer.save()
-        print(f"✅ Usuario creado: {usuario.correo}")
-        print(f"⚠️ Usuario is_active: {usuario.is_active}")
         
-        # Verificar que el usuario se creó INACTIVO
+        print(f"✅ Usuario creado: {usuario.correo}")
+        print(f"⚠️ is_active: {usuario.is_active}")
+        
         if usuario.is_active:
-            print("❌ ERROR: Usuario creado ACTIVO cuando debería ser INACTIVO")
+            print("❌ ERROR: Usuario creado ACTIVO")
             usuario.delete()
             return Response({
-                "error": "Error en la configuración del sistema"
+                "error": "Error del sistema"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # Generar código de verificación
+        
+        # Generar código
         codigo = CodigoVerificacion.generar_codigo()
         CodigoVerificacion.objects.create(usuario=usuario, codigo=codigo)
-        print(f"🔑 Código generado: {codigo}")
-
-        # Responder inmediatamente al cliente
+        
+        print(f"🔢 Código: {codigo}")
+        
+        # ✅ RESPONDER INMEDIATAMENTE
         response_data = {
-            "mensaje": "Usuario registrado. Revisa tu correo para el código de verificación.",
+            "mensaje": "Usuario registrado. Revisa tu correo.",
             "usuario_id": usuario.id,
             "correo": usuario.correo
         }
         
-        # Enviar email en segundo plano
-        from threading import Thread
-        
-        def enviar_email_async():
-            try:
-                print(f"📧 Enviando email a: {usuario.correo}")
-                resultado = enviar_codigo_verificacion(usuario.correo, codigo)
-                if resultado:
-                    print("✅ Email enviado exitosamente (async)")
-                else:
-                    print("❌ Error al enviar email (async)")
-            except Exception as e:
-                print(f"❌ Error en thread: {e}")
-        
-        thread = Thread(target=enviar_email_async, daemon=True)
-        thread.start()
+        # ✅ ENVIAR EMAIL SÍNCRONAMENTE (más confiable)
+        print(f"📧 Enviando email a: {usuario.correo}")
+        try:
+            resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+            if resultado:
+                print("✅ Email enviado")
+            else:
+                print("❌ Error al enviar email (pero continuamos)")
+        except Exception as e:
+            print(f"❌ Excepción al enviar: {e}")
         
         return Response(response_data, status=status.HTTP_201_CREATED)
     
-    print(f"❌ Errores de validación: {serializer.errors}")
+    print(f"❌ Errores: {serializer.errors}")
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def verificar_codigo(request):
-    """Verificar código 2FA"""
+    """Paso 2: Verificar código 2FA"""
     usuario_id = request.data.get('usuario_id')
     codigo_ingresado = request.data.get('codigo')
     
+    print("\n" + "="*60)
+    print("🔍 VERIFICANDO CÓDIGO")
+    print(f"Usuario ID: {usuario_id}")
+    print(f"Código ingresado: {codigo_ingresado}")
+    print("="*60)
+    
+    if not usuario_id or not codigo_ingresado:
+        return Response({
+            "error": "Usuario ID y código son requeridos"
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
         usuario = Usuario.objects.get(id=usuario_id)
+        print(f"✅ Usuario: {usuario.correo}, is_active: {usuario.is_active}")
+        
         codigo_obj = CodigoVerificacion.objects.filter(
             usuario=usuario,
             codigo=codigo_ingresado,
             verificado=False
         ).first()
         
-        if not codigo_obj or not codigo_obj.es_valido():
-            return Response({"error": "Código inválido o expirado"}, status=400)
+        if not codigo_obj:
+            print("❌ Código no encontrado o ya usado")
+            todos_codigos = CodigoVerificacion.objects.filter(usuario=usuario)
+            print(f"Total códigos: {todos_codigos.count()}")
+            for c in todos_codigos:
+                print(f"  - {c.codigo}, Verificado: {c.verificado}, Válido: {c.es_valido()}")
+            
+            return Response({
+                "error": "Código inválido o ya fue usado"
+            }, status=status.HTTP_400_BAD_REQUEST)
         
+        if not codigo_obj.es_valido():
+            print("❌ Código expirado")
+            return Response({
+                "error": "Código expirado. Solicita uno nuevo."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # ✅ Activar usuario
         codigo_obj.verificado = True
         codigo_obj.save()
         
         usuario.is_active = True
         usuario.save()
         
+        print(f"✅ Usuario activado. is_active: {usuario.is_active}")
+        
+        # Generar tokens
         refresh = RefreshToken.for_user(usuario)
         
+        print("✅ VERIFICACIÓN EXITOSA")
+        print("="*60 + "\n")
+        
         return Response({
-            "mensaje": "Cuenta verificada",
+            "mensaje": "Cuenta verificada correctamente",
             "refresh": str(refresh),
             "access": str(refresh.access_token),
-            "usuario": {"id": usuario.id, "nombre": usuario.nombre, "correo": usuario.correo}
-        }, status=200)
+            "usuario": {
+                "id": usuario.id,
+                "nombre": usuario.nombre,
+                "correo": usuario.correo
+            }
+        }, status=status.HTTP_200_OK)
         
     except Usuario.DoesNotExist:
-        return Response({"error": "Usuario no encontrado"}, status=404)
+        print("❌ Usuario no encontrado")
+        return Response({
+            "error": "Usuario no encontrado"
+        }, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
 def reenviar_codigo(request):
-    """Reenviar código"""
+    """Reenviar código de verificación"""
     usuario_id = request.data.get('usuario_id')
+    
+    print(f"\n🔄 Reenviando código para usuario: {usuario_id}")
     
     try:
         usuario = Usuario.objects.get(id=usuario_id)
         
         if usuario.is_active:
-            return Response({"error": "Cuenta ya verificada"}, status=400)
+            return Response({
+                "error": "Esta cuenta ya está verificada"
+            }, status=status.HTTP_400_BAD_REQUEST)
         
+        # Generar nuevo código
         codigo = CodigoVerificacion.generar_codigo()
         CodigoVerificacion.objects.create(usuario=usuario, codigo=codigo)
         
-        try:
-            enviar_codigo_verificacion(usuario.correo, codigo)
-        except:
-            pass
+        print(f"🔢 Nuevo código: {codigo}")
         
-        return Response({"mensaje": "Código reenviado"}, status=200)
+        # ✅ ENVIAR SÍNCRONAMENTE
+        print(f"📧 Enviando a: {usuario.correo}")
+        try:
+            resultado = enviar_codigo_verificacion(usuario.correo, codigo)
+            if resultado:
+                print("✅ Email enviado")
+            else:
+                print("❌ Error al enviar")
+        except Exception as e:
+            print(f"❌ Excepción: {e}")
+        
+        return Response({
+            "mensaje": "Código reenviado correctamente"
+        }, status=status.HTTP_200_OK)
             
     except Usuario.DoesNotExist:
-        return Response({"error": "Usuario no encontrado"}, status=404)
+        return Response({
+            "error": "Usuario no encontrado"
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def verificar_usuario_existente(request):
+    """Verificar si un usuario existe y puede reenviar código"""
+    correo = request.data.get('correo')
+    
+    if not correo:
+        return Response({
+            "error": "Correo es requerido"
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        usuario = Usuario.objects.get(correo=correo)
+        
+        if usuario.is_active:
+            return Response({
+                "error": "Este correo ya está verificado. Intenta iniciar sesión.",
+                "puede_login": True
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            "mensaje": "Usuario encontrado sin verificar",
+            "usuario_id": usuario.id,
+            "correo": usuario.correo,
+            "puede_reenviar": True
+        }, status=status.HTTP_200_OK)
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            "mensaje": "Usuario no existe",
+            "puede_registrar": True
+        }, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])

@@ -1,6 +1,8 @@
 // frontend/src/services/auth.js
 import api from './api'
 
+// ========== AUTENTICACIÓN BÁSICA ==========
+
 export function login(correo, password) {
   return api.post('login/', { correo, password })
 }
@@ -10,7 +12,7 @@ export function registro(nombre, correo, password, password2) {
     nombre, 
     correo, 
     password,
-    password2  // ⚠️ AGREGAR esto - el backend ahora lo requiere
+    password2
   })
 }
 
@@ -18,7 +20,29 @@ export function googleLogin(googleToken) {
   return api.post('google-login/', { token: googleToken })
 }
 
-// ✅ NUEVAS funciones útiles
+// ========== VERIFICACIÓN 2FA ==========
+
+export function verificarCodigo(usuarioId, codigo) {
+  return api.post('verificar-codigo/', {
+    usuario_id: usuarioId,
+    codigo: codigo
+  })
+}
+
+export function reenviarCodigo(usuarioId) {
+  return api.post('reenviar-codigo/', {
+    usuario_id: usuarioId
+  })
+}
+
+export function verificarUsuarioExistente(correo) {
+  return api.post('verificar-existente/', {
+    correo: correo
+  })
+}
+
+// ========== PERFIL ==========
+
 export function obtenerPerfil() {
   return api.get('perfil/')
 }
