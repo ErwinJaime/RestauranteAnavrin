@@ -8,7 +8,7 @@
         <router-link to="/abouthome">About</router-link>
         <router-link to="/resenashome">Review</router-link>
       </div>
-      <button class="btn-login">Iniciar Sesión</button>
+      <router-link to="/login" class="btn-login">Iniciar Sesión</router-link>
     </nav>
 
     <!-- Contenido Principal -->
@@ -209,6 +209,7 @@ export default {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+  text-decoration: none !important;
 }
 
 .btn-login:hover {
